@@ -1,0 +1,8 @@
+[project]
+name = "agent-trace-diff"
+version = "0.1.0"
+description = "Captures agent execution traces and diffs planned vs. actual tool-call sequences."
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
