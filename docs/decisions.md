@@ -1,5 +1,25 @@
 # Decisions Log
 
+## 2026-05-18
+
+- **Optional fields need explicit `= None` defaults in Pydantic v2.** The spec's
+  `Step`/`AgentRun` code block writes `Optional[str]` with no default — in Pydantic v1
+  that implicitly meant "defaults to None", but Pydantic v2 removed that implicit
+  behavior: `Optional[str]` with no default is a *required* field that merely accepts
+  `None` as a value. Added explicit `= None` to every field that should actually be
+  optional (`planned_tool`, `actual_tool`, `tool_input`, `tool_output`, `raw_thought`),
+  keeping `step_index`, `step_type`, and `timestamp` genuinely required so the
+  "missing required field raises ValidationError" test has something real to check.
+
+- **`planned_tool` will stay unused for now, per the spec's own fallback plan.**
+  LangChain's tool-calling loop doesn't expose a separate "planned tool" distinct from
+  the tool it actually calls — a model turn just contains `tool_use` blocks, which
+  directly become `actual_tool` on `action` steps. `raw_thought` (the model's leading
+  text before/around a tool call) is what gets captured instead. Week 3's diff
+  algorithm will need to infer "planned" from `raw_thought` text rather than compare
+  it directly against `actual_tool` — this was anticipated in the spec itself, not a
+  gap I'm discovering later.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
