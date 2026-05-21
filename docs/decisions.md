@@ -20,6 +20,32 @@
   it directly against `actual_tool` — this was anticipated in the spec itself, not a
   gap I'm discovering later.
 
+## 2026-05-20
+
+- **Trace capture uses `agent.stream(..., stream_mode="updates")`, not a
+  `BaseCallbackHandler`.** The spec's Day 3-4 plan assumes callback hooks
+  (`on_agent_action`, `on_tool_start`, etc.) from the old `AgentExecutor` API. The
+  LangGraph-based `create_agent` doesn't fire those the same way, but its `stream()`
+  already yields exactly the structured data needed (`AIMessage`s with `tool_calls`,
+  `ToolMessage`s with `.name`/`.content`) keyed by graph node — building `Step`s
+  directly from that stream is less code and no less reliable than a callback handler
+  would be. Verified the message shapes (`tool_calls` is `[{"name", "args", "id",
+  "type"}]`, `ToolMessage.name`/`.content`) against a live run before writing the
+  capture logic, rather than assuming from memory.
+
+- **`python -m src.generate_traces`, not `python src/generate_traces.py`.** The script
+  does `from src.schema import ...`, which needs the repo root on `sys.path`. Running
+  the file directly puts `src/` itself on `sys.path[0]` (not the repo root), so the
+  import fails; running as a module (`-m`) does not have that problem. Chose this over
+  a `sys.path.insert()` hack at the top of the script to keep the import style
+  consistent with `tests/`, which already imports `from src.schema import ...`.
+
+- **Partial runs are kept, not discarded, on error.** `run_and_capture` wraps the
+  streaming loop in `try/except`; on any exception it sets `final_status="failure"`,
+  appends one observation step noting the error, and still returns/saves whatever
+  steps were captured before the failure — per the spec, partial failure traces are
+  useful data for later evaluation, not something to throw away.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

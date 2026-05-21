@@ -1,27 +1,36 @@
-"""Run a simple tool-using LangChain agent and print its steps to console.
+"""Run a tool-using LangChain agent, capture its full execution trace into
+the Step/AgentRun schema, and write it to data/raw/{run_id}.jsonl.
 
-Day 1 draft: no trace capture yet (that's Week 1 Day 3-4). This just proves
-the agent runs end-to-end with deterministic, canned tools so runs are
-repeatable while building the ingestion pipeline.
+Streaming (not callbacks) is the capture mechanism: agent.stream(...,
+stream_mode="updates") already yields structured per-node output (AIMessage /
+ToolMessage) for the LangGraph-based create_agent, so building Steps directly
+from that stream is simpler and more reliable than a BaseCallbackHandler.
+See docs/decisions.md.
 """
 import argparse
 import os
+import uuid
+from datetime import datetime, timezone
+from pathlib import Path
 
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_anthropic import ChatAnthropic
 
+from src.schema import AgentRun, Step
+
 load_dotenv()
 
 MODEL_NAME = "claude-haiku-4-5"
+FRAMEWORK = "langchain"
+RAW_DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "raw"
 
 
 @tool
 def calculator(expression: str) -> str:
     """Evaluate a basic arithmetic expression, e.g. '12 * 4 + 1'."""
     try:
-        # Restricted eval: digits, operators, parens, whitespace only.
         allowed = set("0123456789+-*/(). ")
         if not set(expression) <= allowed:
             return f"Error: expression contains disallowed characters: {expression}"
@@ -63,26 +72,102 @@ def build_agent():
     return create_agent(model, tools=TOOLS)
 
 
-def run_task(task: str) -> None:
+def _now() -> str:
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _extract_text(content) -> str:
+    """AIMessage.content is either a plain string or a list of content blocks."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        parts = [
+            block.get("text", "")
+            for block in content
+            if isinstance(block, dict) and block.get("type") == "text"
+        ]
+        return "\n".join(p for p in parts if p)
+    return ""
+
+
+def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
+    """Run the agent on `task`, capturing every step into the trace schema.
+
+    Handles mid-run errors by setting final_status="failure" and keeping
+    whatever steps were captured before the error — partial runs are still
+    useful data, not discarded.
+    """
     agent = build_agent()
-    print(f"=== Running task: {task} ===\n")
-    for step in agent.stream(
-        {"messages": [{"role": "user", "content": task}]},
-        stream_mode="updates",
-    ):
-        for node_name, node_output in step.items():
-            print(f"--- step: {node_name} ---")
-            for message in node_output.get("messages", []):
-                message.pretty_print()
-            print()
+    steps: list[Step] = []
+    final_status = "success"
+
+    def add_step(**kwargs) -> None:
+        steps.append(Step(step_index=len(steps), timestamp=_now(), **kwargs))
+
+    try:
+        for chunk in agent.stream(
+            {"messages": [{"role": "user", "content": task}]},
+            stream_mode="updates",
+        ):
+            for _node_name, node_output in chunk.items():
+                for message in node_output.get("messages", []):
+                    if verbose:
+                        message.pretty_print()
+
+                    msg_type = type(message).__name__
+                    if msg_type == "AIMessage":
+                        tool_calls = getattr(message, "tool_calls", None) or []
+                        thought = _extract_text(message.content) or None
+                        if tool_calls:
+                            for call in tool_calls:
+                                add_step(
+                                    step_type="action",
+                                    actual_tool=call["name"],
+                                    tool_input=call["args"],
+                                    raw_thought=thought,
+                                )
+                        else:
+                            add_step(step_type="final_answer", raw_thought=thought)
+                    elif msg_type == "ToolMessage":
+                        add_step(
+                            step_type="observation",
+                            actual_tool=getattr(message, "name", None),
+                            tool_output=message.content,
+                        )
+    except Exception as exc:  # noqa: BLE001 - deliberately broad: capture partial trace on any failure
+        final_status = "failure"
+        add_step(step_type="observation", raw_thought=f"Run errored: {exc}")
+
+    return AgentRun(
+        run_id=str(uuid.uuid4()),
+        task_description=task,
+        framework=FRAMEWORK,
+        model_name=MODEL_NAME,
+        steps=steps,
+        final_status=final_status,
+    )
+
+
+def save_run(run: AgentRun) -> Path:
+    RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    path = RAW_DATA_DIR / f"{run.run_id}.jsonl"
+    with open(path, "w") as f:
+        f.write(run.model_dump_json())
+        f.write("\n")
+    return path
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run a single agent task and print its steps.")
+    parser = argparse.ArgumentParser(
+        description="Run a single agent task, capture its trace, and write it to data/raw/."
+    )
     parser.add_argument("--task", required=True, help="The task/prompt to give the agent.")
     args = parser.parse_args()
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
         raise SystemExit("ANTHROPIC_API_KEY not set (check .env)")
 
-    run_task(args.task)
+    print(f"=== Running task: {args.task} ===\n")
+    run = run_and_capture(args.task)
+    out_path = save_run(run)
+    print(f"\n=== Wrote trace ({run.final_status}, {len(run.steps)} steps) to {out_path} ===")
