@@ -46,6 +46,27 @@
   steps were captured before the failure — per the spec, partial failure traces are
   useful data for later evaluation, not something to throw away.
 
+## 2026-05-21
+
+- **Generated 14 raw traces from 10 task prompts** (3 run twice for variation across
+  the model's non-determinism), landing inside the spec's 12-15 target. Deliberately
+  included tasks designed to *not* cleanly succeed: a search query with no canned
+  match, a read of a file that isn't in the canned set, and a divide-by-zero.
+
+- **Spot-checking 3 traces by eye surfaced real, useful behavior, not just schema
+  bugs** (the point of the spot-check, per the spec):
+  - `Calculate 5 divided by 0` produced a **1-step trace with no tool call at all** —
+    the model answered from its own math knowledge instead of invoking the
+    calculator. Worth keeping in mind for Week 3: "didn't call the tool it was
+    expected to" is itself a kind of divergence, not just "called the wrong tool."
+  - `15 percent of 200` got rewritten to the tool-safe expression `15 * 200 / 100`
+    rather than sent as `15% * 200` — the calculator tool's character allowlist
+    (`0-9+-*/(). `) doesn't include `%`, and the model worked around that on its own
+    without being told to.
+  - The Mars-colonies search (no canned match) produced a clean fallback: the model
+    read the "no specific data found" observation and answered from its own
+    knowledge rather than stalling or hallucinating a fabricated result.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
