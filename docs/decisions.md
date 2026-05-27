@@ -67,6 +67,16 @@
     read the "no specific data found" observation and answered from its own
     knowledge rather than stalling or hallucinating a fabricated result.
 
+## 2026-05-26
+
+- **`TraceParser` is an ABC, not a plain function.** A single `parse_trace(path)`
+  function would work for the one parser we have today, but Week 3+ and any future
+  framework support (raw OpenAI function-calling logs, AgentBench/SWE-bench imports)
+  need a stable contract to add a new parser against without touching the pipeline
+  runner. `can_parse`/`parse` as two separate abstract methods (rather than one method
+  that raises if it can't handle the file) lets the pipeline runner try several
+  parsers per file cheaply, without relying on exceptions for control flow.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
