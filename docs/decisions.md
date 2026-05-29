@@ -77,6 +77,31 @@
   that raises if it can't handle the file) lets the pipeline runner try several
   parsers per file cheaply, without relying on exceptions for control flow.
 
+## 2026-05-28
+
+- **Forward-compatible field handling via a manual key-diff before validation,
+  not `model_config = ConfigDict(extra="forbid")`.** Pydantic v2's default is
+  already "ignore extra fields silently" — that alone satisfies "don't fail," but the
+  spec also wants a visible warning when it happens. Diffing `data.keys()` against
+  `AgentRun.model_fields.keys()` before validation, logging anything unexpected, then
+  letting `model_validate` do its normal (extra-ignoring) thing gets both: a warning
+  for visibility, and validation logic that doesn't have to duplicate what pydantic
+  already does.
+
+- **`can_parse` swallows errors and returns `False`; `parse` raises informative
+  `ValueError`s.** These have different jobs — `can_parse` is a cheap probe the
+  pipeline runner calls on every file against every registered parser, so it must
+  never throw (a bad file should just mean "no match found," not crash the batch).
+  `parse` is only called after a match, so it's fine — better, per the spec — for it
+  to fail loudly with the file path and exact field(s) involved.
+
+- **Verified against the real 14-trace corpus before writing a single test.** All 14
+  raw files parse successfully with `can_parse` correctly true for each, plus quick
+  manual checks that a non-LangChain file is rejected, an extra field warns without
+  failing, and a missing required field raises a `ValueError` naming the file and the
+  missing fields. Wanted this working against real data first — Week 2 Day 5's actual
+  test suite formalizes these same checks, it doesn't discover them for the first time.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
