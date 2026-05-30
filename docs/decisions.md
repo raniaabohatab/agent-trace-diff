@@ -102,6 +102,21 @@
   missing fields. Wanted this working against real data first — Week 2 Day 5's actual
   test suite formalizes these same checks, it doesn't discover them for the first time.
 
+## 2026-05-29
+
+- **`_unparsed.log` is deleted when there's nothing to report, not left stale.**
+  A pipeline that always writes the file (even empty) leaves a confusing artifact
+  after a clean run; one that never checks leaves last run's failures looking current
+  after a fix. Wrote it only when `unparsed_lines` is non-empty and delete it if it
+  exists from a prior run, so its mere presence is a meaningful signal.
+
+- **Confirmed resilience by hand before trusting it**: dropped a garbage non-JSON
+  file into `data/raw/` and reran — it was cleanly logged to `_unparsed.log`
+  ("no registered parser matched this file") and the other 14 real traces still
+  processed and normalized correctly. This is the actual behavior the spec's
+  "one bad file should never take down the pipeline" requirement is about, not just
+  something asserted in a docstring.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
