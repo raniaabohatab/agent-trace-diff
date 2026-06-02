@@ -117,6 +117,23 @@
   "one bad file should never take down the pipeline" requirement is about, not just
   something asserted in a docstring.
 
+## 2026-06-01
+
+- **`run_pipeline()` takes optional `raw_dir`/`normalized_dir` args instead of only
+  ever reading the real `data/raw/`.** Defaults still point at the real project
+  directories, so `python -m src.ingest.run_pipeline` behaves exactly as before. But
+  the "full pipeline produces expected count" test needs a *fixed* known input to
+  assert an exact count against — pointing it at the real `data/raw/` would make the
+  test's expected count drift every time the corpus grows, which is exactly the kind
+  of test that looks broken later for no code reason. Testing against a small
+  tmp_path fixture (2 good, 1 malformed, 1 wrong-framework) is a stronger check of the
+  actual routing logic than the real corpus would be anyway.
+
+- **6 ingest tests, not just the 5 the spec listed** — added a "can_parse rejects a
+  file that isn't even valid JSON" case (`garbage.txt`) alongside the spec's 5,
+  since `can_parse` swallowing `json.JSONDecodeError` (vs. just "wrong framework
+  value") was a real code path that needed its own coverage.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

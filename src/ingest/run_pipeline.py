@@ -17,11 +17,11 @@ NORMALIZED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "
 PARSERS: list[TraceParser] = [LangChainTraceParser()]
 
 
-def run_pipeline() -> None:
-    NORMALIZED_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    unparsed_log_path = NORMALIZED_DATA_DIR / "_unparsed.log"
+def run_pipeline(raw_dir: Path = RAW_DATA_DIR, normalized_dir: Path = NORMALIZED_DATA_DIR) -> dict[str, int]:
+    normalized_dir.mkdir(parents=True, exist_ok=True)
+    unparsed_log_path = normalized_dir / "_unparsed.log"
 
-    raw_files = sorted(p for p in RAW_DATA_DIR.iterdir() if p.is_file() and not p.name.startswith("."))
+    raw_files = sorted(p for p in raw_dir.iterdir() if p.is_file() and not p.name.startswith("."))
 
     succeeded = 0
     failed = 0
@@ -50,7 +50,7 @@ def run_pipeline() -> None:
             failed += 1
             continue
 
-        out_path = NORMALIZED_DATA_DIR / f"{run.run_id}.jsonl"
+        out_path = normalized_dir / f"{run.run_id}.jsonl"
         with open(out_path, "w") as f:
             f.write(run.model_dump_json())
             f.write("\n")
@@ -66,6 +66,8 @@ def run_pipeline() -> None:
     print(f"\n{total} files processed, {succeeded} succeeded, {failed} failed")
     if failed:
         print(f"See {unparsed_log_path} for reasons")
+
+    return {"total": total, "succeeded": succeeded, "failed": failed}
 
 
 if __name__ == "__main__":
