@@ -134,6 +134,20 @@
   since `can_parse` swallowing `json.JSONDecodeError` (vs. just "wrong framework
   value") was a real code path that needed its own coverage.
 
+## 2026-06-03
+
+- **Full integration pass: clean rerun from scratch, byte-for-byte diff on 3
+  raw→normalized pairs.** Deleted `data/normalized/` entirely and reran the pipeline
+  against the full 14-file raw corpus: 14/14 succeeded, no `_unparsed.log` produced.
+  Then diffed 3 raw files (chosen for variety — a 5-step multi-tool run, the 1-step
+  no-tool-call divide-by-zero run, and a 5-step multi-file-read run) against their
+  normalized counterparts as parsed dicts: all three were exact matches. Nothing is
+  silently dropped or reshaped in the raw → parse → validate → normalize path, which
+  is exactly what Week 2's "no data corrupted in translation" check is for — and
+  worth confirming explicitly rather than assuming it from the code, since parse/
+  validate/re-serialize is precisely the kind of round trip that silently drops a
+  field if a bug is introduced later.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
