@@ -4,10 +4,23 @@ A single agent run is one AgentRun containing an ordered list of Steps.
 Plan/action/observation steps are interleaved within one run — we are not
 treating "planned" and "actual" as two separate agent runs to diff against
 each other. See docs/decisions.md for why.
+
+planned_steps (Week 3) is the upfront plan the diff algorithm aligns actual
+execution against. It defaults to an empty list rather than being required,
+so the Week 1 ReAct-style traces already in data/raw/ (generated before the
+Plan-and-Execute change) keep loading correctly — an empty plan against a
+non-empty actual sequence is a real, deliberately-handled edge case for the
+alignment algorithm, not a schema break. See docs/decisions.md, 2026-06-08.
 """
 from typing import Any, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class PlannedStep(BaseModel):
+    step_index: int
+    tool: str
+    reason: str
 
 
 class Step(BaseModel):
@@ -27,5 +40,6 @@ class AgentRun(BaseModel):
     framework: str  # "langchain" for now, always
     model_name: str  # e.g. "gpt-4o", "claude-sonnet-4"
     steps: list[Step]
+    planned_steps: list[PlannedStep] = Field(default_factory=list)  # upfront plan, Week 3+
     final_status: str  # "success" | "failure" | "unknown"
     ground_truth_divergence_step: Optional[int] = None  # filled in manually in Week 5, leave None for now

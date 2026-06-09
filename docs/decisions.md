@@ -148,6 +148,46 @@
   validate/re-serialize is precisely the kind of round trip that silently drops a
   field if a bug is introduced later.
 
+## 2026-06-08
+
+- **Plan-and-Execute, not pure ReAct.** Week 1's agent thinks and acts one step at a
+  time with no upfront plan, which means there's no clean "planned sequence" to diff
+  against "actual sequence" — the core thing this project needs. Added one upfront
+  LLM call (`make_plan()`) that asks the model to output an ordered JSON plan of
+  intended tool calls before any execution happens, completely separate from the
+  agent's actual execution loop.
+
+- **The plan is fed back into the execution prompt, not left as an independent,
+  disconnected sample.** The spec's Day 1 text says to "proceed with normal
+  step-by-step execution as before," which could be read as two fully independent
+  LLM calls about the same task. I fed the generated plan into the execution prompt
+  instead (`_format_plan_for_execution`, appended to the task message: "you
+  previously planned X, follow it but adapt if needed") so that when execution
+  deviates from the plan, it's a genuine adaptation the model is making against a
+  plan it was told to follow — not just two uncorrelated samples that happen to
+  differ. This produces more meaningful divergence data for the diff algorithm to
+  be tested against. Confirmed it actually working end-to-end on a live run before
+  generating the rest of the batch: one task's plan said `["calculator"]` and its
+  actual execution was `["calculator", "search"]` — a real, observed insertion.
+
+- **`planned_steps` defaults to an empty list, not a required field.** This keeps
+  all 14 of the real Week 1 traces (generated before this change, no upfront plan)
+  loading correctly through the exact same schema and pipeline — an empty plan
+  against a non-empty actual sequence becomes a legitimate edge case the alignment
+  algorithm has to handle (and Week 3 Day 5's test plan already calls for exactly
+  this case), rather than a breaking schema migration that forces discarding or
+  regenerating the existing corpus. Verified: all 20 raw traces (14 old + 6 new)
+  normalize cleanly through the unmodified Week 2 pipeline, and all 9 existing tests
+  pass unchanged.
+
+- **A plan that fails to parse produces an empty plan, not a failed run.** `make_plan()`
+  never raises — a malformed JSON response from the planning call is a soft failure
+  (logged, empty `planned_steps`), because the execution trace is still valuable data
+  even when the upfront plan came back unusable. Didn't hit this in practice across
+  6 real runs, but the failure mode is real (free-form JSON extraction from an LLM
+  response, not a schema-validated tool call) and shouldn't be able to take down
+  trace capture.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
