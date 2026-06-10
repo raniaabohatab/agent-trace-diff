@@ -188,6 +188,32 @@
   response, not a schema-validated tool call) and shouldn't be able to take down
   trace capture.
 
+## 2026-06-09
+
+- **Uniform cost (match=0, substitute=1, insert=1, delete=1), not a weighted cost
+  function.** A smarter cost function — e.g. penalizing a substitution less than an
+  insertion+deletion pair when two tool names are semantically similar (`search` vs.
+  `web_search`) — is a real, known possible improvement. Deliberately deferred: with
+  only 3 tool names in the current corpus there's no semantic-similarity signal to
+  exploit yet, and starting simple keeps the alignment easy to reason about and debug
+  before adding a dimension of complexity that would need its own justification and
+  tests. Recorded here explicitly so it reads as a deferred decision, not an
+  oversight, if it comes up later.
+
+- **`AlignedPair` is a plain `@dataclass`, not a pydantic `BaseModel`.** Nothing about
+  alignment output needs pydantic's validation — it's produced by `align()` itself,
+  never parsed from untrusted external input the way `AgentRun` is. A dataclass gives
+  free `__eq__`/`__repr__` (useful for the Day 5 tests, which assert exact
+  `AlignedPair` equality) without the validation overhead pydantic is for.
+
+- **Sanity-checked the DP core by hand against 8 cases (exact match, insert, delete,
+  substitute, empty-planned, empty-actual, repeated-consecutive-tool, and a mixed
+  case) before moving on to `classify.py`.** Not a replacement for Day 5's real test
+  suite — just confirming the backtracking logic is sound before building more code
+  on top of it. All 8 produced the expected minimum-cost alignment on inspection,
+  including the repeated-tool case, which is the classic off-by-one trap for this
+  kind of DP backtrack.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
