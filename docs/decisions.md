@@ -214,6 +214,32 @@
   including the repeated-tool case, which is the classic off-by-one trap for this
   kind of DP backtrack.
 
+## 2026-06-10
+
+- **`args_changed` detection uses a plain lexical word-overlap heuristic, not an LLM
+  call.** The only signal available is the plan's free-text `reason` string versus
+  the executed step's `tool_input` dict — there's no structured "planned arguments"
+  to diff numerically. Tokenize both (lowercased, stopwords stripped, words >2 chars),
+  flag `args_changed` when the two token sets are fully disjoint. This is a known-crude
+  signal — a reason like "compute the total" and args `{"expression": "15 * 200 / 100"}`
+  share zero words but are clearly related — which is exactly why the spec treats
+  `args_changed` as soft (excluded from `first_divergence_index`, never a hard
+  divergence). Same category of deferred-precision decision as Day 2's uniform
+  alignment cost: simple and honest about its limits now, a candidate for a real
+  semantic-similarity check later if it turns out to matter.
+
+- **`DivergenceEvent` is a pydantic `BaseModel`, unlike `AlignedPair`.** `AlignedPair`
+  is purely internal to `align()`/`classify()` and never leaves this module in
+  serialized form. `DivergenceEvent` does — Day 4's `DiffResult` holds a typed
+  `list[DivergenceEvent]` and gets written to `data/diffs/{run_id}.jsonl`, so it needs
+  the same validate-and-serialize behavior as every other schema type in this project.
+
+- **Verified against all 5 real Plan-and-Execute traces with non-empty plans**: the
+  4 that matched their plan exactly produced zero divergence events (including zero
+  false positives from the `args_changed` heuristic), and the one genuine divergence
+  (`planned=[calculator]`, `actual=[calculator, search]`) correctly classified as a
+  single `unexpected_step` at index 1, with `first_divergence_index == 1`.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
