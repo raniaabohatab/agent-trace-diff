@@ -240,6 +240,26 @@
   (`planned=[calculator]`, `actual=[calculator, search]`) correctly classified as a
   single `unexpected_step` at index 1, with `first_divergence_index == 1`.
 
+## 2026-06-11
+
+- **`run_diff_all` catches per-run exceptions and keeps going**, same resilience
+  pattern as Week 2's `run_pipeline.py` — one run that fails to diff shouldn't abort
+  the batch. Ran cleanly against all 20 normalized runs (0 failures) on the first try,
+  so this hasn't been exercised by a real failure yet, but the shape matches the
+  project's established pattern rather than introducing a new one.
+
+- **Known interpretive caveat, found while spot-checking output, not something to
+  quietly special-case:** for the 14 legacy Week 1 traces (empty `planned_steps`,
+  predating the Plan-and-Execute change), every executed step aligns as `INSERT` and
+  gets classified `unexpected_step` — technically correct (there's nothing to match
+  against an empty sequence), but semantically it means "no plan exists for this
+  trace," not "the agent deviated from its plan." `plan_followed_exactly: false` on a
+  legacy trace should be read as "not applicable," not "divergence detected." This
+  matters concretely for Week 5: legacy no-plan traces should not be silently folded
+  into the evaluation set as genuine divergence-detection ground truth — noting it
+  now so Week 5 Day 1's sourcing strategy accounts for it rather than discovering it
+  as a labeling bug later.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

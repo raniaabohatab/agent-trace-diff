@@ -1,0 +1,1 @@
+{"run_id":"ff2d5566-7fae-4611-905d-18a88d23ed67","aligned_pairs":[{"planned_index":null,"actual_index":0,"op":"insert"}],"divergence_events":[{"index":0,"kind":"unexpected_step","planned_tool":null,"actual_tool":"calculator","detail":"Called 'calculator' with no corresponding planned step."}],"first_divergence_index":0,"plan_followed_exactly":false}
