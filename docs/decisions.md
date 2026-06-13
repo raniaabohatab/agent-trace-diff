@@ -260,6 +260,25 @@
   now so Week 5 Day 1's sourcing strategy accounts for it rather than discovering it
   as a labeling bug later.
 
+## 2026-06-12
+
+- **12 synthetic test cases, not the spec's minimum 8-10** — added two beyond the
+  required list: an explicit "args_changed fires but is excluded from
+  `first_divergence_index`" case (the soft-vs-hard distinction is the single most
+  important nuance in `classify.py`'s contract, and it deserves its own test rather
+  than being incidentally covered), and a full `diff_run()` end-to-end wiring test
+  (align → classify → `DiffResult` assembly), since Day 4's wiring code had no direct
+  test coverage yet — everything up to now only exercised `align()`/`classify()`
+  individually or against real data by hand.
+
+- **Every expected value in `test_diff.py` was derived by hand before running the
+  test, not back-filled from whatever the code produced.** For the "multiple
+  divergences" case specifically: `planned=["alpha","beta"]`, `actual=["gamma",
+  "delta"]` — worked out that the minimum-cost alignment must be two substitutions
+  (cost 2: 1+1) rather than delete-both-insert-both (cost 4: 1+1+1+1) before writing
+  the assertion, so the test is checking the algorithm against a known-correct
+  answer, not against its own output.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
