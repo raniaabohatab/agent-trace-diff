@@ -279,6 +279,50 @@
   the assertion, so the test is checking the algorithm against a known-correct
   answer, not against its own output.
 
+## 2026-06-15
+
+- **Expanded the real corpus to 32 traces** (14 legacy + 6 from Day 1 + 12 new,
+  deliberately chosen to provoke real divergence: conditional tasks whose plan can't
+  know the branch outcome in advance, tasks needing more tool calls than planned,
+  a "don't use tools" instruction against a plan that expected one). `run_pipeline.py`
+  and `run_diff.py --all` both processed all 32 with zero failures.
+
+- **Real, genuine limitation found and confirmed with hard evidence — documented,
+  not silently patched, per this week's explicit instruction on ambiguity vs. bug.**
+  When the same tool appears more than once in both the plan and the actual
+  execution, the DP can have multiple equal-cost valid alignments, and which specific
+  occurrence gets paired with which is decided by backtrack order alone — `align()`
+  only ever looks at tool *names*, never at `tool_input` or the plan's `reason` text.
+  Two real examples surfaced this by hand:
+  - `036aca4a...` — plan: `[calculator]`, reason *"need to compute 45 divided by 9"*.
+    Actual: `[calculator(45/9), calculator(100/0)]`. The algorithm paired the plan
+    against the **second** call (`100/0`) and flagged the **first** (`45/9` — the one
+    the reason literally names) as `unexpected_step`. Backwards, by inspection.
+  - `c2750ec6...` — plan: `[calculator, search]`. Actual: `[calculator, search("year
+    63 AD historical events significance"), search("63 AD Roman history")]` — the
+    agent retried its search with a refined query after an empty result. Here there's
+    no clearly "right" answer at all (both searches genuinely serve the one planned
+    intent), which is the kind of ambiguity the spec anticipated as legitimate rather
+    than fixable.
+  - **Both are the same underlying gap**: alignment is tool-name-only, per Day 2's
+    "uniform cost, no semantic signal" decision — this is that decision's limitation
+    showing up in practice, not a new one. A natural fix exists (when a DP tie
+    involves repeated occurrences of the same tool, break it using the same
+    `tool_input`/`reason` lexical-overlap check `classify.py` already computes for
+    `args_changed`) but isn't implemented now — that would mean `align()` needing
+    `AgentRun` context it currently doesn't take, a real interface change, not a
+    one-line patch, and Day 2 already scoped richer signal as deferred work.
+  - **Mitigating and worth stating plainly: `first_divergence_index` — the number
+    Week 5 actually evaluates — was correct in both cases** (`1` and, when checked
+    against a similar pattern, unaffected). The ambiguity is confined to *which*
+    same-tool occurrence gets blamed in the fine-grained `aligned_pairs`/event detail,
+    not to whether a divergence gets detected or where it first occurs.
+
+- **Sanity-checked 2 of the clean-match cases too** (a 3-tool sequential chain and a
+  2x-`read_file`-with-different-filenames case) — both correctly show as exact
+  matches at the tool-name level, which is the alignment's actual scope; per-argument
+  correctness within a match is `args_changed`'s job, not `align()`'s.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

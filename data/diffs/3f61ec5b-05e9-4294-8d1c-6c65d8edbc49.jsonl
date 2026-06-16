@@ -1,0 +1,1 @@
+{"run_id":"3f61ec5b-05e9-4294-8d1c-6c65d8edbc49","aligned_pairs":[{"planned_index":0,"actual_index":0,"op":"match"},{"planned_index":1,"actual_index":1,"op":"match"},{"planned_index":2,"actual_index":2,"op":"match"}],"divergence_events":[],"first_divergence_index":null,"plan_followed_exactly":true}
