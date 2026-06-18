@@ -323,6 +323,34 @@
   matches at the tool-name level, which is the alignment's actual scope; per-argument
   correctness within a match is `args_changed`'s job, not `align()`'s.
 
+## 2026-06-17
+
+- **Static HTML report generator, not a live web server or SPA.** Zero-dependency to
+  view (open the file, no server to run), trivially shareable (attach to an email,
+  embed in a portfolio page), and works with no internet connection since everything
+  — CSS included — is inlined into one file per report. This is a deliberate scope
+  decision, not a shortcut taken to skip building a frontend: the time saved not
+  standing up a server goes toward making the report itself genuinely legible, which
+  is the actual goal (see Week 4's stated 30-second legibility bar).
+
+- **Report layout, designed before writing any code:**
+  - **Summary header** above everything: task description, final status, count of
+    hard divergence events, and a one-line plain-English summary generated
+    programmatically from `classify.py`'s output (Week 4 Day 3's `summarize()` — no
+    LLM call, template logic keyed on `kind` and position).
+  - **Two columns below the header**: planned steps on the left, actual steps on the
+    right, connected by the alignment — each `AlignedPair` becomes one horizontal row
+    spanning both columns, so a `match` shows the same tool on both sides at the same
+    row, an `insert` shows an empty left cell, a `delete` shows an empty right cell.
+  - **Color coding per row**, keyed to `AlignOp`/`DivergenceEvent.kind`: green
+    background = match (with no `args_changed` event), yellow = match with
+    `args_changed`, red = substitute (`wrong_tool`), gray with a dashed border =
+    insert or delete (nothing on the other side to compare against).
+  - **The first hard divergence gets a distinct marker** — a red left border on its
+    row — so it's the first thing a viewer's eye lands on, matching
+    `first_divergence_index` being the single most important number in the whole
+    pipeline.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
