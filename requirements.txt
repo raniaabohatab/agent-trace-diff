@@ -5,3 +5,4 @@ anthropic==0.121.0
 pydantic==2.13.4
 python-dotenv==1.2.2
 pytest==9.1.1
+Jinja2==3.1.6

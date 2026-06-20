@@ -351,6 +351,33 @@
     `first_divergence_index` being the single most important number in the whole
     pipeline.
 
+## 2026-06-19
+
+- **`summarize()` stays a pure function of `divergence_events` alone** (no `AgentRun`
+  or `DiffResult` argument) — it takes the same input `classify.py` already produces,
+  which keeps Day 4's planned unit tests (exact string assertions per divergence
+  `kind`) simple and independent of report-rendering concerns. Describes the first
+  *hard* divergence in one sentence, then appends a parenthetical count if there are
+  more; `args_changed`-only runs get a distinct "followed its plan, but arguments
+  looked off" sentence rather than being silently folded into "no divergence."
+
+- **Legacy no-plan traces get a distinct summary sentence, not `summarize()`'s
+  normal output.** Rendering a real report for one of the 14 pre-Plan-and-Execute
+  traces surfaced exactly the interpretive trap flagged on 2026-06-11: `summarize()`
+  would say "Agent called 'read_file', which wasn't in the plan" — accurate per the
+  alignment math, but misleading to a reader, who'd take that as "the agent went
+  off-script" rather than "there was no plan at all for this trace." Fixed at the
+  `render_report()` level (check `run.planned_steps` before calling `summarize()`)
+  rather than inside `summarize()` itself, so `summarize()` stays a pure function of
+  divergence events — this is a report-legibility fix, not an algorithm fix, and
+  belongs in the layer that owns "what does a human reading this need to know."
+
+- **Verified 3 real reports render as well-formed HTML** (checked via Python's
+  `html.parser` — no unclosed/mismatched tags) and read correctly: a genuine
+  divergence case shows the right summary and marks the right row as first-divergence,
+  a clean-match case shows "followed its plan exactly," and the legacy no-plan case
+  now shows the corrected message above.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
