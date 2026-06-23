@@ -378,6 +378,19 @@
   a clean-match case shows "followed its plan exactly," and the legacy no-plan case
   now shows the corrected message above.
 
+## 2026-06-22
+
+- **9 exact-string tests for `summarize()`, not the spec's minimum 3-4** — one per
+  divergence kind (`skipped_step`, `unexpected_step`, `wrong_tool`), plus the
+  args_changed-only sentence (singular and plural), the multi-divergence count
+  suffix (singular "1 more divergence" vs. plural "2 more divergences" — a classic
+  off-by-one for hand-written pluralization), and a case specifically checking that a
+  soft `args_changed` event sitting *before* a hard divergence in the list doesn't get
+  picked as "the first divergence" or counted in the "N more" tally. Asserting exact
+  strings (not just "returns non-empty" or "contains the tool name") is deliberate —
+  this function's whole job is to read naturally, and a test that only checks
+  presence of a substring wouldn't catch an awkward or misleading sentence.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
