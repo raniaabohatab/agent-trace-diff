@@ -391,6 +391,39 @@
   this function's whole job is to read naturally, and a test that only checks
   presence of a substring wouldn't catch an awkward or misleading sentence.
 
+## 2026-06-23
+
+- **`render_all.py`, same per-file resilience pattern as every batch script in this
+  project.** Ran cleanly against all 32 diffs on the first try.
+
+- **Readability review (9 reports, read as a stranger seeing them for the first
+  time) surfaced two real bugs, not just "looks fine":**
+  - **Real bug, found by comparing files, not by reading one in isolation**: two
+    Day 6 stress-batch traces (`9b335d47`, `9eae1430`) genuinely planned an empty
+    tool sequence *and* executed zero tools — a correct, deliberate exact match, not
+    a missing plan. But `render_report.py`'s `if not run.planned_steps` check (from
+    2026-06-19) couldn't tell that apart from a true legacy no-plan trace, since both
+    produce the same empty-list shape. Fixed properly: added `plan_was_attempted:
+    bool = False` to `AgentRun` (schema.py), set `True` unconditionally in
+    `generate_traces.py` now that `make_plan()` always runs, and backfilled the 18
+    already-generated raw files that genuinely went through planning (identified
+    precisely — not guessed — by checking which raw JSON files literally contain a
+    `planned_steps` key at all, since the 14 true-legacy files predate the field
+    existing in the schema). Considered relying on pydantic's `model_fields_set`
+    instead of a new field — rejected because `run_pipeline.py`'s
+    `model_dump_json()` re-serializes every field regardless of whether it was
+    explicitly set, so that distinction is already lost by the time a report reads
+    from `data/normalized/`, not something to recover after the fact.
+  - **Empty-state gap**: a run with zero aligned rows (the case above) rendered the
+    diff section as a blank block under the "Planned / Actual" headers — reads as a
+    broken or incomplete report to a first-time viewer, not "there's nothing to show
+    because everything matched trivially." Added an explicit `.empty-state` message
+    in the template for `{% if not rows %}`.
+  - Re-verified after both fixes: the genuine empty-plan match now correctly reads
+    "Agent followed its plan exactly," the true legacy case still correctly reads
+    "no plan captured," and the empty-rows case shows an explanatory message instead
+    of a blank area. All 30 tests still pass; `render_all.py` re-run clean.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

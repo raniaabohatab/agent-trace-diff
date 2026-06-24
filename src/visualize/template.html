@@ -70,6 +70,14 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
   .event-detail {
     grid-column: 1 / -1;
     font-size: 0.85rem;
@@ -94,12 +102,17 @@
     <div class="summary">{{ summary_text }}</div>
   </header>
 
+  {% if rows %}
   <div class="columns-header">
     <div>Planned</div>
     <div>Actual</div>
   </div>
+  {% endif %}
 
   <div class="diff">
+    {% if not rows %}
+    <div class="empty-state">No tool calls were planned or executed for this task — nothing to compare.</div>
+    {% endif %}
     {% for row in rows %}
     <div class="row {{ row.row_class }}{% if row.is_first_divergence %} first-divergence{% endif %}">
       <div class="cell">

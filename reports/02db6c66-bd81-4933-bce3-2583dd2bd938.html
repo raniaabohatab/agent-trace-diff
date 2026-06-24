@@ -70,6 +70,14 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
   .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
   .event-detail {
     grid-column: 1 / -1;
     font-size: 0.85rem;
@@ -94,12 +102,15 @@
     <div class="summary">No upfront plan was captured for this run (a pre-Plan-and-Execute trace) — there's nothing to compare execution against.</div>
   </header>
 
+  
   <div class="columns-header">
     <div>Planned</div>
     <div>Actual</div>
   </div>
+  
 
   <div class="diff">
+    
     
     <div class="row row-missing first-divergence">
       <div class="cell">

@@ -217,6 +217,7 @@ def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
         model_name=MODEL_NAME,
         steps=steps,
         planned_steps=planned_steps,
+        plan_was_attempted=True,
         final_status=final_status,
     )
 

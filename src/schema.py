@@ -41,5 +41,6 @@ class AgentRun(BaseModel):
     model_name: str  # e.g. "gpt-4o", "claude-sonnet-4"
     steps: list[Step]
     planned_steps: list[PlannedStep] = Field(default_factory=list)  # upfront plan, Week 3+
+    plan_was_attempted: bool = False  # True iff make_plan() actually ran, even if it returned []
     final_status: str  # "success" | "failure" | "unknown"
     ground_truth_divergence_step: Optional[int] = None  # filled in manually in Week 5, leave None for now
