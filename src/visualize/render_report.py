@@ -68,9 +68,35 @@ _ROW_CLASS_BY_EVENT_KIND = {
 }
 
 
+_LONG_OUTPUT_THRESHOLD = 150  # chars, above which the output collapses into a <details>
+
+
+def _pair_actions_with_observations(run: AgentRun) -> list[tuple]:
+    """Actions and observations aren't always strictly alternating — a single
+    AIMessage can request multiple parallel tool calls, which appends several
+    "action" steps in a row before their "observation" steps arrive (also in
+    a row). ToolMessages come back in the same order their tool_calls were
+    requested, so the Nth action step's output is the Nth observation step,
+    even when they're not adjacent. Verified against a real 2-parallel-call
+    trace before relying on this. See docs/decisions.md, 2026-06-24.
+    """
+    action_steps = [s for s in run.steps if s.step_type == "action"]
+    observation_steps = [s for s in run.steps if s.step_type == "observation"]
+    paired = []
+    for i, action in enumerate(action_steps):
+        observation = observation_steps[i] if i < len(observation_steps) else None
+        if observation is not None and observation.actual_tool != action.actual_tool:
+            # Ordering assumption broke for this run — degrade gracefully
+            # (no output shown) rather than mis-attribute one tool's output
+            # to a different tool's row.
+            observation = None
+        paired.append((action, observation))
+    return paired
+
+
 def _build_rows(run: AgentRun, diff: DiffResult) -> list[dict]:
     events_by_index = {e.index: e for e in diff.divergence_events}
-    action_steps = [s for s in run.steps if s.step_type == "action"]
+    action_observation_pairs = _pair_actions_with_observations(run)
 
     rows = []
     for i, pair in enumerate(diff.aligned_pairs):
@@ -78,7 +104,10 @@ def _build_rows(run: AgentRun, diff: DiffResult) -> list[dict]:
         event = events_by_index.get(i)
 
         planned = run.planned_steps[pair["planned_index"]] if pair["planned_index"] is not None else None
-        actual = action_steps[pair["actual_index"]] if pair["actual_index"] is not None else None
+        actual, observation = (
+            action_observation_pairs[pair["actual_index"]] if pair["actual_index"] is not None else (None, None)
+        )
+        actual_output = str(observation.tool_output) if observation and observation.tool_output is not None else None
 
         if op == "match":
             row_class = _ROW_CLASS_BY_EVENT_KIND.get(event.kind, "row-match") if event else "row-match"
@@ -93,6 +122,8 @@ def _build_rows(run: AgentRun, diff: DiffResult) -> list[dict]:
                 "planned_reason": planned.reason if planned else None,
                 "actual_tool": actual.actual_tool if actual else None,
                 "actual_input": actual.tool_input if actual else None,
+                "actual_output": actual_output,
+                "actual_output_is_long": bool(actual_output) and len(actual_output) > _LONG_OUTPUT_THRESHOLD,
                 "row_class": row_class,
                 "is_first_divergence": diff.first_divergence_index == i,
                 "event_detail": event.detail if event else None,

@@ -69,6 +69,33 @@
     margin-top: 0.25rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
+  .output-inline {
+    font-size: 0.85rem;
+    color: #2a6f4b;
+    margin-top: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  details.output {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+  }
+  details.output summary {
+    cursor: pointer;
+    color: #4361ee;
+    user-select: none;
+  }
+  details.output .output-body {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #f7f7f8;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
   .empty-cell { color: #aaa; font-style: italic; }
   .empty-state {
     text-align: center;
@@ -123,6 +150,11 @@
         
           <div class="tool-name">read_file</div>
           <div class="args">{'filename': 'notes.txt'}</div>
+          
+            
+            <div class="output-inline">→ Meeting notes: discuss Q3 roadmap, budget review, hiring plan.</div>
+            
+          
         
       </div>
       
@@ -139,6 +171,11 @@
         
           <div class="tool-name">read_file</div>
           <div class="args">{'filename': 'config.json'}</div>
+          
+            
+            <div class="output-inline">→ {"env": "test", "debug": true}</div>
+            
+          
         
       </div>
       
@@ -155,6 +192,11 @@
         
           <div class="tool-name">calculator</div>
           <div class="args">{'expression': '59 - 27'}</div>
+          
+            
+            <div class="output-inline">→ 32</div>
+            
+          
         
       </div>
       

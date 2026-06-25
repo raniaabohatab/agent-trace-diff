@@ -424,6 +424,32 @@
     "no plan captured," and the empty-rows case shows an explanatory message instead
     of a blank area. All 30 tests still pass; `render_all.py` re-run clean.
 
+## 2026-06-24
+
+- **Added tool outputs to the report — a real gap, not originally in the Day 2-3
+  build.** The report showed planned reasons and actual arguments but never what a
+  tool actually *returned*, which matters: rendering `036aca4a`'s report with outputs
+  now visibly shows the second `calculator` call returned `"Error evaluating
+  expression: division by zero"` — context a reader needs and the report was
+  silently missing.
+
+- **Pairing an action step with its observation isn't always "next step in the
+  list."** A single AIMessage can request multiple parallel tool calls, which
+  appends several "action" steps in a row before their "observation" steps arrive
+  (also in a row) — confirmed on a real 2-parallel-call trace (`807835da`):
+  `action(calc), action(search), observation(calc), observation(search)`, not
+  alternating. Fixed by pairing the Nth action-step with the Nth observation-step by
+  position within each filtered list (ToolMessages return in the same order their
+  tool_calls were requested), with a same-tool-name sanity check per pair that
+  degrades to "no output shown" rather than mis-attributing one tool's output to a
+  different tool's row if that assumption ever breaks.
+
+- **Collapsible `<details>` for long outputs (>150 chars), inline for short ones.**
+  The real corpus's longest tool output is only 111 characters — canned test data is
+  naturally short — so no real report actually exercises the collapsing path.
+  Verified it directly with a synthetic 200-character output instead of trusting
+  that a code path nothing in the corpus reaches actually works.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
