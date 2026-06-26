@@ -3,9 +3,9 @@
 Captures an AI agent's full execution trace, diffs the planned sequence of actions
 against what was actually executed, and flags the exact step where they diverge.
 
-**Status:** Trace generation, the ingestion pipeline, and the diff algorithm are
-working end-to-end. Visualization (Week 4) and the evaluation harness (Week 5) are
-not built yet.
+**Status:** Trace generation, the ingestion pipeline, the diff algorithm, and HTML
+report visualization are working end-to-end. The evaluation harness (Week 5) is not
+built yet.
 
 ## Setup
 
@@ -52,9 +52,17 @@ its actual ones and classifies the differences, writing a `DiffResult` to
 python -m src.diff.run_diff --all
 ```
 
+**4. Render a report** — turns one `DiffResult` + its source `AgentRun` into a
+standalone HTML file, or render the whole corpus at once:
+
+```bash
+python -m src.visualize.render_report --run-id <run_id>   # single report -> reports/{run_id}.html
+python -m src.visualize.render_all                         # every diff in data/diffs/ -> reports/
+```
+
 Run everything as a module (`-m`), not as a direct script path — these files import
-`src.schema`/`src.ingest.*`/`src.diff.*`, which need the repo root on `sys.path`;
-`-m` gives you that, a direct script invocation doesn't.
+`src.schema`/`src.ingest.*`/`src.diff.*`/`src.visualize.*`, which need the repo root
+on `sys.path`; `-m` gives you that, a direct script invocation doesn't.
 
 ## How the diff algorithm works
 
@@ -92,17 +100,46 @@ this visibly paired the plan against the wrong one of two identical-tool calls. 
 doesn't affect `first_divergence_index` in any case checked so far, only the
 fine-grained pairing detail. See `docs/decisions.md` (2026-06-15) for the specifics.
 
+## Visualization
+
+Each report (`src/visualize/render_report.py`) is a single self-contained HTML file —
+no server, no build step, works offline, opens directly in a browser. That's a
+deliberate choice (see `docs/decisions.md`, 2026-06-17): the time not spent building
+a live app went into making the report itself legible in well under 30 seconds.
+
+A report has three parts. A **summary header** up top states the task, whether the
+run succeeded, how many hard divergences it has, and a one-line plain-English
+explanation generated programmatically from the divergence events (no LLM call —
+`summarize()` in `render_report.py`). Below that, a **two-column table** lines up the
+planned tool calls against the actual ones, row by row, following the same alignment
+`align()` computed — green rows are exact matches, yellow rows matched on tool name
+but have arguments that don't obviously relate to the plan's stated reason, red rows
+are a substituted tool, and gray dashed rows are a step with nothing on the other
+side (planned but never executed, or executed but never planned). Each row also
+shows the tool's actual output, inline if short or in a collapsible `<details>` if
+long. The **first hard divergence** — the single most important thing to notice — gets
+a red left border so it's the first thing your eye lands on.
+
+Example: a task asking for two separate divisions, where the plan only anticipated
+one `calculator` call. The extra unplanned call is immediately visible (gray dashed
+row, first-divergence marker), and the yellow row below it shows a real caught issue
+too — the second `calculator` call actually errored (`division by zero`), visible
+directly in its output line:
+
+![Example diff report](docs/example_report.png)
+
 ## Tests
 
 ```bash
 python -m pytest tests/
 ```
 
-21 tests: 3 on the trace schema, 6 on ingestion, and 12 on the diff algorithm —
-hand-constructed cases (exact match, single insert/delete/substitute, empty-plan and
-empty-execution edge cases, repeated-consecutive-tool, multiple divergences in one
-run, and the args-changed soft-signal behavior) with manually-verified expected
-answers, kept separate from real messy agent data.
+30 tests: 3 on the trace schema, 6 on ingestion, 12 on the diff algorithm
+(hand-constructed cases — exact match, single insert/delete/substitute, empty-plan
+and empty-execution edge cases, repeated-consecutive-tool, multiple divergences in
+one run, and the args-changed soft-signal behavior — with manually-verified expected
+answers, kept separate from real messy agent data), and 9 on `summarize()`'s
+plain-English output, one exact-string assertion per divergence type.
 
 ## Project layout
 
@@ -119,14 +156,22 @@ src/
     classify.py          # alignment -> human-readable divergence events
     diff_result.py       # DiffResult output schema
     run_diff.py           # data/normalized/ -> data/diffs/, with per-run failure handling
+  visualize/
+    template.html         # self-contained Jinja2 HTML template (inline CSS)
+    render_report.py       # DiffResult + AgentRun -> reports/{run_id}.html; summarize()
+    render_all.py           # batch version, same pattern as run_pipeline.py/run_diff.py
 data/
   raw/                  # untouched agent traces, one file per run
   normalized/            # schema-validated output of the ingestion pipeline
   diffs/                 # DiffResult output of the diff pipeline
+reports/
+  {run_id}.html          # standalone HTML report per run
 docs/
   decisions.md           # dated log of non-obvious choices, with reasoning
+  example_report.png      # screenshot of a real generated report
 ```
 
 See `docs/decisions.md` for the reasoning behind specific choices (schema design,
 LangChain API surface, parser error handling, alignment cost function, test design,
-and the repeated-tool tie-breaking limitation above).
+the repeated-tool tie-breaking limitation, the `plan_was_attempted` field, and the
+report-legibility fixes found during the Week 4 readability review).
