@@ -450,6 +450,56 @@
   Verified it directly with a synthetic 200-character output instead of trusting
   that a code path nothing in the corpus reaches actually works.
 
+## 2026-06-29
+
+- **Two-source eval set: self-constructed injected failures + one external benchmark**,
+  not either alone — a single-source eval set is fairly criticized as unrepresentative
+  (self-constructed cases only prove the algorithm works on failures shaped like the
+  ones I imagined; external cases only prove it on someone else's data, with no clean
+  ground truth). Both together are stronger than either.
+
+- **AgentBench investigated first (as the spec suggested) and rejected — for a
+  real, checked reason, not assumed.** Pulled its actual repo structure via the GitHub
+  API: `data/<env>/` holds task *specifications* (descriptions, setup scripts, grading
+  criteria) and Docker environment definitions, not recorded agent transcripts.
+  Getting real failure traces out of it means running their full harness — Docker,
+  their `src/` framework, live model calls — against those task specs myself, which is
+  a different and much larger undertaking than "adapt a subset of pre-existing
+  traces." The spec explicitly permits falling back to an alternative when a benchmark
+  format is awkward to work with; this is that case, not a shortcut.
+
+- **`SWE-bench/experiments` checked next — also rejected**, for the same underlying
+  reason: it publishes aggregate *results* (resolved/unresolved counts, patch stats),
+  not per-step tool-call trajectories.
+
+- **Landed on `nebius/SWE-agent-trajectories` (Hugging Face)** — a public dataset of
+  ~80K real recorded SWE-agent trajectories attempting to resolve actual GitHub
+  issues, each with `instance_id`, `model_name`, `target` (bool: whether the issue was
+  actually resolved), and a full step-by-step `trajectory` (alternating `ai`/`user`
+  roles — the agent's reasoning + a fenced bash command, then the real command output).
+  Fetched via Hugging Face's public `datasets-server` "rows" API (no full-parquet
+  download needed) and confirmed the shape against real sample rows before committing
+  to it. Filtered to `target: False` (genuinely unresolved — real failures, not
+  synthetic ones) and trajectory length ≤ 20 steps (keeps hand-labeling tractable):
+  57 candidates spanning 13 distinct GitHub issues, comfortably above the 15-20 target.
+
+- **A real architectural finding, worked out before writing any adapter code, that
+  changes how the eval set and harness need to be built:** SWE-agent is ReAct-style —
+  reason, then act, one step at a time — with no explicit upfront plan, same as my own
+  14 legacy Week 1 traces. My diff algorithm is fundamentally a *plan-vs-actual*
+  comparison; with `planned_steps=[]`, the very first executed step always aligns as
+  `INSERT` (nothing to match against an empty plan), so `first_divergence_index` is
+  **trivially 0** for every no-plan trace with at least one action — not a discovery
+  about that specific trace, a structural fact about the algorithm applied to empty
+  plans. If I fold these into the headline accuracy number as ordinary cases, they
+  inflate it for free: the algorithm literally cannot get them wrong. **Decision:**
+  every eval case gets a `source_category` — `self_constructed_failure` (has a real
+  plan, genuinely tests divergence detection), `external_no_plan` (SWE-agent cases;
+  tests the no-plan edge case and cross-benchmark pipeline extensibility on real messy
+  data, reported separately, not blended into headline accuracy), or `clean_control`
+  (negative controls, Day 4). This is exactly the kind of thing this week is for
+  catching before it quietly makes the eventual numbers look better than they are.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
