@@ -222,6 +222,110 @@ def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
     )
 
 
+ALL_TOOL_NAMES = [t.name for t in TOOLS]
+
+
+class InjectionPreconditionError(ValueError):
+    """Raised when a run isn't shaped right for a given injection (e.g. no
+    clean match at the position being corrupted). The caller should generate
+    a different base run rather than treat this as a real failure."""
+
+
+def inject_wrong_tool(run: AgentRun) -> AgentRun:
+    """Swap the first planned step's tool for one that differs from what was
+    actually executed there, forcing a deterministic SUBSTITUTE divergence
+    at position 0 — ground truth is known exactly because we caused it.
+    Requires the run's first planned step to have cleanly matched execution.
+    """
+    action_steps = [s for s in run.steps if s.step_type == "action"]
+    if not run.planned_steps or not action_steps:
+        raise InjectionPreconditionError("wrong_tool needs at least one planned step and one executed action")
+    real_tool = action_steps[0].actual_tool
+    if run.planned_steps[0].tool != real_tool:
+        raise InjectionPreconditionError("wrong_tool needs the first step to already be a clean match")
+
+    fake_tool = next(t for t in ALL_TOOL_NAMES if t != real_tool)
+    new_planned = list(run.planned_steps)
+    new_planned[0] = PlannedStep(step_index=0, tool=fake_tool, reason=new_planned[0].reason)
+
+    return run.model_copy(
+        update={
+            "planned_steps": new_planned,
+            "injected_failure": "wrong_tool",
+            "ground_truth_divergence_step": 0,
+        }
+    )
+
+
+def inject_skip_step(run: AgentRun) -> AgentRun:
+    """Remove the last planned step's actual execution (its action step and
+    matching observation), simulating the agent skipping a step it planned
+    — forces a deterministic DELETE (skipped_step) divergence. Requires the
+    run to have cleanly executed every planned step, one tool call each.
+    """
+    if len(run.planned_steps) < 2:
+        raise InjectionPreconditionError("skip_step needs at least 2 planned steps")
+
+    action_steps = [s for s in run.steps if s.step_type == "action"]
+    observation_steps = [s for s in run.steps if s.step_type == "observation"]
+    planned_tools = [p.tool for p in run.planned_steps]
+    actual_tools = [s.actual_tool for s in action_steps]
+    if planned_tools != actual_tools or len(observation_steps) != len(action_steps):
+        raise InjectionPreconditionError("skip_step needs a fully clean 1:1 planned/executed run")
+
+    skip_idx = len(run.planned_steps) - 1
+    action_to_remove = action_steps[skip_idx]
+    observation_to_remove = observation_steps[skip_idx]
+
+    kept_steps = [s for s in run.steps if s is not action_to_remove and s is not observation_to_remove]
+    renumbered_steps = [s.model_copy(update={"step_index": i}) for i, s in enumerate(kept_steps)]
+
+    return run.model_copy(
+        update={
+            "steps": renumbered_steps,
+            "injected_failure": "skip_step",
+            "ground_truth_divergence_step": skip_idx,
+        }
+    )
+
+
+def inject_corrupt_args(run: AgentRun) -> AgentRun:
+    """Replace the first executed action's arguments with values clearly
+    unrelated to the plan's stated reason — the tool called is still the
+    planned one (align() sees a clean MATCH), but classify()'s lexical-
+    overlap check should flag args_changed. This is a soft signal, so
+    ground_truth_divergence_step stays None: there is no hard divergence to
+    find, and correctly NOT flagging one is exactly what's being tested.
+    Requires the first step to already be a clean match.
+    """
+    action_steps = [s for s in run.steps if s.step_type == "action"]
+    if not run.planned_steps or not action_steps or action_steps[0].actual_tool != run.planned_steps[0].tool:
+        raise InjectionPreconditionError("corrupt_args needs the first step to already be a clean match")
+
+    original_input = action_steps[0].tool_input or {}
+    corrupted_input = {k: "zzz_corrupted_unrelated_value_9981" for k in original_input} or {
+        "zzz_corrupted_key": "zzz_corrupted_unrelated_value_9981"
+    }
+    new_steps = [
+        s.model_copy(update={"tool_input": corrupted_input}) if s is action_steps[0] else s for s in run.steps
+    ]
+
+    return run.model_copy(
+        update={
+            "steps": new_steps,
+            "injected_failure": "corrupt_args",
+            "ground_truth_divergence_step": None,
+        }
+    )
+
+
+INJECTORS = {
+    "wrong_tool": inject_wrong_tool,
+    "skip_step": inject_skip_step,
+    "corrupt_args": inject_corrupt_args,
+}
+
+
 def save_run(run: AgentRun) -> Path:
     RAW_DATA_DIR.mkdir(parents=True, exist_ok=True)
     path = RAW_DATA_DIR / f"{run.run_id}.jsonl"
@@ -236,6 +340,16 @@ if __name__ == "__main__":
         description="Run a single agent task, capture its trace, and write it to data/raw/."
     )
     parser.add_argument("--task", required=True, help="The task/prompt to give the agent.")
+    parser.add_argument(
+        "--inject-failure",
+        choices=sorted(INJECTORS.keys()),
+        help=(
+            "Deliberately corrupt the captured run to force a known divergence "
+            "(auto-populates ground_truth_divergence_step). Fails clearly if this "
+            "task's run isn't shaped right for the chosen injection (e.g. no clean "
+            "match to corrupt) — try a different --task."
+        ),
+    )
     args = parser.parse_args()
 
     if not os.environ.get("ANTHROPIC_API_KEY"):
@@ -243,5 +357,12 @@ if __name__ == "__main__":
 
     print(f"=== Running task: {args.task} ===\n")
     run = run_and_capture(args.task)
+
+    if args.inject_failure:
+        try:
+            run = INJECTORS[args.inject_failure](run)
+        except InjectionPreconditionError as e:
+            raise SystemExit(f"Cannot inject '{args.inject_failure}' into this run: {e}")
+
     out_path = save_run(run)
     print(f"\n=== Wrote trace ({run.final_status}, {len(run.steps)} steps) to {out_path} ===")

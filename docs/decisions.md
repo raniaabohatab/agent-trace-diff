@@ -500,6 +500,51 @@
   (negative controls, Day 4). This is exactly the kind of thing this week is for
   catching before it quietly makes the eventual numbers look better than they are.
 
+## 2026-06-30
+
+- **Injection is post-processing on a genuine, unperturbed run, not a corrupted
+  prompt fed into execution.** Considered corrupting the plan text *before* feeding
+  it into the execution prompt (closer to the spec's literal "swap... before
+  execution" phrasing) — rejected because that makes the actual execution's behavior
+  unpredictable (the model might partially comply with a wrong plan in ways that
+  aren't the specific divergence being tested), which defeats the point of having
+  *exact* auto-populated ground truth. Instead: run the task completely normally,
+  capture a genuine clean plan+execution, and only then corrupt the stored record
+  (`inject_wrong_tool` swaps `planned_steps[0].tool`, `inject_skip_step` removes the
+  last action+observation `Step` pair, `inject_corrupt_args` replaces the first
+  action's `tool_input` values) — the real execution is untouched, so the divergence
+  is exactly and only what I put there.
+
+- **Each injector raises `InjectionPreconditionError` (caught, not fatal) when the
+  base run isn't shaped right** — e.g. `wrong_tool`/`corrupt_args` need the first
+  step to already be a clean match, `skip_step` needs ≥2 planned steps that all
+  executed cleanly with none already diverging. Real and expected: of the tasks tried
+  in the batch script, several were skipped this way before landing on ones that
+  worked (e.g. a task whose plan came back empty, or one where the model didn't plan
+  a step it ended up not needing). Precondition failures are a normal control-flow
+  path here, not a bug — the CLI (`--inject-failure`) surfaces the same error clearly
+  and tells the user to try a different `--task` rather than silently doing nothing.
+
+- **`corrupt_args`'s `ground_truth_divergence_step` is `None`, deliberately** — not
+  a placeholder for "not yet labeled." `args_changed` is a soft signal excluded from
+  `first_divergence_index` by `classify.py`'s own definition (Week 3), so the correct
+  behavior for a `corrupt_args`-injected run genuinely is "report no hard divergence
+  despite the corrupted arguments" — these cases test that the algorithm does NOT
+  over-fire, which is exactly as important as testing that it correctly detects real
+  divergences.
+
+- **Generated 21 injected-failure runs** (7 per type — the batch script's 18 plus 3
+  from validating each injector manually before batch-generating), landing above the
+  15-20 target. **Verified all 21 programmatically, not just a spot-check of a few**:
+  ran every one through `align()`/`classify()` via `diff_run()` and compared
+  `first_divergence_index` against the auto-populated `ground_truth_divergence_step`
+  — 21/21 exact matches. (Spot-checked 2 by hand first, per the spec's explicit ask,
+  before trusting the full programmatic check.) This isn't Week 5's real evaluation —
+  these are cases I built to have a known-correct answer by construction, so a
+  mismatch here would mean a bug in the injector or the algorithm, not a genuine
+  measurement of detection accuracy on hard cases. The actual `eval_harness.py`
+  measurement comes Day 5-6, against the full mixed eval set.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

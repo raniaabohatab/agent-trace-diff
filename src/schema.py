@@ -44,3 +44,4 @@ class AgentRun(BaseModel):
     plan_was_attempted: bool = False  # True iff make_plan() actually ran, even if it returned []
     final_status: str  # "success" | "failure" | "unknown"
     ground_truth_divergence_step: Optional[int] = None  # filled in manually in Week 5, leave None for now
+    injected_failure: Optional[str] = None  # "wrong_tool" | "skip_step" | "corrupt_args", Week 5 self-constructed cases only

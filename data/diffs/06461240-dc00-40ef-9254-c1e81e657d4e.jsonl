@@ -1,0 +1,1 @@
+{"run_id":"06461240-dc00-40ef-9254-c1e81e657d4e","aligned_pairs":[{"planned_index":0,"actual_index":0,"op":"substitute"}],"divergence_events":[{"index":0,"kind":"wrong_tool","planned_tool":"search","actual_tool":"calculator","detail":"Planned to call 'search' but called 'calculator' instead."}],"first_divergence_index":0,"plan_followed_exactly":false}
