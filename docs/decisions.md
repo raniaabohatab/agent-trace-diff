@@ -545,6 +545,44 @@
   measurement of detection accuracy on hard cases. The actual `eval_harness.py`
   measurement comes Day 5-6, against the full mixed eval set.
 
+## 2026-07-01
+
+- **`SWEAgentTraceParser`, not `agentbench_parser.py`** — file named for what it
+  actually parses (`nebius/SWE-agent-trajectories`), per the Day 1 sourcing decision.
+
+- **Staged external raw files carry an explicit `run_id` key, matching
+  `LangChainTraceParser`'s convention** — considered deriving `run_id` from the
+  filename instead (simpler at first glance, since the staging script already
+  generates the filename), but that makes the file's identity depend on where it
+  happens to live rather than what's inside it, unlike every other raw file in this
+  project. Fixed before ever running the pipeline against it, not after finding a bug.
+
+- **Tool name extraction is "first word of the command"** (`ls -F` → `ls`,
+  `find_file "x.py" lexicon` → `find_file`), not a fixed enum — SWE-agent's ACI verbs
+  (`open`, `edit`, `search_dir`, `find_file`, `submit`, plain bash) all fall out of
+  this naturally, matched against the format's own consistent `DISCUSSION\n<reasoning>
+  \n\nCOMMAND\n\`\`\`\n<command>\n\`\`\`` structure (confirmed by reading several real
+  trajectory steps before writing the regex, not guessed).
+
+- **Registered a second parser in `run_pipeline.py` with a one-line change to the
+  `PARSERS` list — no other pipeline code touched.** This is the actual payoff of
+  Week 2's abstract `TraceParser` interface being worth building: a structurally very
+  different data source (nested JSON trajectory objects vs. this project's own flat
+  JSONL) becomes a new parser class, not a rewrite. Ran cleanly against all 71 raw
+  files (53 existing + 18 new external) on the first try — 0 failures.
+
+- **All 18 external cases produced `first_divergence_index == 0`, exactly as the
+  Day 1 architectural analysis predicted** — verified programmatically, not just
+  assumed the earlier reasoning still held. Confirms `planned_steps=[]` really does
+  mean "trivially diverges at 0" in practice, on real messy external data, not just
+  in the abstract.
+
+- **Fixed a small but real accuracy issue found while spot-checking a rendered
+  external report**: the no-plan message said "a pre-Plan-and-Execute trace," which
+  is only true for the legacy Week 1 cases — an external SWE-agent trace isn't
+  "pre-" anything of mine, it's a different framework that never plans upfront by
+  design. Reworded to cover both cases honestly.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

@@ -3,18 +3,21 @@ it, and write the normalized AgentRun to data/normalized/{run_id}.jsonl.
 
 One bad file should never take down the whole batch — anything that doesn't
 parse gets logged to data/normalized/_unparsed.log with a reason instead of
-raising. There's only one parser today, but the loop is written as if there
-could be several, since that's the point of the TraceParser abstraction.
+raising. Two parsers now (LangChain-generated traces, and external
+SWE-agent-derived traces) — this is exactly the payoff Week 2's abstract
+TraceParser interface was built for: a second format is a new parser class,
+not a rewrite of this loop. See docs/decisions.md, 2026-07-01.
 """
 from pathlib import Path
 
 from src.ingest.base import TraceParser
 from src.ingest.langchain_parser import LangChainTraceParser
+from src.ingest.swe_agent_parser import SWEAgentTraceParser
 
 RAW_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "raw"
 NORMALIZED_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "normalized"
 
-PARSERS: list[TraceParser] = [LangChainTraceParser()]
+PARSERS: list[TraceParser] = [LangChainTraceParser(), SWEAgentTraceParser()]
 
 
 def run_pipeline(raw_dir: Path = RAW_DATA_DIR, normalized_dir: Path = NORMALIZED_DATA_DIR) -> dict[str, int]:

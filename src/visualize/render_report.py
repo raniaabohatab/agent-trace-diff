@@ -137,17 +137,21 @@ def render_report(run: AgentRun, diff: DiffResult) -> str:
     hard_count = sum(1 for e in diff.divergence_events if e.kind in _HARD_KINDS)
 
     if not run.plan_was_attempted:
-        # A pre-Plan-and-Execute trace has no upfront plan at all — every
-        # executed step aligns as "unexpected" against an empty plan, which
-        # is technically correct but reads as "the agent went off-script"
-        # when the real story is "there was no plan to compare against."
-        # See docs/decisions.md, 2026-06-11. Deliberately NOT `not
+        # No upfront plan exists for this run at all — either a legacy Week 1
+        # trace (predates the Plan-and-Execute change) or a ReAct-style
+        # external trace (e.g. SWE-agent, which reasons and acts one step at
+        # a time with no upfront plan by design). Either way, every executed
+        # step aligns as "unexpected" against an empty plan, which is
+        # technically correct but reads as "the agent went off-script" when
+        # the real story is "there was no plan to compare against." See
+        # docs/decisions.md, 2026-06-11 and 2026-07-01. Deliberately NOT `not
         # run.planned_steps` — a run where a plan was genuinely attempted and
         # came back empty (and execution also made zero tool calls) is a real,
         # correct exact match, not a missing plan. See 2026-06-23.
         summary_text = (
-            "No upfront plan was captured for this run (a pre-Plan-and-Execute "
-            "trace) — there's nothing to compare execution against."
+            "No upfront plan exists for this run (either a legacy pre-Plan-and-"
+            "Execute trace, or a framework that doesn't plan upfront) — there's "
+            "nothing to compare execution against."
         )
     else:
         summary_text = summarize(diff.divergence_events)
