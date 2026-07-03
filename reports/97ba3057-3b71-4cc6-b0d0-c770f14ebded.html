@@ -124,7 +124,7 @@
 In an effort to make it easier for implementers to query for a list of installed PyJen plugins, we should add a couple of helper functions to the plugin API</div>
     <div class="stats">
       <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
-      <div class="stat"><span class="label">Divergences</span><span>8</span></div>
+      <div class="stat"><span class="label">Divergences</span><span>9</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
     </div>
     <div class="summary">No upfront plan exists for this run (either a legacy pre-Plan-and-Execute trace, or a framework that doesn't plan upfront) — there's nothing to compare execution against.</div>
@@ -460,7 +460,7 @@ bash-$</div>
       <div class="cell">
         
           <div class="tool-name">edit</div>
-          <div class="args">{'command': 'edit 68:68\n    if inspect.isclass(plugin) and issubclass(plugin, View):\nend_of_edit'}</div>
+          <div class="args">{'command': 'edit 4:4\nimport inspect\nend_of_edit'}</div>
           
             
             <details class="output">
@@ -569,7 +569,7 @@ bash-$</div>
       <div class="cell">
         
           <div class="tool-name">edit</div>
-          <div class="args">{'command': 'edit 68:70\n    if inspect.isclass(plugin) and issubclass(plugin, View):\n        view_plugins.append(plugin)\nend_of_edit'}</div>
+          <div class="args">{'command': 'edit 77:79\n    if inspect.isclass(plugin) and issubclass(plugin, Job):\n        job_plugins.append(plugin)\nend_of_edit'}</div>
           
             
             <details class="output">
@@ -641,7 +641,7 @@ bash-$</div>
       <div class="cell">
         
           <div class="tool-name">edit</div>
-          <div class="args">{'command': 'edit 69:69\n    if inspect.isclass(plugin) and issubclass(plugin, View):\nend_of_edit'}</div>
+          <div class="args">{'command': 'edit 77:77\n        if inspect.isclass(plugin) and issubclass(plugin, Job):\nend_of_edit'}</div>
           
             
             <details class="output">
@@ -847,6 +847,24 @@ bash-$</div>
       </div>
       
       <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">submit</div>
+          <div class="args">{'command': 'submit'}</div>
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'submit' with no corresponding planned step.</div>
       
     </div>
     

@@ -9,6 +9,21 @@ SWE-agent is ReAct-style with no upfront plan (same as the project's own
 Week 1 legacy traces) — planned_steps is always empty here, deliberately,
 not a parsing gap. See docs/decisions.md, 2026-06-29, for what that means
 for how these cases are scored in Week 5's evaluation.
+
+Command extraction takes the LAST fenced code block in each "ai" turn, not
+the first. Real trajectories from the weaker model in this dataset
+(swe-agent-llama-8b) don't reliably use the "DISCUSSION"/"COMMAND" section
+headers at all, and can quote an earlier ``` block from the issue text as
+context before stating the real command in a later, unlabeled ``` block —
+taking the first block in that case grabs the quoted reference, not the
+real action (confirmed against the actual tool_output that followed: it
+matched the LAST block's command, not the first's). "Last block" is a
+known-imperfect heuristic for the rarer opposite case — a turn emitting
+several real edit commands at once, where the harness that produced this
+dataset only executed the first one (confirmed the same way: exactly one
+observation followed a multi-block turn, never several) — see
+docs/decisions.md, 2026-07-02, for why this residual ambiguity is
+documented rather than special-cased away.
 """
 import json
 import logging
@@ -19,16 +34,17 @@ from src.schema import AgentRun, Step
 
 logger = logging.getLogger(__name__)
 
-_COMMAND_RE = re.compile(r"```\s*\n(.*?)\n```", re.DOTALL)
+_COMMAND_BLOCK_RE = re.compile(r"```[a-zA-Z]*\s*\n(.*?)\n```", re.DOTALL)
 _DISCUSSION_RE = re.compile(r"DISCUSSION\s*\n(.*?)(?:\n\s*COMMAND|\Z)", re.DOTALL)
 
 
 def _extract_command_and_thought(text: str) -> tuple[str | None, str | None]:
-    """SWE-agent's ACI format is consistently 'DISCUSSION\\n<reasoning>\\n\\nCOMMAND\\n```\\n<cmd>\\n```'."""
+    """SWE-agent's ACI format is usually 'DISCUSSION\\n<reasoning>\\n\\nCOMMAND\\n```\\n<cmd>\\n```',
+    but not always (see module docstring) — take the LAST fenced block as the command regardless."""
     if not text:
         return None, None
-    command_match = _COMMAND_RE.search(text)
-    command = command_match.group(1).strip() if command_match else None
+    command_blocks = _COMMAND_BLOCK_RE.findall(text)
+    command = command_blocks[-1].strip() if command_blocks else None
     discussion_match = _DISCUSSION_RE.search(text)
     thought = discussion_match.group(1).strip() if discussion_match else text.strip()
     return command, thought

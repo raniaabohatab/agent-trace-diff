@@ -583,6 +583,55 @@
   "pre-" anything of mine, it's a different framework that never plans upfront by
   design. Reworded to cover both cases honestly.
 
+## 2026-07-02
+
+- **Found a real parser bug while doing the actual hand-labeling reading, not before
+  it** — exactly the kind of thing "actually read each one" (the spec's explicit
+  instruction) is for. `SWEAgentTraceParser`'s command extraction originally took the
+  *first* fenced code block in each "ai" turn. Reading `asottile__pyupgrade-147`
+  (`c5814d40`) closely surfaced a case where the agent's reasoning quotes the GitHub
+  issue's own example command in one fenced block, then states the real new command
+  in a second, later block — grabbing the first block produced a bogus "tool name" of
+  literally `Let's` (a fragment of English prose). Confirmed the real fix by checking
+  which block's content matched the traceback shown in the following observation step
+  — the second (last) block, not the first. Switched to taking the *last* fenced block.
+  Also found, checking this across all 18 trajectories rather than just the one case
+  that surfaced it: a rarer opposite pattern (one weaker-model turn emitting several
+  real edit attempts in a row, of which only the first was actually executed —
+  confirmed by exactly one observation following, not several). "Last block" is
+  correct for the common case and a known-imperfect heuristic for that rarer one;
+  documented in the parser's own module docstring rather than fixed further, since
+  it affects only 4 of ~180 "ai" turns across the whole external set and the two
+  patterns don't have a shared rule that would fix both.
+
+- **Ground truth for external cases is `0` for all 18, and that's a mechanical fact,
+  not a per-case judgment call** — worked out carefully in `data/eval/labeling_notes.md`
+  because conflating it with "did I judge this case correctly" would be dishonest.
+  This project's diff algorithm answers one specific question (does execution match
+  *the plan*); with no plan, the answer is trivially "diverges immediately," by the
+  algorithm's own definition, for every such case. Explicitly recorded that this is a
+  narrower claim than "where did the agent's approach actually go wrong" — a real,
+  harder question I still engaged with in `labeling_notes.md` as supplementary,
+  unscored analysis (e.g. `TheFriendlyCoder__pyjen-113`'s agent claims success at step
+  10, admits the fix didn't work at step 12, needs a second retry, and still ends up
+  `target=False` after reaching `submit` — a genuinely interesting real failure mode
+  this project's algorithm has no way to see, since it only compares tool-call
+  sequences, not reasoning quality).
+
+- **10 clean controls selected from the existing corpus, not freshly generated** —
+  verified programmatically (an `assert` in the assembly script, not eyeballed) that
+  each really does have `planned_steps == [executed tools]` before including it.
+  Picked for variety across tool-count (3 zero-tool, 3 single-tool, 2 two-tool, 2
+  three-tool), including the two genuine empty-plan-matches-empty-execution cases
+  that motivated the `plan_was_attempted` field fix on 2026-06-23.
+
+- **`data/eval/eval_set.jsonl` assembled: 49 total** (21 self-constructed + 18
+  external + 10 clean), above the spec's ~25-30 target for the failure-case portion.
+  Deliberate, not scope creep: this is real, already-validated data sitting in the
+  corpus, and discarding good real data to hit a smaller round number would trade
+  away statistical value for no real reason — "extra real data is never wasted," per
+  the Week 1 closing notes, applies here too.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
