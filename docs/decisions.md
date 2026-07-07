@@ -632,6 +632,37 @@
   away statistical value for no real reason — "extra real data is never wasted," per
   the Week 1 closing notes, applies here too.
 
+## 2026-07-06
+
+- **Four outcome categories, not just right/wrong**: `exact_match`,
+  `within_tolerance` (predicted within 1 step of ground truth), `false_positive`
+  (flagged a divergence on a case that shouldn't have one), `miss` (a real
+  divergence existed and the algorithm either reported none or reported one more
+  than 1 step away). Collapsing these into a single accuracy number would hide the
+  difference between "close but not exact" and "confidently wrong," which matters
+  for the honest failure-mode discussion Day 6 needs to write.
+
+- **`primary` metric excludes `external_no_plan`, per the Day 1 decision, implemented
+  in code now rather than left as a promise** — `PRIMARY_CATEGORIES = {"self_constructed_
+  failure", "clean_control"}`. Reported per-category numbers still include
+  `external_no_plan` in the printed breakdown (nothing hidden), just not folded into
+  the headline `primary` figure it would trivially inflate.
+
+- **A first run against the full 49-case set scored 100% in every category — noted
+  here now, addressed honestly in Day 6's write-up rather than treated as "done."**
+  Before writing up results, worth being explicit that a perfect score on this
+  particular eval set is expected, not a strong claim about general-purpose
+  divergence detection: `self_constructed_failure` cases are injected by directly
+  manipulating the same `planned_steps`/`actual_tool` sequences `align()` reads, so
+  scoring well there is close to "does the already-extensively-tested Week 3
+  algorithm still run correctly," not an independent judgment test; `clean_control`
+  cases were selected specifically for already being exact matches. Flagging this now
+  so Day 6 doesn't just report "100%!" without the context that makes the number
+  mean what it actually means — the real, harder evidence about the algorithm's
+  actual capabilities and limits is the qualitative findings already on record (the
+  repeated-tool tie-breaking bug from Week 3 Day 6, the external cases' supplementary
+  analysis in `labeling_notes.md`), not a single blended percentage.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
