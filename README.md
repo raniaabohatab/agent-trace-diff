@@ -3,9 +3,12 @@
 Captures an AI agent's full execution trace, diffs the planned sequence of actions
 against what was actually executed, and flags the exact step where they diverge.
 
-**Status:** Trace generation, the ingestion pipeline, the diff algorithm, and HTML
-report visualization are working end-to-end. The evaluation harness (Week 5) is not
-built yet.
+**Status:** Trace generation, the ingestion pipeline, the diff algorithm, HTML report
+visualization, and the evaluation harness are all working end-to-end, with a real
+49-case evaluation set (self-constructed injected failures, external real-world
+traces, and clean controls) and real, honestly-reported results — see
+`docs/eval_results.md`. Iterating on the algorithm against these results (Week 6) and
+final polish/writeup (Week 7+) are not done yet.
 
 ## Setup
 

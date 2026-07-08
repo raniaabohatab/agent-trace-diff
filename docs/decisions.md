@@ -663,6 +663,26 @@
   repeated-tool tie-breaking bug from Week 3 Day 6, the external cases' supplementary
   analysis in `labeling_notes.md`), not a single blended percentage.
 
+## 2026-07-07
+
+- **Ran the harness against the real 49-case set and wrote up the actual result —
+  100% across every category — in `docs/eval_results.md`, with as much space given to
+  what the number doesn't show as to the number itself.** The honest version of "the
+  eval passed" here isn't "the algorithm is proven correct," it's "this eval set,
+  built the way it was built, can't currently produce anything other than a high
+  score" — `external_no_plan` is trivially guaranteed by the algorithm's own
+  definition, `self_constructed_failure` shares its underlying assumptions with the
+  code being tested, `clean_control` was selected for already matching. Said this
+  plainly rather than let a clean 100% imply more than it does.
+
+- **Explicitly connected the eval result back to the one real bug this project has
+  found** (Week 3 Day 6's repeated-tool tie-breaking issue) to make a genuinely useful
+  methodological point: that bug doesn't produce a `miss` under this harness, because
+  `first_divergence_index` — the only thing scored — was unaffected by it. A clean eval
+  score and a known, documented bug coexist here, and burying that would make the
+  100% read as a stronger claim than the data supports. This is the kind of finding
+  Week 5's "measure honestly" discipline is specifically for.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
