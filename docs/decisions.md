@@ -683,6 +683,19 @@
   100% read as a stronger claim than the data supports. This is the kind of finding
   Week 5's "measure honestly" discipline is specifically for.
 
+## 2026-07-08
+
+- **Final Week 5 re-review: genuinely re-read `eval_set.jsonl` end to end, found
+  nothing to correct — recorded as a real (clean) outcome, not skipped because there
+  were no algorithm disagreements to chase.** With 0 misses from Day 6, there was no
+  "the algorithm disagrees with my label" signal to investigate the way the spec's
+  framing assumes — so the check instead was structural and re-readthrough-based:
+  duplicate `run_id`s, category/ground-truth consistency, and a second read of all 18
+  external `task_description` extracts for corruption or truncation. Re-ran the
+  harness afterward to confirm nothing had drifted (identical 49/49). Week 5 is done:
+  49-case real eval set, honestly measured, honestly written up, with the actual
+  Week 3 limitation connected explicitly to what the metric does and doesn't cover.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

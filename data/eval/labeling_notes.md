@@ -79,6 +79,19 @@ of it feeds `ground_truth_divergence_step`:
   followed (a traceback matching the second command, not the first) before fixing the
   extraction logic — not assumed.
 
+## Day 7 re-review (2026-07-08)
+
+Re-read `eval_set.jsonl` end to end a second time, specifically looking for labeling
+errors now that the harness had run — including checking whether the algorithm's
+100% agreement might mean *my* labels were wrong in a way that happened to match a
+consistent bug rather than the algorithm being right. Structural checks: no duplicate
+`run_id`s, category/ground-truth consistency holds for all 49 entries (every
+`clean_control` has `null`, every `external_no_plan` has `0`), no truncated or
+suspiciously short `task_description` values. Spot-read all 18 external
+`task_description` extracts again — all genuine, readable GitHub issue excerpts, no
+parsing corruption. Found no corrections to make. Re-ran the harness after this
+review to confirm nothing had drifted: identical 49/49 results.
+
 ## Clean control cases (10, from the Week 3/4 corpus)
 
 No hand-labeling needed — `ground_truth_divergence_step = None` for all 10, because
