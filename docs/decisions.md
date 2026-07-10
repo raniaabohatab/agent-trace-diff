@@ -696,6 +696,26 @@
   49-case real eval set, honestly measured, honestly written up, with the actual
   Week 3 limitation connected explicitly to what the metric does and doesn't cover.
 
+## Week 6 Day 1: prioritizing what to fix
+
+The eval harness scored zero misses across all 49 cases in Week 5. That means there
+is no accuracy based failure pattern to sort by frequency the way the spec describes,
+because nothing actually failed on the metric the harness measures. I am not going to
+invent misses that do not exist just to have more material.
+
+There is still a real, honest target. The one confirmed bug this project has found is
+the repeated tool tie breaking issue from Week 3 Day 6. It does not show up as a miss
+because it affects which occurrence of a repeated tool gets paired with the plan, not
+whether a divergence is detected or where it starts. That is exactly why it survived
+the eval harness undetected. It is still a real correctness bug in the fine grained
+alignment output, and it will matter more once Week 7 grows the eval set, since Week 7
+explicitly wants cases where the same tool gets called several times in a row.
+Fixing this now is the right call even though it will not move this week's numbers,
+because the current metric cannot see the problem at all.
+
+Prioritized list for the week: one item, the repeated tool tie breaking bug in
+`align.py`.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
