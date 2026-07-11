@@ -716,6 +716,25 @@ because the current metric cannot see the problem at all.
 Prioritized list for the week: one item, the repeated tool tie breaking bug in
 `align.py`.
 
+## Week 6 Day 2: hypothesis
+
+The bug happens when the same tool name appears more than once in both the plan and
+the actual execution. The dynamic programming alignment finds the correct minimum
+cost, but when two different paths reach that same minimum cost, the backtrack always
+prefers the diagonal match first, with no check on whether that specific pairing
+actually makes sense. In the confirmed case, the plan's stated reason names a value
+that only shows up in the first occurrence of the repeated tool, but the algorithm
+paired the plan with the second occurrence instead and flagged the first one as
+unexpected.
+
+The fix is to give the backtrack a tie breaker. When a diagonal match and an insert
+or delete both reach the same cost, and the tool names already match, check whether
+the plan's reason text shares any words with the executed tool's arguments. If it
+does not, skip this pairing in favor of the alternative, so a different occurrence
+gets a chance to match instead. This reuses the same word overlap check `classify.py`
+already computes for `args_changed`, so it is not new machinery, just applied one
+step earlier, during alignment instead of after it.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
