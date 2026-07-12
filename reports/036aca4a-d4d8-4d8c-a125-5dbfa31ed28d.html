@@ -126,7 +126,7 @@
       <div class="stat"><span class="label">Divergences</span><span>1</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
     </div>
-    <div class="summary">Agent called 'calculator', which wasn't in the plan, at step 0.</div>
+    <div class="summary">Agent called 'calculator', which wasn't in the plan, at step 1.</div>
   </header>
 
   
@@ -139,10 +139,11 @@
   <div class="diff">
     
     
-    <div class="row row-missing first-divergence">
+    <div class="row row-match">
       <div class="cell">
         
-          <div class="empty-cell">(not planned)</div>
+          <div class="tool-name">calculator</div>
+          <div class="reason">need to compute 45 divided by 9</div>
         
       </div>
       <div class="cell">
@@ -157,15 +158,12 @@
         
       </div>
       
-      <div class="event-detail">Called 'calculator' with no corresponding planned step.</div>
-      
     </div>
     
-    <div class="row row-args-changed">
+    <div class="row row-missing first-divergence">
       <div class="cell">
         
-          <div class="tool-name">calculator</div>
-          <div class="reason">need to compute 45 divided by 9</div>
+          <div class="empty-cell">(not planned)</div>
         
       </div>
       <div class="cell">
@@ -180,7 +178,7 @@
         
       </div>
       
-      <div class="event-detail">Called 'calculator' as planned, but its arguments don't obviously relate to the stated reason ('need to compute 45 divided by 9').</div>
+      <div class="event-detail">Called 'calculator' with no corresponding planned step.</div>
       
     </div>
     

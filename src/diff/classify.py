@@ -3,20 +3,15 @@
 args_changed detection (MATCH pairs where the executed tool's arguments
 don't obviously relate to the plan's stated reason) uses a plain lexical
 overlap heuristic, not an LLM call — see docs/decisions.md, 2026-06-10, for
-why that's a known-crude signal deliberately kept simple.
+why that's a known-crude signal deliberately kept simple. The heuristic
+itself now lives in text_utils.py so align.py can reuse it too (Week 6
+Day 3, the repeated tool tie breaking fix).
 """
-import re
-
 from pydantic import BaseModel
 
 from src.diff.align import AlignedPair, AlignOp
+from src.diff.text_utils import shares_a_word
 from src.schema import AgentRun
-
-_STOPWORDS = {
-    "the", "a", "an", "to", "of", "for", "and", "in", "on", "at", "is", "this",
-    "that", "it", "need", "needs", "with", "from", "into", "its", "will", "be",
-    "determine", "find", "get", "use", "using", "then", "want", "would", "should",
-}
 
 
 class DivergenceEvent(BaseModel):
@@ -25,10 +20,6 @@ class DivergenceEvent(BaseModel):
     planned_tool: str | None = None
     actual_tool: str | None = None
     detail: str  # human-readable one-line explanation
-
-
-def _tokenize(text: str) -> set[str]:
-    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if len(w) > 2 and w not in _STOPWORDS}
 
 
 def _args_look_unrelated_to_reason(tool_input: dict | None, reason: str) -> bool:
@@ -40,11 +31,8 @@ def _args_look_unrelated_to_reason(tool_input: dict | None, reason: str) -> bool
     """
     if not tool_input:
         return False
-    input_tokens = _tokenize(" ".join(str(v) for v in tool_input.values()))
-    reason_tokens = _tokenize(reason)
-    if not input_tokens or not reason_tokens:
-        return False
-    return input_tokens.isdisjoint(reason_tokens)
+    input_text = " ".join(str(v) for v in tool_input.values())
+    return not shares_a_word(input_text, reason)
 
 
 def classify(aligned: list[AlignedPair], run: AgentRun) -> list[DivergenceEvent]:

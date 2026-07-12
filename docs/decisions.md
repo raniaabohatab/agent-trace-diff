@@ -735,6 +735,43 @@ gets a chance to match instead. This reuses the same word overlap check `classif
 already computes for `args_changed`, so it is not new machinery, just applied one
 step earlier, during alignment instead of after it.
 
+## Week 6 Day 3: implementing the fix
+
+Pulled the word overlap tokenizer out of `classify.py` into a shared
+`text_utils.py` so `align.py` could reuse it without a circular import.
+`align()` now takes two optional arguments, `planned_context` and
+`actual_context`. When neither is given it behaves exactly as before, always
+preferring the diagonal on a tie. When both are given, the backtrack checks
+for a tie between the diagonal and an insert or delete, and if the tool
+names already match but the context does not share a word, it takes the
+tied alternative instead and leaves this pairing open for a different
+occurrence to claim.
+
+`run_diff.py` now passes the plan's reason text and the executed call's
+stringified arguments as that context, so the fix is live in the real
+pipeline, not just available in theory.
+
+Tested against the actual case that found the bug, run `036aca4a` from
+Week 3 Day 6. Before the fix, the plan paired with the second calculator
+call and the first one got flagged as unexpected. After the fix, the plan
+correctly pairs with the first call, the one its own reason text names, and
+the second call is what gets flagged. Added four new tests locking this in:
+one confirming the old no context behavior is unchanged, one reproducing
+the real bug as a hand built case, one confirming the fix backs off when
+context does not clearly rule out the diagonal, and one confirming
+`run_diff.py` actually wires the context through end to end. All 34 tests
+pass, no regressions.
+
+Regenerated diffs and reports for the full 71 trace corpus. Exactly two
+files changed, `036aca4a` and `c2750ec6`, the two cases already flagged in
+Week 3 Day 6 as showing this problem. `c2750ec6` improved too, and I had
+not specifically targeted it. Its plan said it needed to find the
+historical significance of a year, and the agent searched twice, once with
+a query that shares those exact words and once with a shorter, less
+related retry. The fix now pairs the plan with the first search, the one
+that actually matches the stated reason, instead of the second. Nothing
+else in the corpus moved.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

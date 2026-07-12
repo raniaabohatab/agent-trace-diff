@@ -181,3 +181,69 @@ def test_diff_run_end_to_end_wiring():
     assert result.plan_followed_exactly is False
     assert len(result.divergence_events) == 1
     assert result.aligned_pairs == serialize_aligned_pairs(align(["search", "calc"], ["search", "file_read", "calc"]))
+
+
+def test_align_without_context_keeps_old_tie_breaking_behavior():
+    # No context given, so a repeated tool ties toward the diagonal first,
+    # same as before Week 6. This locks in the old behavior for every
+    # caller that doesn't pass context.
+    aligned = align(["calculator"], ["calculator", "calculator"])
+    ops = [(p.op, p.planned_index, p.actual_index) for p in aligned]
+    assert ops == [
+        (AlignOp.INSERT, None, 0),
+        (AlignOp.MATCH, 0, 1),
+    ]
+
+
+def test_align_with_context_breaks_repeated_tool_tie_correctly():
+    # This is the real case from Week 3 Day 6 (run 036aca4a), reproduced as a
+    # hand constructed test: a plan step whose reason names a value that only
+    # shows up in the FIRST of two identical tool calls. Without context, the
+    # backtrack pairs the plan with the second call instead (see the test
+    # above). With context, it correctly pairs the plan with the first call
+    # and flags the second as unexpected.
+    planned_tools = ["calculator"]
+    actual_tools = ["calculator", "calculator"]
+    planned_context = ["need to compute 45 divided by 9"]
+    actual_context = ["45 / 9", "100 / 0"]
+
+    aligned = align(planned_tools, actual_tools, planned_context=planned_context, actual_context=actual_context)
+    ops = [(p.op, p.planned_index, p.actual_index) for p in aligned]
+    assert ops == [
+        (AlignOp.MATCH, 0, 0),
+        (AlignOp.INSERT, None, 1),
+    ]
+
+
+def test_align_with_context_falls_back_to_diagonal_when_both_sides_relate():
+    # If context doesn't clearly rule out the diagonal pairing, keep the old
+    # diagonal-first behavior rather than guessing.
+    aligned = align(
+        ["calculator"],
+        ["calculator", "calculator"],
+        planned_context=["compute the total"],
+        actual_context=["10 total", "20 total"],
+    )
+    ops = [(p.op, p.planned_index, p.actual_index) for p in aligned]
+    assert ops == [
+        (AlignOp.INSERT, None, 0),
+        (AlignOp.MATCH, 0, 1),
+    ]
+
+
+def test_diff_run_uses_context_for_repeated_tool_pairing():
+    # Same scenario as test_align_with_context_breaks_repeated_tool_tie_correctly,
+    # but through the real diff_run() wiring, confirming run_diff.py actually
+    # passes context through rather than just align() supporting it in theory.
+    run = make_run(
+        ["calculator"],
+        ["calculator", "calculator"],
+        tool_inputs=[{"expression": "45 / 9"}, {"expression": "100 / 0"}],
+    )
+    run.planned_steps[0] = PlannedStep(step_index=0, tool="calculator", reason="need to compute 45 divided by 9")
+
+    result = diff_run(run)
+
+    assert result.aligned_pairs[0] == {"planned_index": 0, "actual_index": 0, "op": AlignOp.MATCH}
+    assert result.aligned_pairs[1] == {"planned_index": None, "actual_index": 1, "op": AlignOp.INSERT}
+    assert result.first_divergence_index == 1

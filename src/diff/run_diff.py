@@ -21,9 +21,13 @@ DIFFS_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "diffs
 
 def diff_run(run: AgentRun) -> DiffResult:
     planned_tools = [s.tool for s in run.planned_steps]
-    actual_tools = [s.actual_tool for s in run.steps if s.step_type == "action"]
+    action_steps = [s for s in run.steps if s.step_type == "action"]
+    actual_tools = [s.actual_tool for s in action_steps]
 
-    aligned = align(planned_tools, actual_tools)
+    planned_context = [s.reason for s in run.planned_steps]
+    actual_context = [" ".join(str(v) for v in (s.tool_input or {}).values()) for s in action_steps]
+
+    aligned = align(planned_tools, actual_tools, planned_context=planned_context, actual_context=actual_context)
     events = classify(aligned, run)
     fdi = compute_first_divergence_index(events)
 
