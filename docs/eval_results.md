@@ -87,3 +87,32 @@ built to avoid.
 See `data/eval/labeling_notes.md` for how every hand-labeled ground truth value was
 determined, and `docs/decisions.md` (2026-06-29 through 2026-07-06) for the full
 reasoning behind the eval set's design.
+
+## Week 6 rerun (2026-07-11), after the repeated tool tie breaking fix
+
+Same command, same `eval_set.jsonl`, run again after fixing the bug described above
+in `align.py`. Here is the honest result: nothing moved.
+
+| Category | n | Exact match | Within ±1 | False positive | Miss | Accuracy (exact) | Accuracy (±1) |
+|---|---|---|---|---|---|---|---|
+| self_constructed_failure | 21 | 21 | 0 | 0 | 0 | 1.000 | 1.000 |
+| external_no_plan | 18 | 18 | 0 | 0 | 0 | 1.000 | 1.000 |
+| clean_control | 10 | 10 | 0 | 0 | 0 | 1.000 | 1.000 |
+
+Primary accuracy is still 1.000 exact and 1.000 within one step, and the false
+positive rate on clean controls is still 0.000. Every number here is identical to
+the Week 5 run.
+
+That is not a mistake and it is not a wasted week. The fix was real. Two traces in
+the full 71 trace corpus changed, `036aca4a` and `c2750ec6`, and both now pair the
+plan with the correct occurrence of a repeated tool. Neither trace happens to be one
+of the 49 cases in `eval_set.jsonl`, so this particular eval set was never able to
+see the bug, and it was never going to see the fix either. That is a real limit of
+the current eval set, not a limit of the fix. Week 7 adds cases with a tool called
+several times in a row specifically so a future run of this harness can actually
+measure something like this instead of missing it entirely.
+
+The honest one line summary for this week: found a real bug, fixed it, confirmed the
+fix on the traces that exposed it, and the current eval set is not built to detect
+either the bug or the fix. All three of those things are true at once, and the
+project is better for knowing it.
