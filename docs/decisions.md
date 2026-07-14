@@ -772,6 +772,21 @@ related retry. The fix now pairs the plan with the first search, the one
 that actually matches the stated reason, instead of the second. Nothing
 else in the corpus moved.
 
+## Week 6 Day 5: no second pattern this week
+
+The spec's Day 5 asks for a second improvement round if there is a second item on
+Day 1's prioritized list. Mine only had one item, because that was the only real bug
+this project had actually found. Forcing a second fix here would mean picking one of
+a few known, already documented soft spots, the crude word overlap heuristic in
+`args_changed`, the uniform cost function in `align.py`, the rare multi block command
+ambiguity in the SWE agent parser, and treating it as broken when nothing has
+actually shown it to be. Every one of those was already looked at and deliberately
+left alone with a clear reason on record. Changing one now, with no new evidence,
+would be tuning against a number I want to see move rather than a problem I have
+actually found, which is the exact thing this project's rules are built to prevent.
+
+Not doing a second round this week is the honest call, not a shortcut.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
