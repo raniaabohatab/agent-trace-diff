@@ -787,6 +787,13 @@ actually found, which is the exact thing this project's rules are built to preve
 
 Not doing a second round this week is the honest call, not a shortcut.
 
+## Week 6 Day 6: regression check
+
+Deleted `data/normalized`, `data/diffs`, and `reports`, then rebuilt everything from
+scratch: ingestion, diffing, rendering, the eval harness, and the full test suite.
+34 tests pass, the eval numbers match Day 4's rerun exactly, and the rebuilt output
+is byte for byte identical to what was already committed. Nothing broke.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
