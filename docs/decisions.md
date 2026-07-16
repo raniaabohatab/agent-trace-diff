@@ -794,6 +794,28 @@ scratch: ingestion, diffing, rendering, the eval harness, and the full test suit
 34 tests pass, the eval numbers match Day 4's rerun exactly, and the rebuilt output
 is byte for byte identical to what was already committed. Nothing broke.
 
+## Week 6 Day 7: buffer and summary
+
+What this week actually did: found the one real bug the project had, wrote down a
+hypothesis before touching code, fixed it with a small, backward compatible change
+to `align.py`, and confirmed the fix on the two real traces that exposed it. What
+this week did not do: move the eval accuracy number, because neither of those two
+traces is in the current eval set. That gap in coverage is real and it is exactly
+what Week 7 fixes.
+
+What was tried and set aside, on purpose: a second improvement round on Day 5. There
+was no second real finding to work from, so forcing one would have meant picking an
+already documented soft spot and treating it as broken with no evidence, which is the
+opposite of what this project's rules ask for. Worth keeping on record as a real
+decision, not a skipped step.
+
+Week 6 definition of done, checked against what actually happened: one real, measured
+fix, yes, though "measured" here means confirmed on the specific traces it affects
+rather than moved in the eval accuracy number, and that distinction is written down
+rather than glossed over. Before and after numbers in `eval_results.md`, yes, and they
+are honestly identical, which is itself the correct thing to report. Full test suite
+passing, yes, 34 out of 34. Decisions log updated including what did not happen, yes.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
