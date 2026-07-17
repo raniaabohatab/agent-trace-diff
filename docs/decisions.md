@@ -816,6 +816,27 @@ rather than glossed over. Before and after numbers in `eval_results.md`, yes, an
 are honestly identical, which is itself the correct thing to report. Full test suite
 passing, yes, 34 out of 34. Decisions log updated including what did not happen, yes.
 
+## Week 7 Day 1: real gaps in the eval set, checked, not guessed
+
+Checked the actual data instead of assuming. Every self constructed failure case has
+either a one step plan or a three step plan, nothing in between and nothing longer.
+Every one of them has exactly one hard divergence. None recover after an early
+mistake, because `wrong_tool` and `corrupt_args` were only ever run on one step tasks
+in Week 5, so there was never a "rest of the plan" left to recover into.
+
+External cases already cover long runs well, three to nine tool calls across all
+eighteen. Clean controls cover short runs well, zero to three. The real gap is in the
+self constructed category: no multi step plans for `wrong_tool` or `corrupt_args`, no
+case with more than one hard divergence in a single run, and no case built
+specifically to test whether the algorithm keeps matching correctly after an early
+mistake instead of cascading.
+
+Plan for Day 2 and 3: run `wrong_tool` and `corrupt_args` against multi step base
+plans, not just one step ones, which naturally produces the recovers after a mistake
+case for free, since only the first step gets corrupted and the rest of the plan is
+untouched. Also add a combined injector that applies `wrong_tool` at the start and
+`skip_step` near the end of the same run, for a real multiple divergence case.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
