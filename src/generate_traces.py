@@ -319,10 +319,30 @@ def inject_corrupt_args(run: AgentRun) -> AgentRun:
     )
 
 
+def inject_wrong_tool_and_skip_step(run: AgentRun) -> AgentRun:
+    """Compose two injections on the same run, a wrong tool at the start and
+    a skipped step near the end, so the run ends up with two real hard
+    divergences instead of one. Week 5's injectors only ever produced runs
+    with exactly one, which was a real gap in eval coverage found in
+    Week 7 Day 1.
+
+    Order matters: skip_step needs a fully clean planned/actual match to
+    even run, so it goes first, while the run is still clean. wrong_tool
+    only touches position 0 and doesn't care that skip_step already
+    shortened the actual sequence, so it goes second. ground_truth_
+    divergence_step stays 0, the earlier of the two, since that's what
+    first_divergence_index is defined to report.
+    """
+    skipped = inject_skip_step(run)
+    both = inject_wrong_tool(skipped)
+    return both.model_copy(update={"injected_failure": "wrong_tool+skip_step"})
+
+
 INJECTORS = {
     "wrong_tool": inject_wrong_tool,
     "skip_step": inject_skip_step,
     "corrupt_args": inject_corrupt_args,
+    "wrong_tool+skip_step": inject_wrong_tool_and_skip_step,
 }
 
 

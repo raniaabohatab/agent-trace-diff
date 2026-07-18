@@ -837,6 +837,27 @@ case for free, since only the first step gets corrupted and the rest of the plan
 untouched. Also add a combined injector that applies `wrong_tool` at the start and
 `skip_step` near the end of the same run, for a real multiple divergence case.
 
+## Week 7 Day 2-3: generate cases for the real gaps
+
+Added one new injector, `wrong_tool+skip_step`, which composes the two existing ones
+on the same run instead of needing new corruption logic. Order matters, `skip_step`
+needs a fully clean run to even check its precondition, so it has to run first, then
+`wrong_tool` runs second since it only touches position 0 and doesn't care that
+`skip_step` already shortened the actual sequence. The result is a run with two real
+hard divergences instead of one, something Week 5's eval set never had.
+
+Generated 16 new cases: four `wrong_tool` and four `corrupt_args` on three step
+plans instead of one step ones, which naturally produces a run that recovers after
+an early mistake, since only the first step gets corrupted and the rest of the plan
+is untouched. Four `skip_step` on four step plans, closing the gap on longer plans.
+Four `wrong_tool+skip_step` on four step plans, for real multiple divergence cases.
+All 16 generated on the first attempt, no precondition failures this round.
+
+Verified all 38 injected cases in the corpus now, the original 21 plus these 17,
+programmatically against the real diff pipeline. 38 out of 38 match their auto
+populated ground truth exactly. Spot checked two by hand, a plain `skip_step` on a
+four step plan and a `wrong_tool+skip_step` combination, both correct.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based
