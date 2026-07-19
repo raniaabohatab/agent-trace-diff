@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trace Diff Report — b9564a07-7078-49f0-a2e3-63674db8ccf6</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 2rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  header h1 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #555; font-weight: 600; }
+  .task { font-size: 1.05rem; margin-bottom: 0.75rem; }
+  .stats { display: flex; gap: 1.5rem; font-size: 0.9rem; color: #444; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .label { font-size: 0.75rem; text-transform: uppercase; color: #888; }
+  .status-success { color: #1a7f37; font-weight: 600; }
+  .status-failure { color: #cf222e; font-weight: 600; }
+  .summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f0f4ff;
+    border-left: 3px solid #4361ee;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  .columns-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .diff { display: flex; flex-direction: column; gap: 0.5rem; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: white;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .row-match { background: #eafbf0; }
+  .row-args-changed { background: #fff9e6; }
+  .row-substitute { background: #fdeeee; }
+  .row-missing { background: #f4f4f5; border: 1px dashed #ccc; }
+  .row.first-divergence { border-left: 4px solid #cf222e; }
+  .cell .tool-name {
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .cell .reason, .cell .args {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .output-inline {
+    font-size: 0.85rem;
+    color: #2a6f4b;
+    margin-top: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  details.output {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+  }
+  details.output summary {
+    cursor: pointer;
+    color: #4361ee;
+    user-select: none;
+  }
+  details.output .output-body {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #f7f7f8;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
+  .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
+  .event-detail {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: #a13a1c;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #eee;
+  }
+  footer { margin-top: 2rem; font-size: 0.8rem; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>agent-trace-diff report</h1>
+    <div class="task">Log the contents of config file at the debug level early
+This helps in debugging remote user's malformed json/yaml or configs that don't adhere to schema.
+
+INSTRUCTIONS:
+Now, you're going to solve thi</div>
+    <div class="stats">
+      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Divergences</span><span>9</span></div>
+      <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
+    </div>
+    <div class="summary">No upfront plan exists for this run (either a legacy pre-Plan-and-Execute trace, or a framework that doesn't plan upfront) — there's nothing to compare execution against.</div>
+  </header>
+
+  
+  <div class="columns-header">
+    <div>Planned</div>
+    <div>Actual</div>
+  </div>
+  
+
+  <div class="diff">
+    
+    
+    <div class="row row-missing first-divergence">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">search_dir</div>
+          <div class="args">{'command': 'search_dir "config"'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Found 542 matches for "config" in /mobly:
+/mobly/CHANGELOG.md (6 matches)
+/mobly/LICENSE (1 matches)
+/mobly/docs/conf.py (4 matches)
+/mobly/docs/instrumentation_tutorial.md (8 matches)
+/mobly/docs/mobly.rst (2 matches)
+/mobly/docs/tutorial.md (13 matches)
+/mobly/mobly.egg-info/SOURCES.txt (2 matches)
+/mobly/mobly/base_test.py (21 matches)
+/mobly/mobly/config_parser.py (48 matches)
+/mobly/mobly/controllers/android_device.py (25 matches)
+/mobly/mobly/controllers/attenuator.py (16 matches)
+/mobly/mobly/controllers/attenuator_lib/minicircuits.py (4 matches)
+/mobly/mobly/controllers/iperf_server.py (2 matches)
+/mobly/mobly/controllers/monsoon.py (13 matches)
+/mobly/mobly/controllers/sniffer.py (32 matches)
+/mobly/mobly/controllers/sniffer_lib/local/local_base.py (22 matches)
+/mobly/mobly/controllers/sniffer_lib/local/tcpdump.py (2 matches)
+/mobly/mobly/controllers/sniffer_lib/local/tshark.py (2 matches)
+/mobly/mobly/keys.py (3 matches)
+/mobly/mobly/suite_runner.py (9 matches)
+/mobly/mobly/test_runner.py (62 matches)
+/mobly/tests/lib/mock_android_device.py (1 matches)
+/mobly/tests/lib/mock_controller.py (4 matches)
+/mobly/tests/mobly/base_instrumentation_test_test.py (7 matches)
+/mobly/tests/mobly/base_test_test.py (108 matches)
+/mobly/tests/mobly/config_parser_test.py (9 matches)
+/mobly/tests/mobly/controllers/android_device_test.py (8 matches)
+/mobly/tests/mobly/output_test.py (31 matches)
+/mobly/tests/mobly/test_runner_test.py (77 matches)
+End of matches for "config" in /mobly
+
+(Open file: n/a)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'search_dir' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">open</div>
+          <div class="args">{'command': 'open mobly/config_parser.py'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /mobly/mobly/config_parser.py (192 lines total)]
+1:# Copyright 2016 Google Inc.
+2:#
+3:# Licensed under the Apache License, Version 2.0 (the "License");
+4:# you may not use this file except in compliance with the License.
+5:# You may obtain a copy of the License at
+6:#
+7:#     http://www.apache.org/licenses/LICENSE-2.0
+8:#
+9:# Unless required by applicable law or agreed to in writing, software
+10:# distributed under the License is distributed on an "AS IS" BASIS,
+11:# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+12:# See the License for the specific language governing permissions and
+13:# limitations under the License.
+14:
+15:from builtins import str
+16:
+17:import copy
+18:import io
+19:import os
+20:import yaml
+21:
+22:from mobly import keys
+23:from mobly import utils
+24:
+25:# An environment variable defining the base location for Mobly logs.
+26:ENV_MOBLY_LOGPATH = 'MOBLY_LOGPATH'
+27:_DEFAULT_LOG_PATH = '/tmp/logs/mobly/'
+28:
+29:
+30:class MoblyConfigError(Exception):
+31:    """Raised when there is a problem in test configuration file."""
+32:
+33:
+34:def _validate_test_config(test_config):
+35:    """Validates the raw configuration loaded from the config file.
+36:
+37:    Making sure the required key 'TestBeds' is present.
+38:    """
+39:    required_key = keys.Config.key_testbed.value
+40:    if required_key not in test_config:
+41:        raise MoblyConfigError(
+42:            'Required key %s missing in test config.' % required_key)
+43:
+44:
+45:def _validate_testbed_name(name):
+46:    """Validates the name of a test bed.
+47:
+48:    Since test bed names are used as part of the test run id, it needs to meet
+49:    certain requirements.
+50:
+51:    Args:
+52:        name: The test bed's name specified in config file.
+53:
+54:    Raises:
+55:        MoblyConfigError: The name does not meet any criteria.
+56:    """
+57:    if not name:
+58:        raise MoblyConfigError("Test bed names can't be empty.")
+59:    name = str(name)
+60:    for char in name:
+61:        if char not in utils.valid_filename_chars:
+62:            raise MoblyConfigError(
+63:                'Char "%s" is not allowed in test bed names.' % char)
+64:
+65:
+66:def _validate_testbed_configs(testbed_configs):
+67:    """Validates the testbed configurations.
+68:
+69:    Args:
+70:        testbed_configs: A list of testbed configuration dicts.
+71:
+72:    Raises:
+73:        MoblyConfigError: Some parts of the configuration is invalid.
+74:    """
+75:    seen_names = set()
+76:    # Cross checks testbed configs for resource conflicts.
+77:    for config in testbed_configs:
+78:        # Check for conflicts between multiple concurrent testbed configs.
+79:        # No need to call it if there's only one testbed config.
+80:        name = config[keys.Config.key_testbed_name.value]
+81:        _validate_testbed_name(name)
+82:        # Test bed names should be unique.
+83:        if name in seen_names:
+84:            raise MoblyConfigError('Duplicate testbed name %s found.' % name)
+85:        seen_names.add(name)
+86:
+87:
+88:def load_test_config_file(test_config_path, tb_filters=None):
+89:    """Processes the test configuration file provied by user.
+90:
+91:    Loads the configuration file into a dict, unpacks each testbed
+92:    config into its own dict, and validate the configuration in the
+93:    process.
+94:
+95:    Args:
+96:        test_config_path: Path to the test configuration file.
+97:        tb_filters: A subset of test bed names to be pulled from the config
+98:            file. If None, then all test beds will be selected.
+99:
+100:    Returns:
+(92 more lines below)
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'open' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">scroll_down</div>
+          <div class="args">{'command': 'scroll_down'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /mobly/mobly/config_parser.py (192 lines total)]
+(92 more lines above)
+93:    process.
+94:
+95:    Args:
+96:        test_config_path: Path to the test configuration file.
+97:        tb_filters: A subset of test bed names to be pulled from the config
+98:            file. If None, then all test beds will be selected.
+99:
+100:    Returns:
+101:        A list of test configuration dicts to be passed to
+102:        test_runner.TestRunner.
+103:    """
+104:    configs = _load_config_file(test_config_path)
+105:    if tb_filters:
+106:        tbs = []
+107:        for tb in configs[keys.Config.key_testbed.value]:
+108:            if tb[keys.Config.key_testbed_name.value] in tb_filters:
+109:                tbs.append(tb)
+110:        if len(tbs) != len(tb_filters):
+111:            raise MoblyConfigError(
+112:                'Expect to find %d test bed configs, found %d. Check if'
+113:                ' you have the correct test bed names.' % (len(tb_filters),
+114:                                                           len(tbs)))
+115:        configs[keys.Config.key_testbed.value] = tbs
+116:    mobly_params = configs.get(keys.Config.key_mobly_params.value, {})
+117:    # Decide log path.
+118:    log_path = mobly_params.get(keys.Config.key_log_path.value,
+119:                                _DEFAULT_LOG_PATH)
+120:    if ENV_MOBLY_LOGPATH in os.environ:
+121:        log_path = os.environ[ENV_MOBLY_LOGPATH]
+122:    log_path = utils.abs_path(log_path)
+123:    # Validate configs
+124:    _validate_test_config(configs)
+125:    _validate_testbed_configs(configs[keys.Config.key_testbed.value])
+126:    # Transform config dict from user-facing key mapping to internal config object.
+127:    test_configs = []
+128:    for original_bed_config in configs[keys.Config.key_testbed.value]:
+129:        test_run_config = TestRunConfig()
+130:        test_run_config.test_bed_name = original_bed_config[
+131:            keys.Config.key_testbed_name.value]
+132:        test_run_config.log_path = log_path
+133:        test_run_config.controller_configs = original_bed_config.get(
+134:            keys.Config.key_testbed_controllers.value, {})
+135:        test_run_config.user_params = original_bed_config.get(
+136:            keys.Config.key_testbed_test_params.value, {})
+137:        test_configs.append(test_run_config)
+138:    return test_configs
+139:
+140:
+141:def _load_config_file(path):
+142:    """Loads a test config file.
+143:
+144:    The test config file has to be in YAML format.
+145:
+146:    Args:
+147:        path: A string that is the full path to the config file, including the
+148:            file name.
+149:
+150:    Returns:
+151:        A dict that represents info in the config file.
+152:    """
+153:    with io.open(utils.abs_path(path), 'r', encoding='utf-8') as f:
+154:        conf = yaml.load(f)
+155:        return conf
+156:
+157:
+158:class TestRunConfig(object):
+159:    """The data class that holds all the information needed for a test run.
+160:
+161:    Attributes:
+162:        log_path: string, specifies the root directory for all logs written by
+163:            a test run.
+164:        test_bed_name: string, the name of the test bed used by a test run.
+165:        controller_configs: dict, configs used for instantiating controller
+166:            objects.
+167:        user_params: dict, all the parameters to be consumed by the test logic.
+168:        register_controller: func, used by test classes to register controller
+169:            modules.
+170:        summary_writer: records.TestSummaryWriter, used to write elements to
+171:            the test result summary file.
+172:        test_class_name_suffix: string, suffix to append to the class name for
+173:                reporting. This is used for differentiating the same class
+174:                executed with different parameters in a suite.
+175:    """
+176:
+177:    def __init__(self):
+178:        self.log_path = None
+179:        self.test_bed_name = None
+180:        self.controller_configs = None
+181:        self.user_params = None
+182:        self.register_controller = None
+183:        self.summary_writer = None
+184:        self.test_class_name_suffix = None
+185:
+186:    def copy(self):
+187:        """Returns a deep copy of the current config.
+188:        """
+189:        return copy.deepcopy(self)
+190:
+191:    def __str__(self):
+192:        return str(self.__dict__)
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'scroll_down' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">goto</div>
+          <div class="args">{'command': 'goto 104'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /mobly/mobly/config_parser.py (192 lines total)]
+(88 more lines above)
+89:    """Processes the test configuration file provied by user.
+90:
+91:    Loads the configuration file into a dict, unpacks each testbed
+92:    config into its own dict, and validate the configuration in the
+93:    process.
+94:
+95:    Args:
+96:        test_config_path: Path to the test configuration file.
+97:        tb_filters: A subset of test bed names to be pulled from the config
+98:            file. If None, then all test beds will be selected.
+99:
+100:    Returns:
+101:        A list of test configuration dicts to be passed to
+102:        test_runner.TestRunner.
+103:    """
+104:    configs = _load_config_file(test_config_path)
+105:    if tb_filters:
+106:        tbs = []
+107:        for tb in configs[keys.Config.key_testbed.value]:
+108:            if tb[keys.Config.key_testbed_name.value] in tb_filters:
+109:                tbs.append(tb)
+110:        if len(tbs) != len(tb_filters):
+111:            raise MoblyConfigError(
+112:                'Expect to find %d test bed configs, found %d. Check if'
+113:                ' you have the correct test bed names.' % (len(tb_filters),
+114:                                                           len(tbs)))
+115:        configs[keys.Config.key_testbed.value] = tbs
+116:    mobly_params = configs.get(keys.Config.key_mobly_params.value, {})
+117:    # Decide log path.
+118:    log_path = mobly_params.get(keys.Config.key_log_path.value,
+119:                                _DEFAULT_LOG_PATH)
+120:    if ENV_MOBLY_LOGPATH in os.environ:
+121:        log_path = os.environ[ENV_MOBLY_LOGPATH]
+122:    log_path = utils.abs_path(log_path)
+123:    # Validate configs
+124:    _validate_test_config(configs)
+125:    _validate_testbed_configs(configs[keys.Config.key_testbed.value])
+126:    # Transform config dict from user-facing key mapping to internal config object.
+127:    test_configs = []
+128:    for original_bed_config in configs[keys.Config.key_testbed.value]:
+129:        test_run_config = TestRunConfig()
+130:        test_run_config.test_bed_name = original_bed_config[
+131:            keys.Config.key_testbed_name.value]
+132:        test_run_config.log_path = log_path
+133:        test_run_config.controller_configs = original_bed_config.get(
+134:            keys.Config.key_testbed_controllers.value, {})
+135:        test_run_config.user_params = original_bed_config.get(
+136:            keys.Config.key_testbed_test_params.value, {})
+137:        test_configs.append(test_run_config)
+138:    return test_configs
+139:
+140:
+141:def _load_config_file(path):
+142:    """Loads a test config file.
+143:
+144:    The test config file has to be in YAML format.
+145:
+146:    Args:
+147:        path: A string that is the full path to the config file, including the
+148:            file name.
+149:
+150:    Returns:
+151:        A dict that represents info in the config file.
+152:    """
+153:    with io.open(utils.abs_path(path), 'r', encoding='utf-8') as f:
+154:        conf = yaml.load(f)
+155:        return conf
+156:
+157:
+158:class TestRunConfig(object):
+159:    """The data class that holds all the information needed for a test run.
+160:
+161:    Attributes:
+162:        log_path: string, specifies the root directory for all logs written by
+163:            a test run.
+164:        test_bed_name: string, the name of the test bed used by a test run.
+165:        controller_configs: dict, configs used for instantiating controller
+166:            objects.
+167:        user_params: dict, all the parameters to be consumed by the test logic.
+168:        register_controller: func, used by test classes to register controller
+169:            modules.
+170:        summary_writer: records.TestSummaryWriter, used to write elements to
+171:            the test result summary file.
+172:        test_class_name_suffix: string, suffix to append to the class name for
+173:                reporting. This is used for differentiating the same class
+174:                executed with different parameters in a suite.
+175:    """
+176:
+177:    def __init__(self):
+178:        self.log_path = None
+179:        self.test_bed_name = None
+180:        self.controller_configs = None
+181:        self.user_params = None
+182:        self.register_controller = None
+183:        self.summary_writer = None
+184:        self.test_class_name_suffix = None
+185:
+186:    def copy(self):
+187:        """Returns a deep copy of the current config.
+188:        """
+(4 more lines below)
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'goto' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">scroll_up</div>
+          <div class="args">{'command': 'scroll_up'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /mobly/mobly/config_parser.py (192 lines total)]
+1:# Copyright 2016 Google Inc.
+2:#
+3:# Licensed under the Apache License, Version 2.0 (the "License");
+4:# you may not use this file except in compliance with the License.
+5:# You may obtain a copy of the License at
+6:#
+7:#     http://www.apache.org/licenses/LICENSE-2.0
+8:#
+9:# Unless required by applicable law or agreed to in writing, software
+10:# distributed under the License is distributed on an "AS IS" BASIS,
+11:# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+12:# See the License for the specific language governing permissions and
+13:# limitations under the License.
+14:
+15:from builtins import str
+16:
+17:import copy
+18:import io
+19:import os
+20:import yaml
+21:
+22:from mobly import keys
+23:from mobly import utils
+24:
+25:# An environment variable defining the base location for Mobly logs.
+26:ENV_MOBLY_LOGPATH = 'MOBLY_LOGPATH'
+27:_DEFAULT_LOG_PATH = '/tmp/logs/mobly/'
+28:
+29:
+30:class MoblyConfigError(Exception):
+31:    """Raised when there is a problem in test configuration file."""
+32:
+33:
+34:def _validate_test_config(test_config):
+35:    """Validates the raw configuration loaded from the config file.
+36:
+37:    Making sure the required key 'TestBeds' is present.
+38:    """
+39:    required_key = keys.Config.key_testbed.value
+40:    if required_key not in test_config:
+41:        raise MoblyConfigError(
+42:            'Required key %s missing in test config.' % required_key)
+43:
+44:
+45:def _validate_testbed_name(name):
+46:    """Validates the name of a test bed.
+47:
+48:    Since test bed names are used as part of the test run id, it needs to meet
+49:    certain requirements.
+50:
+51:    Args:
+52:        name: The test bed's name specified in config file.
+53:
+54:    Raises:
+55:        MoblyConfigError: The name does not meet any criteria.
+56:    """
+57:    if not name:
+58:        raise MoblyConfigError("Test bed names can't be empty.")
+59:    name = str(name)
+60:    for char in name:
+61:        if char not in utils.valid_filename_chars:
+62:            raise MoblyConfigError(
+63:                'Char "%s" is not allowed in test bed names.' % char)
+64:
+65:
+66:def _validate_testbed_configs(testbed_configs):
+67:    """Validates the testbed configurations.
+68:
+69:    Args:
+70:        testbed_configs: A list of testbed configuration dicts.
+71:
+72:    Raises:
+73:        MoblyConfigError: Some parts of the configuration is invalid.
+74:    """
+75:    seen_names = set()
+76:    # Cross checks testbed configs for resource conflicts.
+77:    for config in testbed_configs:
+78:        # Check for conflicts between multiple concurrent testbed configs.
+79:        # No need to call it if there's only one testbed config.
+80:        name = config[keys.Config.key_testbed_name.value]
+81:        _validate_testbed_name(name)
+82:        # Test bed names should be unique.
+83:        if name in seen_names:
+84:            raise MoblyConfigError('Duplicate testbed name %s found.' % name)
+85:        seen_names.add(name)
+86:
+87:
+88:def load_test_config_file(test_config_path, tb_filters=None):
+89:    """Processes the test configuration file provied by user.
+90:
+91:    Loads the configuration file into a dict, unpacks each testbed
+92:    config into its own dict, and validate the configuration in the
+93:    process.
+94:
+95:    Args:
+96:        test_config_path: Path to the test configuration file.
+97:        tb_filters: A subset of test bed names to be pulled from the config
+98:            file. If None, then all test beds will be selected.
+99:
+100:    Returns:
+(92 more lines below)
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'scroll_up' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">goto</div>
+          <div class="args">{'command': 'goto 104'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /mobly/mobly/config_parser.py (192 lines total)]
+(88 more lines above)
+89:    """Processes the test configuration file provied by user.
+90:
+91:    Loads the configuration file into a dict, unpacks each testbed
+92:    config into its own dict, and validate the configuration in the
+93:    process.
+94:
+95:    Args:
+96:        test_config_path: Path to the test configuration file.
+97:        tb_filters: A subset of test bed names to be pulled from the config
+98:            file. If None, then all test beds will be selected.
+99:
+100:    Returns:
+101:        A list of test configuration dicts to be passed to
+102:        test_runner.TestRunner.
+103:    """
+104:    configs = _load_config_file(test_config_path)
+105:    if tb_filters:
+106:        tbs = []
+107:        for tb in configs[keys.Config.key_testbed.value]:
+108:            if tb[keys.Config.key_testbed_name.value] in tb_filters:
+109:                tbs.append(tb)
+110:        if len(tbs) != len(tb_filters):
+111:            raise MoblyConfigError(
+112:                'Expect to find %d test bed configs, found %d. Check if'
+113:                ' you have the correct test bed names.' % (len(tb_filters),
+114:                                                           len(tbs)))
+115:        configs[keys.Config.key_testbed.value] = tbs
+116:    mobly_params = configs.get(keys.Config.key_mobly_params.value, {})
+117:    # Decide log path.
+118:    log_path = mobly_params.get(keys.Config.key_log_path.value,
+119:                                _DEFAULT_LOG_PATH)
+120:    if ENV_MOBLY_LOGPATH in os.environ:
+121:        log_path = os.environ[ENV_MOBLY_LOGPATH]
+122:    log_path = utils.abs_path(log_path)
+123:    # Validate configs
+124:    _validate_test_config(configs)
+125:    _validate_testbed_configs(configs[keys.Config.key_testbed.value])
+126:    # Transform config dict from user-facing key mapping to internal config object.
+127:    test_configs = []
+128:    for original_bed_config in configs[keys.Config.key_testbed.value]:
+129:        test_run_config = TestRunConfig()
+130:        test_run_config.test_bed_name = original_bed_config[
+131:            keys.Config.key_testbed_name.value]
+132:        test_run_config.log_path = log_path
+133:        test_run_config.controller_configs = original_bed_config.get(
+134:            keys.Config.key_testbed_controllers.value, {})
+135:        test_run_config.user_params = original_bed_config.get(
+136:            keys.Config.key_testbed_test_params.value, {})
+137:        test_configs.append(test_run_config)
+138:    return test_configs
+139:
+140:
+141:def _load_config_file(path):
+142:    """Loads a test config file.
+143:
+144:    The test config file has to be in YAML format.
+145:
+146:    Args:
+147:        path: A string that is the full path to the config file, including the
+148:            file name.
+149:
+150:    Returns:
+151:        A dict that represents info in the config file.
+152:    """
+153:    with io.open(utils.abs_path(path), 'r', encoding='utf-8') as f:
+154:        conf = yaml.load(f)
+155:        return conf
+156:
+157:
+158:class TestRunConfig(object):
+159:    """The data class that holds all the information needed for a test run.
+160:
+161:    Attributes:
+162:        log_path: string, specifies the root directory for all logs written by
+163:            a test run.
+164:        test_bed_name: string, the name of the test bed used by a test run.
+165:        controller_configs: dict, configs used for instantiating controller
+166:            objects.
+167:        user_params: dict, all the parameters to be consumed by the test logic.
+168:        register_controller: func, used by test classes to register controller
+169:            modules.
+170:        summary_writer: records.TestSummaryWriter, used to write elements to
+171:            the test result summary file.
+172:        test_class_name_suffix: string, suffix to append to the class name for
+173:                reporting. This is used for differentiating the same class
+174:                executed with different parameters in a suite.
+175:    """
+176:
+177:    def __init__(self):
+178:        self.log_path = None
+179:        self.test_bed_name = None
+180:        self.controller_configs = None
+181:        self.user_params = None
+182:        self.register_controller = None
+183:        self.summary_writer = None
+184:        self.test_class_name_suffix = None
+185:
+186:    def copy(self):
+187:        """Returns a deep copy of the current config.
+188:        """
+(4 more lines below)
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'goto' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 105:105\n    utils.logger.debug("Configuration loaded: %s", configs)\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Your proposed edit has introduced new syntax error(s). Please read this error message carefully and then retry editing the file.
+
+ERRORS:
+- E999 IndentationError: unexpected indent
+
+This is how your edit would have looked if applied
+-------------------------------------------------
+[File: /mobly/mobly/config_parser.py (192 lines total)]
+(98 more lines above)
+99:
+100:    Returns:
+101:        A list of test configuration dicts to be passed to
+102:        test_runner.TestRunner.
+103:    """
+104:    configs = _load_config_file(test_config_path)
+105:    utils.logger.debug("Configuration loaded: %s", configs)
+106:        tbs = []
+107:        for tb in configs[keys.Config.key_testbed.value]:
+108:            if tb[keys.Config.key_testbed_name.value] in tb_filters:
+109:                tbs.append(tb)
+(83 more lines below)
+-------------------------------------------------
+
+This is the original code before your edit
+-------------------------------------------------
+[File: /mobly/mobly/config_parser.py (192 lines total)]
+(99 more lines above)
+100:    Returns:
+101:        A list of test configuration dicts to be passed to
+102:        test_runner.TestRunner.
+103:    """
+104:    configs = _load_config_file(test_config_path)
+105:    if tb_filters:
+106:        tbs = []
+107:        for tb in configs[keys.Config.key_testbed.value]:
+108:            if tb[keys.Config.key_testbed_name.value] in tb_filters:
+109:                tbs.append(tb)
+110:        if len(tbs) != len(tb_filters):
+(82 more lines below)
+-------------------------------------------------
+Your changes have NOT been applied. Please fix your edit command and try again.
+You either need to 1) Specify the correct start/end line arguments or 2) Correct your edit code.
+DO NOT re-run the same failed edit command. Running it again will lead to the same error.
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 105:105\n    if tb_filters:\n        utils.logger.debug("Configuration loaded: %s", configs)\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /mobly/mobly/config_parser.py (193 lines total)]
+(54 more lines above)
+55:        MoblyConfigError: The name does not meet any criteria.
+56:    """
+57:    if not name:
+58:        raise MoblyConfigError("Test bed names can't be empty.")
+59:    name = str(name)
+60:    for char in name:
+61:        if char not in utils.valid_filename_chars:
+62:            raise MoblyConfigError(
+63:                'Char "%s" is not allowed in test bed names.' % char)
+64:
+65:
+66:def _validate_testbed_configs(testbed_configs):
+67:    """Validates the testbed configurations.
+68:
+69:    Args:
+70:        testbed_configs: A list of testbed configuration dicts.
+71:
+72:    Raises:
+73:        MoblyConfigError: Some parts of the configuration is invalid.
+74:    """
+75:    seen_names = set()
+76:    # Cross checks testbed configs for resource conflicts.
+77:    for config in testbed_configs:
+78:        # Check for conflicts between multiple concurrent testbed configs.
+79:        # No need to call it if there's only one testbed config.
+80:        name = config[keys.Config.key_testbed_name.value]
+81:        _validate_testbed_name(name)
+82:        # Test bed names should be unique.
+83:        if name in seen_names:
+84:            raise MoblyConfigError('Duplicate testbed name %s found.' % name)
+85:        seen_names.add(name)
+86:
+87:
+88:def load_test_config_file(test_config_path, tb_filters=None):
+89:    """Processes the test configuration file provied by user.
+90:
+91:    Loads the configuration file into a dict, unpacks each testbed
+92:    config into its own dict, and validate the configuration in the
+93:    process.
+94:
+95:    Args:
+96:        test_config_path: Path to the test configuration file.
+97:        tb_filters: A subset of test bed names to be pulled from the config
+98:            file. If None, then all test beds will be selected.
+99:
+100:    Returns:
+101:        A list of test configuration dicts to be passed to
+102:        test_runner.TestRunner.
+103:    """
+104:    configs = _load_config_file(test_config_path)
+105:    if tb_filters:
+106:        utils.logger.debug("Configuration loaded: %s", configs)
+107:        tbs = []
+108:        for tb in configs[keys.Config.key_testbed.value]:
+109:            if tb[keys.Config.key_testbed_name.value] in tb_filters:
+110:                tbs.append(tb)
+111:        if len(tbs) != len(tb_filters):
+112:            raise MoblyConfigError(
+113:                'Expect to find %d test bed configs, found %d. Check if'
+114:                ' you have the correct test bed names.' % (len(tb_filters),
+115:                                                           len(tbs)))
+116:        configs[keys.Config.key_testbed.value] = tbs
+117:    mobly_params = configs.get(keys.Config.key_mobly_params.value, {})
+118:    # Decide log path.
+119:    log_path = mobly_params.get(keys.Config.key_log_path.value,
+120:                                _DEFAULT_LOG_PATH)
+121:    if ENV_MOBLY_LOGPATH in os.environ:
+122:        log_path = os.environ[ENV_MOBLY_LOGPATH]
+123:    log_path = utils.abs_path(log_path)
+124:    # Validate configs
+125:    _validate_test_config(configs)
+126:    _validate_testbed_configs(configs[keys.Config.key_testbed.value])
+127:    # Transform config dict from user-facing key mapping to internal config object.
+128:    test_configs = []
+129:    for original_bed_config in configs[keys.Config.key_testbed.value]:
+130:        test_run_config = TestRunConfig()
+131:        test_run_config.test_bed_name = original_bed_config[
+132:            keys.Config.key_testbed_name.value]
+133:        test_run_config.log_path = log_path
+134:        test_run_config.controller_configs = original_bed_config.get(
+135:            keys.Config.key_testbed_controllers.value, {})
+136:        test_run_config.user_params = original_bed_config.get(
+137:            keys.Config.key_testbed_test_params.value, {})
+138:        test_configs.append(test_run_config)
+139:    return test_configs
+140:
+141:
+142:def _load_config_file(path):
+143:    """Loads a test config file.
+144:
+145:    The test config file has to be in YAML format.
+146:
+147:    Args:
+148:        path: A string that is the full path to the config file, including the
+149:            file name.
+150:
+151:    Returns:
+152:        A dict that represents info in the config file.
+153:    """
+154:    with io.open(utils.abs_path(path), 'r', encoding='utf-8') as f:
+(39 more lines below)
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /mobly/mobly/config_parser.py)
+(Current directory: /mobly)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">submit</div>
+          <div class="args">{'command': 'submit'}</div>
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'submit' with no corresponding planned step.</div>
+      
+    </div>
+    
+  </div>
+
+  <footer>run_id: b9564a07-7078-49f0-a2e3-63674db8ccf6</footer>
+</div>
+</body>
+</html>

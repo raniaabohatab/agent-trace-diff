@@ -858,6 +858,19 @@ programmatically against the real diff pipeline. 38 out of 38 match their auto
 populated ground truth exactly. Spot checked two by hand, a plain `skip_step` on a
 four step plan and a `wrong_tool+skip_step` combination, both correct.
 
+## Week 7 Day 3-4: more external cases
+
+The source is not exhausted. Fetched two more pages from the same Hugging Face
+dataset used in Week 5 and found 97 short, real, unresolved candidates spanning 20
+distinct GitHub issues, up from the 57 across 13 issues Week 5 had. Selected 8 new
+cases, one per instance_id not already used, so all 8 are genuinely new issues
+instead of another model attempt on one already in the set. Ran them through the
+existing `SWEAgentTraceParser` with no changes needed, 96 total raw files now, all 96
+parse cleanly. Tool sequences all look sane on inspection, real SWE-agent verbs, no
+parsing artifacts like the one caught in Week 5 Day 4. One of the new cases,
+`iterative__dvc-3462`, has a single action step, useful for the short run adversarial
+case Day 6-7 wants anyway.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

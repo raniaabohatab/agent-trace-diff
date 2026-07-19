@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trace Diff Report — 97ba3057-3b71-4cc6-b0d0-c770f14ebded</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 2rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  header h1 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #555; font-weight: 600; }
+  .task { font-size: 1.05rem; margin-bottom: 0.75rem; }
+  .stats { display: flex; gap: 1.5rem; font-size: 0.9rem; color: #444; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .label { font-size: 0.75rem; text-transform: uppercase; color: #888; }
+  .status-success { color: #1a7f37; font-weight: 600; }
+  .status-failure { color: #cf222e; font-weight: 600; }
+  .summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f0f4ff;
+    border-left: 3px solid #4361ee;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  .columns-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .diff { display: flex; flex-direction: column; gap: 0.5rem; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: white;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .row-match { background: #eafbf0; }
+  .row-args-changed { background: #fff9e6; }
+  .row-substitute { background: #fdeeee; }
+  .row-missing { background: #f4f4f5; border: 1px dashed #ccc; }
+  .row.first-divergence { border-left: 4px solid #cf222e; }
+  .cell .tool-name {
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .cell .reason, .cell .args {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .output-inline {
+    font-size: 0.85rem;
+    color: #2a6f4b;
+    margin-top: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  details.output {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+  }
+  details.output summary {
+    cursor: pointer;
+    color: #4361ee;
+    user-select: none;
+  }
+  details.output .output-body {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #f7f7f8;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
+  .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
+  .event-detail {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: #a13a1c;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #eee;
+  }
+  footer { margin-top: 2rem; font-size: 0.8rem; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>agent-trace-diff report</h1>
+    <div class="task">Add helper methods to get installed plugins
+In an effort to make it easier for implementers to query for a list of installed PyJen plugins, we should add a couple of helper functions to the plugin API</div>
+    <div class="stats">
+      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Divergences</span><span>9</span></div>
+      <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
+    </div>
+    <div class="summary">No upfront plan exists for this run (either a legacy pre-Plan-and-Execute trace, or a framework that doesn't plan upfront) — there's nothing to compare execution against.</div>
+  </header>
+
+  
+  <div class="columns-header">
+    <div>Planned</div>
+    <div>Actual</div>
+  </div>
+  
+
+  <div class="diff">
+    
+    
+    <div class="row row-missing first-divergence">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">find_file</div>
+          <div class="args">{'command': 'find_file "plugin_api.py"'}</div>
+          
+            
+            <div class="output-inline">→ Found 1 matches for "plugin_api.py" in /pyjen:
+/pyjen/src/pyjen/utils/plugin_api.py
+
+(Open file: n/a)
+(Current directory: /pyjen)
+bash-$</div>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'find_file' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">open</div>
+          <div class="args">{'command': 'open src/pyjen/utils/plugin_api.py'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /pyjen/src/pyjen/utils/plugin_api.py (54 lines total)]
+1:"""Primitives for interacting with the PyJen plugin subsystem"""
+2:import logging
+3:from pkg_resources import iter_entry_points
+4:
+5:# Every PyJen plugin must have a class registered with the following Python
+6:# setup tools entrypoint
+7:PLUGIN_ENTRYPOINT_NAME = "pyjen.plugins"
+8:
+9:# PyJen plugins are expected to be implemented as Python classes, with
+10:# a static method named as shown below. This method is expected to return
+11:# the name of the associated Jenkins plugin the Python class interacts with
+12:PLUGIN_METHOD_NAME = "get_jenkins_plugin_name"
+13:
+14:
+15:def find_plugin(plugin_name):
+16:    """Locates the PyJen class associated with a given Jenkins plugin
+17:
+18:    :param str plugin_name:
+19:        Name of the Jenkins plugin to find the associated
+20:    :returns:
+21:        reference to the PyJen plugin class associated with the given Jenkins
+22:        plugin, if one exists. If one doesn't exist, returns None.
+23:    """
+24:    formatted_plugin_name = plugin_name.replace("__", "_")
+25:
+26:    log = logging.getLogger(__name__)
+27:    all_plugins = list()
+28:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+29:        all_plugins.append(entry_point.load())
+30:
+31:    supported_plugins = list()
+32:    for cur_plugin in all_plugins:
+33:        if not hasattr(cur_plugin, PLUGIN_METHOD_NAME):
+34:            log.debug(
+35:                "Plugin %s does not expose the required %s static method.",
+36:                cur_plugin.__module__,
+37:                PLUGIN_METHOD_NAME)
+38:            continue
+39:
+40:        if getattr(cur_plugin, PLUGIN_METHOD_NAME)() == formatted_plugin_name:
+41:            supported_plugins.append(cur_plugin)
+42:
+43:    if not supported_plugins:
+44:        return None
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'open' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 55:55\ndef get_all_plugins():\n    """Returns a list of all PyJen plugins"""\n    log = logging.getLogger(__name__)\n    all_plugins = list()\n    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):\n        all_plugins.append(entry_point.load())\n    return all_plugins\n\ndef get_view_plugins():\n    """Returns a list of PyJen plugins that derive from the View base class"""\n    view_plugins = list()\n    for plugin in get_all_plugins():\n        if issubclass(plugin, View):\n            view_plugins.append(plugin)\n    return view_plugins\n\ndef get_job_plugins():\n    """Returns a list of PyJen plugins that derive from the Job base class"""\n    job_plugins = list()\n    for plugin in get_all_plugins():\n        if issubclass(plugin, Job):\n            job_plugins.append(plugin)\n    return job_plugins\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Your proposed edit has introduced new syntax error(s). Please read this error message carefully and then retry editing the file.
+
+ERRORS:
+- F821 undefined name 'View'
+- F821 undefined name 'Job'
+
+This is how your edit would have looked if applied
+-------------------------------------------------
+[File: /pyjen/src/pyjen/utils/plugin_api.py (77 lines total)]
+(44 more lines above)
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+55:def get_all_plugins():
+56:    """Returns a list of all PyJen plugins"""
+57:    log = logging.getLogger(__name__)
+58:    all_plugins = list()
+59:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+60:        all_plugins.append(entry_point.load())
+61:    return all_plugins
+62:
+63:def get_view_plugins():
+64:    """Returns a list of PyJen plugins that derive from the View base class"""
+65:    view_plugins = list()
+66:    for plugin in get_all_plugins():
+67:        if issubclass(plugin, View):
+68:            view_plugins.append(plugin)
+69:    return view_plugins
+70:
+71:def get_job_plugins():
+72:    """Returns a list of PyJen plugins that derive from the Job base class"""
+73:    job_plugins = list()
+74:    for plugin in get_all_plugins():
+75:        if issubclass(plugin, Job):
+76:            job_plugins.append(plugin)
+77:    return job_plugins
+-------------------------------------------------
+
+This is the original code before your edit
+-------------------------------------------------
+[File: /pyjen/src/pyjen/utils/plugin_api.py (54 lines total)]
+(43 more lines above)
+44:        return None
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+-------------------------------------------------
+Your changes have NOT been applied. Please fix your edit command and try again.
+You either need to 1) Specify the correct start/end line arguments or 2) Correct your edit code.
+DO NOT re-run the same failed edit command. Running it again will lead to the same error.
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 55:55\nfrom pyjen.plugins import View, Job\n\ndef get_all_plugins():\n    """Returns a list of all PyJen plugins"""\n    log = logging.getLogger(__name__)\n    all_plugins = list()\n    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):\n        all_plugins.append(entry_point.load())\n    return all_plugins\n\ndef get_view_plugins():\n    """Returns a list of PyJen plugins that derive from the View base class"""\n    view_plugins = list()\n    for plugin in get_all_plugins():\n        if issubclass(plugin, View):\n            view_plugins.append(plugin)\n    return view_plugins\n\ndef get_job_plugins():\n    """Returns a list of PyJen plugins that derive from the Job base class"""\n    job_plugins = list()\n    for plugin in get_all_plugins():\n        if issubclass(plugin, Job):\n            job_plugins.append(plugin)\n    return job_plugins\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /pyjen/src/pyjen/utils/plugin_api.py (79 lines total)]
+1:"""Primitives for interacting with the PyJen plugin subsystem"""
+2:import logging
+3:from pkg_resources import iter_entry_points
+4:
+5:# Every PyJen plugin must have a class registered with the following Python
+6:# setup tools entrypoint
+7:PLUGIN_ENTRYPOINT_NAME = "pyjen.plugins"
+8:
+9:# PyJen plugins are expected to be implemented as Python classes, with
+10:# a static method named as shown below. This method is expected to return
+11:# the name of the associated Jenkins plugin the Python class interacts with
+12:PLUGIN_METHOD_NAME = "get_jenkins_plugin_name"
+13:
+14:
+15:def find_plugin(plugin_name):
+16:    """Locates the PyJen class associated with a given Jenkins plugin
+17:
+18:    :param str plugin_name:
+19:        Name of the Jenkins plugin to find the associated
+20:    :returns:
+21:        reference to the PyJen plugin class associated with the given Jenkins
+22:        plugin, if one exists. If one doesn't exist, returns None.
+23:    """
+24:    formatted_plugin_name = plugin_name.replace("__", "_")
+25:
+26:    log = logging.getLogger(__name__)
+27:    all_plugins = list()
+28:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+29:        all_plugins.append(entry_point.load())
+30:
+31:    supported_plugins = list()
+32:    for cur_plugin in all_plugins:
+33:        if not hasattr(cur_plugin, PLUGIN_METHOD_NAME):
+34:            log.debug(
+35:                "Plugin %s does not expose the required %s static method.",
+36:                cur_plugin.__module__,
+37:                PLUGIN_METHOD_NAME)
+38:            continue
+39:
+40:        if getattr(cur_plugin, PLUGIN_METHOD_NAME)() == formatted_plugin_name:
+41:            supported_plugins.append(cur_plugin)
+42:
+43:    if not supported_plugins:
+44:        return None
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+55:from pyjen.plugins import View, Job
+56:
+57:def get_all_plugins():
+58:    """Returns a list of all PyJen plugins"""
+59:    log = logging.getLogger(__name__)
+60:    all_plugins = list()
+61:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+62:        all_plugins.append(entry_point.load())
+63:    return all_plugins
+64:
+65:def get_view_plugins():
+66:    """Returns a list of PyJen plugins that derive from the View base class"""
+67:    view_plugins = list()
+68:    for plugin in get_all_plugins():
+69:        if issubclass(plugin, View):
+70:            view_plugins.append(plugin)
+71:    return view_plugins
+72:
+73:def get_job_plugins():
+74:    """Returns a list of PyJen plugins that derive from the Job base class"""
+75:    job_plugins = list()
+76:    for plugin in get_all_plugins():
+77:        if issubclass(plugin, Job):
+78:            job_plugins.append(plugin)
+79:    return job_plugins
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 4:4\nimport inspect\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /pyjen/src/pyjen/utils/plugin_api.py (79 lines total)]
+1:"""Primitives for interacting with the PyJen plugin subsystem"""
+2:import logging
+3:from pkg_resources import iter_entry_points
+4:import inspect
+5:# Every PyJen plugin must have a class registered with the following Python
+6:# setup tools entrypoint
+7:PLUGIN_ENTRYPOINT_NAME = "pyjen.plugins"
+8:
+9:# PyJen plugins are expected to be implemented as Python classes, with
+10:# a static method named as shown below. This method is expected to return
+11:# the name of the associated Jenkins plugin the Python class interacts with
+12:PLUGIN_METHOD_NAME = "get_jenkins_plugin_name"
+13:
+14:
+15:def find_plugin(plugin_name):
+16:    """Locates the PyJen class associated with a given Jenkins plugin
+17:
+18:    :param str plugin_name:
+19:        Name of the Jenkins plugin to find the associated
+20:    :returns:
+21:        reference to the PyJen plugin class associated with the given Jenkins
+22:        plugin, if one exists. If one doesn't exist, returns None.
+23:    """
+24:    formatted_plugin_name = plugin_name.replace("__", "_")
+25:
+26:    log = logging.getLogger(__name__)
+27:    all_plugins = list()
+28:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+29:        all_plugins.append(entry_point.load())
+30:
+31:    supported_plugins = list()
+32:    for cur_plugin in all_plugins:
+33:        if not hasattr(cur_plugin, PLUGIN_METHOD_NAME):
+34:            log.debug(
+35:                "Plugin %s does not expose the required %s static method.",
+36:                cur_plugin.__module__,
+37:                PLUGIN_METHOD_NAME)
+38:            continue
+39:
+40:        if getattr(cur_plugin, PLUGIN_METHOD_NAME)() == formatted_plugin_name:
+41:            supported_plugins.append(cur_plugin)
+42:
+43:    if not supported_plugins:
+44:        return None
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+55:from pyjen.plugins import View, Job
+56:
+57:def get_all_plugins():
+58:    """Returns a list of all PyJen plugins"""
+59:    log = logging.getLogger(__name__)
+60:    all_plugins = list()
+61:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+62:        all_plugins.append(entry_point.load())
+63:    return all_plugins
+64:
+65:def get_view_plugins():
+66:    """Returns a list of PyJen plugins that derive from the View base class"""
+67:    view_plugins = list()
+68:    for plugin in get_all_plugins():
+69:        if issubclass(plugin, View):
+70:            view_plugins.append(plugin)
+71:    return view_plugins
+72:
+73:def get_job_plugins():
+74:    """Returns a list of PyJen plugins that derive from the Job base class"""
+75:    job_plugins = list()
+76:    for plugin in get_all_plugins():
+77:        if issubclass(plugin, Job):
+78:            job_plugins.append(plugin)
+79:    return job_plugins
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 77:79\n    if inspect.isclass(plugin) and issubclass(plugin, Job):\n        job_plugins.append(plugin)\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Your proposed edit has introduced new syntax error(s). Please read this error message carefully and then retry editing the file.
+
+ERRORS:
+- E999 IndentationError: expected an indented block after 'for' statement on line 76
+
+This is how your edit would have looked if applied
+-------------------------------------------------
+[File: /pyjen/src/pyjen/utils/plugin_api.py (78 lines total)]
+(66 more lines above)
+67:    view_plugins = list()
+68:    for plugin in get_all_plugins():
+69:        if issubclass(plugin, View):
+70:            view_plugins.append(plugin)
+71:    return view_plugins
+72:
+73:def get_job_plugins():
+74:    """Returns a list of PyJen plugins that derive from the Job base class"""
+75:    job_plugins = list()
+76:    for plugin in get_all_plugins():
+77:    if inspect.isclass(plugin) and issubclass(plugin, Job):
+78:        job_plugins.append(plugin)
+-------------------------------------------------
+
+This is the original code before your edit
+-------------------------------------------------
+[File: /pyjen/src/pyjen/utils/plugin_api.py (79 lines total)]
+(66 more lines above)
+67:    view_plugins = list()
+68:    for plugin in get_all_plugins():
+69:        if issubclass(plugin, View):
+70:            view_plugins.append(plugin)
+71:    return view_plugins
+72:
+73:def get_job_plugins():
+74:    """Returns a list of PyJen plugins that derive from the Job base class"""
+75:    job_plugins = list()
+76:    for plugin in get_all_plugins():
+77:        if issubclass(plugin, Job):
+78:            job_plugins.append(plugin)
+79:    return job_plugins
+-------------------------------------------------
+Your changes have NOT been applied. Please fix your edit command and try again.
+You either need to 1) Specify the correct start/end line arguments or 2) Correct your edit code.
+DO NOT re-run the same failed edit command. Running it again will lead to the same error.
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 77:77\n        if inspect.isclass(plugin) and issubclass(plugin, Job):\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /pyjen/src/pyjen/utils/plugin_api.py (79 lines total)]
+1:"""Primitives for interacting with the PyJen plugin subsystem"""
+2:import logging
+3:from pkg_resources import iter_entry_points
+4:import inspect
+5:# Every PyJen plugin must have a class registered with the following Python
+6:# setup tools entrypoint
+7:PLUGIN_ENTRYPOINT_NAME = "pyjen.plugins"
+8:
+9:# PyJen plugins are expected to be implemented as Python classes, with
+10:# a static method named as shown below. This method is expected to return
+11:# the name of the associated Jenkins plugin the Python class interacts with
+12:PLUGIN_METHOD_NAME = "get_jenkins_plugin_name"
+13:
+14:
+15:def find_plugin(plugin_name):
+16:    """Locates the PyJen class associated with a given Jenkins plugin
+17:
+18:    :param str plugin_name:
+19:        Name of the Jenkins plugin to find the associated
+20:    :returns:
+21:        reference to the PyJen plugin class associated with the given Jenkins
+22:        plugin, if one exists. If one doesn't exist, returns None.
+23:    """
+24:    formatted_plugin_name = plugin_name.replace("__", "_")
+25:
+26:    log = logging.getLogger(__name__)
+27:    all_plugins = list()
+28:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+29:        all_plugins.append(entry_point.load())
+30:
+31:    supported_plugins = list()
+32:    for cur_plugin in all_plugins:
+33:        if not hasattr(cur_plugin, PLUGIN_METHOD_NAME):
+34:            log.debug(
+35:                "Plugin %s does not expose the required %s static method.",
+36:                cur_plugin.__module__,
+37:                PLUGIN_METHOD_NAME)
+38:            continue
+39:
+40:        if getattr(cur_plugin, PLUGIN_METHOD_NAME)() == formatted_plugin_name:
+41:            supported_plugins.append(cur_plugin)
+42:
+43:    if not supported_plugins:
+44:        return None
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+55:from pyjen.plugins import View, Job
+56:
+57:def get_all_plugins():
+58:    """Returns a list of all PyJen plugins"""
+59:    log = logging.getLogger(__name__)
+60:    all_plugins = list()
+61:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+62:        all_plugins.append(entry_point.load())
+63:    return all_plugins
+64:
+65:def get_view_plugins():
+66:    """Returns a list of PyJen plugins that derive from the View base class"""
+67:    view_plugins = list()
+68:    for plugin in get_all_plugins():
+69:        if issubclass(plugin, View):
+70:            view_plugins.append(plugin)
+71:    return view_plugins
+72:
+73:def get_job_plugins():
+74:    """Returns a list of PyJen plugins that derive from the Job base class"""
+75:    job_plugins = list()
+76:    for plugin in get_all_plugins():
+77:        if inspect.isclass(plugin) and issubclass(plugin, Job):
+78:            job_plugins.append(plugin)
+79:    return job_plugins
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 69:69\n        if inspect.isclass(plugin) and issubclass(plugin, View):\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /pyjen/src/pyjen/utils/plugin_api.py (79 lines total)]
+1:"""Primitives for interacting with the PyJen plugin subsystem"""
+2:import logging
+3:from pkg_resources import iter_entry_points
+4:import inspect
+5:# Every PyJen plugin must have a class registered with the following Python
+6:# setup tools entrypoint
+7:PLUGIN_ENTRYPOINT_NAME = "pyjen.plugins"
+8:
+9:# PyJen plugins are expected to be implemented as Python classes, with
+10:# a static method named as shown below. This method is expected to return
+11:# the name of the associated Jenkins plugin the Python class interacts with
+12:PLUGIN_METHOD_NAME = "get_jenkins_plugin_name"
+13:
+14:
+15:def find_plugin(plugin_name):
+16:    """Locates the PyJen class associated with a given Jenkins plugin
+17:
+18:    :param str plugin_name:
+19:        Name of the Jenkins plugin to find the associated
+20:    :returns:
+21:        reference to the PyJen plugin class associated with the given Jenkins
+22:        plugin, if one exists. If one doesn't exist, returns None.
+23:    """
+24:    formatted_plugin_name = plugin_name.replace("__", "_")
+25:
+26:    log = logging.getLogger(__name__)
+27:    all_plugins = list()
+28:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+29:        all_plugins.append(entry_point.load())
+30:
+31:    supported_plugins = list()
+32:    for cur_plugin in all_plugins:
+33:        if not hasattr(cur_plugin, PLUGIN_METHOD_NAME):
+34:            log.debug(
+35:                "Plugin %s does not expose the required %s static method.",
+36:                cur_plugin.__module__,
+37:                PLUGIN_METHOD_NAME)
+38:            continue
+39:
+40:        if getattr(cur_plugin, PLUGIN_METHOD_NAME)() == formatted_plugin_name:
+41:            supported_plugins.append(cur_plugin)
+42:
+43:    if not supported_plugins:
+44:        return None
+45:
+46:    if len(supported_plugins) > 1:
+47:        log.warning("multiple plugins detected for specified Jenkins"
+48:                    " object: %s. Using first match.", formatted_plugin_name)
+49:
+50:    return supported_plugins[0]
+51:
+52:
+53:if __name__ == "__main__":  # pragma: no cover
+54:    pass
+55:from pyjen.plugins import View, Job
+56:
+57:def get_all_plugins():
+58:    """Returns a list of all PyJen plugins"""
+59:    log = logging.getLogger(__name__)
+60:    all_plugins = list()
+61:    for entry_point in iter_entry_points(group=PLUGIN_ENTRYPOINT_NAME):
+62:        all_plugins.append(entry_point.load())
+63:    return all_plugins
+64:
+65:def get_view_plugins():
+66:    """Returns a list of PyJen plugins that derive from the View base class"""
+67:    view_plugins = list()
+68:    for plugin in get_all_plugins():
+69:        if inspect.isclass(plugin) and issubclass(plugin, View):
+70:            view_plugins.append(plugin)
+71:    return view_plugins
+72:
+73:def get_job_plugins():
+74:    """Returns a list of PyJen plugins that derive from the Job base class"""
+75:    job_plugins = list()
+76:    for plugin in get_all_plugins():
+77:        if inspect.isclass(plugin) and issubclass(plugin, Job):
+78:            job_plugins.append(plugin)
+79:    return job_plugins
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /pyjen/src/pyjen/utils/plugin_api.py)
+(Current directory: /pyjen)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">submit</div>
+          <div class="args">{'command': 'submit'}</div>
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'submit' with no corresponding planned step.</div>
+      
+    </div>
+    
+  </div>
+
+  <footer>run_id: 97ba3057-3b71-4cc6-b0d0-c770f14ebded</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trace Diff Report — 26900982-5a00-4138-92f6-634e0fa3ee64</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 2rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  header h1 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #555; font-weight: 600; }
+  .task { font-size: 1.05rem; margin-bottom: 0.75rem; }
+  .stats { display: flex; gap: 1.5rem; font-size: 0.9rem; color: #444; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .label { font-size: 0.75rem; text-transform: uppercase; color: #888; }
+  .status-success { color: #1a7f37; font-weight: 600; }
+  .status-failure { color: #cf222e; font-weight: 600; }
+  .summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f0f4ff;
+    border-left: 3px solid #4361ee;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  .columns-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .diff { display: flex; flex-direction: column; gap: 0.5rem; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: white;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .row-match { background: #eafbf0; }
+  .row-args-changed { background: #fff9e6; }
+  .row-substitute { background: #fdeeee; }
+  .row-missing { background: #f4f4f5; border: 1px dashed #ccc; }
+  .row.first-divergence { border-left: 4px solid #cf222e; }
+  .cell .tool-name {
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .cell .reason, .cell .args {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .output-inline {
+    font-size: 0.85rem;
+    color: #2a6f4b;
+    margin-top: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  details.output {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+  }
+  details.output summary {
+    cursor: pointer;
+    color: #4361ee;
+    user-select: none;
+  }
+  details.output .output-body {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #f7f7f8;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
+  .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
+  .event-detail {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: #a13a1c;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #eee;
+  }
+  footer { margin-top: 2rem; font-size: 0.8rem; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>agent-trace-diff report</h1>
+    <div class="task">Stop MetricFrame errors on nonscalar metrics
+#### Is your feature request related to a problem? Please describe.
+
+`MetricFrame` is quite relaxed as to the return values of the metric functions it ev</div>
+    <div class="stats">
+      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Divergences</span><span>9</span></div>
+      <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
+    </div>
+    <div class="summary">No upfront plan exists for this run (either a legacy pre-Plan-and-Execute trace, or a framework that doesn't plan upfront) — there's nothing to compare execution against.</div>
+  </header>
+
+  
+  <div class="columns-header">
+    <div>Planned</div>
+    <div>Actual</div>
+  </div>
+  
+
+  <div class="diff">
+    
+    
+    <div class="row row-missing first-divergence">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">find_file</div>
+          <div class="args">{'command': 'find_file "metricframe.py"'}</div>
+          
+            
+            <div class="output-inline">→ No matches found for "metricframe.py" in /fairlearn
+
+(Open file: n/a)
+(Current directory: /fairlearn)
+bash-$</div>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'find_file' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">search_dir</div>
+          <div class="args">{'command': 'search_dir "MetricFrame"'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Found 266 matches for "MetricFrame" in /fairlearn:
+/fairlearn/docs/faq.rst (1 matches)
+/fairlearn/docs/quickstart.rst (6 matches)
+/fairlearn/docs/user_guide/assessment.rst (24 matches)
+/fairlearn/docs/user_guide/installation_and_version_guide/v0.5.0.rst (11 matches)
+/fairlearn/docs/user_guide/installation_and_version_guide/v0.6.0.rst (1 matches)
+/fairlearn/docs/user_guide/installation_and_version_guide/v0.6.1.rst (1 matches)
+/fairlearn/docs/user_guide/installation_and_version_guide/v0.7.0.rst (3 matches)
+/fairlearn/docs/user_guide/mitigation.rst (5 matches)
+/fairlearn/examples/plot_grid_search_census.py (4 matches)
+/fairlearn/examples/plot_make_derived_metric.py (10 matches)
+/fairlearn/examples/plot_metricframe_beyond_binary_classification.py (17 matches)
+/fairlearn/examples/plot_new_metrics.py (19 matches)
+/fairlearn/examples/plot_quickstart.py (4 matches)
+/fairlearn/examples/plot_quickstart_selection_rate.py (2 matches)
+/fairlearn/fairlearn/metrics/__init__.py (2 matches)
+/fairlearn/fairlearn/metrics/_disparities.py (9 matches)
+/fairlearn/fairlearn/metrics/_extra_metrics.py (1 matches)
+/fairlearn/fairlearn/metrics/_group_metric_set.py (2 matches)
+/fairlearn/fairlearn/metrics/_make_derived_metric.py (6 matches)
+/fairlearn/fairlearn/metrics/_metric_frame.py (7 matches)
+/fairlearn/notebooks/Binary (5 matches)
+/fairlearn/notebooks/Mitigating (13 matches)
+/fairlearn/test/unit/metrics/test_create_group_metric_set.py (2 matches)
+/fairlearn/test/unit/metrics/test_disparities.py (9 matches)
+/fairlearn/test/unit/metrics/test_make_derived_metric.py (12 matches)
+/fairlearn/test/unit/metrics/test_metricframe_aggregates.py (11 matches)
+/fairlearn/test/unit/metrics/test_metricframe_by_group.py (6 matches)
+/fairlearn/test/unit/metrics/test_metricframe_comprehensive.py (1 matches)
+/fairlearn/test/unit/metrics/test_metricframe_deprecate.py (6 matches)
+/fairlearn/test/unit/metrics/test_metricframe_feature_indexing.py (3 matches)
+/fairlearn/test/unit/metrics/test_metricframe_missing.py (2 matches)
+/fairlearn/test/unit/metrics/test_metricframe_multiclass.py (1 matches)
+/fairlearn/test/unit/metrics/test_metricframe_nonscalar.py (4 matches)
+/fairlearn/test/unit/metrics/test_metricframe_overall.py (13 matches)
+/fairlearn/test/unit/metrics/test_metricframe_process_features.py (16 matches)
+/fairlearn/test/unit/metrics/test_metricframe_smoke.py (10 matches)
+/fairlearn/test/unit/metrics/utils.py (3 matches)
+/fairlearn/test/unit/postprocessing/test_threshold_optimizer_multiple_sensitive_features.py (3 matches)
+/fairlearn/test/unit/reductions/exponentiated_gradient/test_control_features.py (8 matches)
+/fairlearn/test/unit/reductions/moments/test_moments_control_features.py (3 matches)
+End of matches for "MetricFrame" in /fairlearn
+
+(Open file: n/a)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'search_dir' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">open</div>
+          <div class="args">{'command': 'open fairlearn/metrics/_metric_frame.py'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /fairlearn/fairlearn/metrics/_metric_frame.py (644 lines total)]
+1:# Copyright (c) Microsoft Corporation and Fairlearn contributors.
+2:# Licensed under the MIT License.
+3:
+4:import copy
+5:import logging
+6:import numpy as np
+7:import pandas as pd
+8:from typing import Any, Callable, Dict, List, Optional, Union
+9:from sklearn.utils import check_consistent_length
+10:import warnings
+11:from functools import wraps
+12:
+13:from fairlearn.metrics._input_manipulations import _convert_to_ndarray_and_squeeze
+14:from ._function_container import FunctionContainer, _SAMPLE_PARAMS_NOT_DICT
+15:from ._group_feature import GroupFeature
+16:
+17:
+18:logger = logging.getLogger(__name__)
+19:
+20:_SUBGROUP_COUNT_WARNING_THRESHOLD = 20
+21:
+22:_SF_DICT_CONVERSION_FAILURE = "DataFrame.from_dict() failed on sensitive features. " \
+23:    "Please ensure each array is strictly 1-D."
+24:_BAD_FEATURE_LENGTH = "Received a feature of length {0} when length {1} was expected"
+25:_SUBGROUP_COUNT_WARNING = "Found {0} subgroups. Evaluation may be slow"
+26:_FEATURE_LIST_NONSCALAR = "Feature lists must be of scalar types"
+27:_FEATURE_DF_COLUMN_BAD_NAME = "DataFrame column names must be strings. Name '{0}' is of type {1}"
+28:_DUPLICATE_FEATURE_NAME = "Detected duplicate feature name: '{0}'"
+29:_TOO_MANY_FEATURE_DIMS = "Feature array has too many dimensions"
+30:_SAMPLE_PARAM_KEYS_NOT_IN_FUNC_DICT = \
+31:    "Keys in 'sample_params' do not match those in 'metric'"
+32:
+33:
+34:def _deprecate_metric_frame_init(new_metric_frame_init):
+35:    """Issue deprecation warnings for the `MetricFrame` constructor.
+36:
+37:    Decorator to issue warnings if called with positional arguments
+38:    or with the keyword argument `metric` instead of `metrics`.
+39:
+40:    Parameters
+41:    ----------
+42:    new_metric_frame_init : callable
+43:        New MetricFrame constructor.
+44:    """
+45:    @wraps(new_metric_frame_init)
+46:    def compatible_metric_frame_init(self, *args, metric=None, **kwargs):
+47:        positional_names = ["metrics", "y_true", "y_pred"]
+48:        version = "0.10.0"
+49:
+50:        positional_dict = dict(zip(positional_names, args))
+51:
+52:        # If more than 3 positional arguments are provided (apart from self), show
+53:        # the error message applicable to the new constructor implementation (with `self`
+54:        # being the only positional argument).
+55:        if len(args) > 3:
+56:            raise TypeError(f"{new_metric_frame_init.__name__}() takes 1 positional "
+57:                            f"argument but {1+len(args)} positional arguments "
+58:                            f"were given")
+59:
+60:        # If 1-3 positional arguments are provided (apart fom self), issue warning.
+61:        if len(args) > 0:
+62:            args_msg = ", ".join([f"'{name}'" for name in positional_dict.keys()])
+63:            warnings.warn(f"You have provided {args_msg} as positional arguments. "
+64:                          f"Please pass them as keyword arguments. From version "
+65:                          f"{version} passing them as positional arguments "
+66:                          f"will result in an error.",
+67:                          FutureWarning)
+68:
+69:        # If a keyword argument `metric` is provided, issue warning.
+70:        metric_arg_dict = {}
+71:        if metric is not None:
+72:            metric_arg_dict = {"metrics": metric}
+73:            warnings.warn(f"The positional argument 'metric' has been replaced "
+74:                          f"by a keyword argument 'metrics'. "
+75:                          f"From version {version} passing it as a positional argument "
+76:                          f"or as a keyword argument 'metric' will result in an error",
+77:                          FutureWarning)
+78:
+79:        # Call the new constructor with positional arguments passed as keyword arguments
+80:        # and with the `metric` keyword argument renamed to `metrics`.
+81:        new_metric_frame_init(self,
+82:                              **metric_arg_dict,
+83:                              **positional_dict,
+84:                              **kwargs)
+85:
+86:    return compatible_metric_frame_init
+87:
+88:
+89:class MetricFrame:
+90:    """Collection of disaggregated metric values.
+91:
+92:    This data structure stores and manipulates disaggregated values for any number of underlying
+93:    metrics. At least one sensitive feature must be supplied, which is used
+94:    to split the data into subgroups. The underlying metric(s) is(are) calculated
+95:    across the entire dataset (made available by the :attr:`.overall` property) and
+96:    for each identified subgroup (made available by the :attr:`.by_group` property).
+97:
+98:    The only limitations placed on the metric functions are that:
+99:
+100:    * The first two arguments they take must be ``y_true`` and ``y_pred`` arrays
+(544 more lines below)
+
+(Open file: /fairlearn/fairlearn/metrics/_metric_frame.py)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'open' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">search_file</div>
+          <div class="args">{'command': 'search_file "group_min" fairlearn/metrics/_metric_frame.py'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Found 5 matches for "group_min" in /fairlearn/fairlearn/metrics/_metric_frame.py:
+Line 407:    def group_min(self) -> Union[Any, pd.Series, pd.DataFrame]:
+Line 454:        ``group_max() - group_min()``). Alternatively, ``to_overall``
+Line 472:            subtrahend = self.group_min()
+Line 496:        ``group_min() / group_max()``). Alternatively, ``to_overall``
+Line 515:            result = self.group_min() / self.group_max()
+End of matches for "group_min" in /fairlearn/fairlearn/metrics/_metric_frame.py
+
+(Open file: /fairlearn/fairlearn/metrics/_metric_frame.py)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'search_file' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">goto</div>
+          <div class="args">{'command': 'goto 407'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /fairlearn/fairlearn/metrics/_metric_frame.py (644 lines total)]
+(391 more lines above)
+392:            result = pd.Series(index=self._by_group.columns, dtype='object')
+393:            for m in result.index:
+394:                max_val = self._by_group[m].max()
+395:                result[m] = max_val
+396:        else:
+397:            result = self._by_group.groupby(level=self.control_levels).max()
+398:
+399:        if self._user_supplied_callable:
+400:            if self.control_levels:
+401:                return result.iloc[:, 0]
+402:            else:
+403:                return result.iloc[0]
+404:        else:
+405:            return result
+406:
+407:    def group_min(self) -> Union[Any, pd.Series, pd.DataFrame]:
+408:        """Return the minimum value of the metric over the sensitive features.
+409:
+410:        This method computes the minimum value over all combinations of
+411:        sensitive features for each underlying metric function in the :attr:`.by_group`
+412:        property (it will only succeed if all the underlying metric
+413:        functions return scalar values). The exact return type depends on
+414:        whether control features are present, and whether the metric functions
+415:        were specified as a single callable or a dictionary.
+416:
+417:        Returns
+418:        -------
+419:        typing.Any pandas.Series or pandas.DataFrame
+420:            The minimum value over sensitive features. The exact type
+421:            follows the table in :attr:`.MetricFrame.overall`.
+422:        """
+423:        if not self.control_levels:
+424:            result = pd.Series(index=self._by_group.columns, dtype='object')
+425:            for m in result.index:
+426:                min_val = self._by_group[m].min()
+427:                result[m] = min_val
+428:        else:
+429:            result = self._by_group.groupby(level=self.control_levels).min()
+430:
+431:        if self._user_supplied_callable:
+432:            if self.control_levels:
+433:                return result.iloc[:, 0]
+434:            else:
+435:                return result.iloc[0]
+436:        else:
+437:            return result
+438:
+439:    def difference(self,
+440:                   method: str = 'between_groups') -> Union[Any, pd.Series, pd.DataFrame]:
+441:        """Return the maximum absolute difference between groups for each metric.
+442:
+443:        This method calculates a scalar value for each underlying metric by
+444:        finding the maximum absolute difference between the entries in each
+445:        combination of sensitive features in the :attr:`.by_group` property.
+446:
+447:        Similar to other methods, the result type varies with the
+448:        specification of the metric functions, and whether control features
+449:        are present or not.
+450:
+451:        There are two allowed values for the ``method=`` parameter. The
+452:        value ``between_groups`` computes the maximum difference between
+453:        any two pairs of groups in the :attr:`.by_group` property (i.e.
+454:        ``group_max() - group_min()``). Alternatively, ``to_overall``
+455:        computes the difference between each subgroup and the
+456:        corresponding value from :attr:`.overall` (if there are control
+457:        features, then :attr:`.overall` is multivalued for each metric).
+458:        The result is the absolute maximum of these values.
+459:
+460:        Parameters
+461:        ----------
+462:        method : str
+463:            How to compute the aggregate. Default is :code:`between_groups`
+464:
+465:        Returns
+466:        -------
+467:        typing.Any or pandas.Series or pandas.DataFrame
+468:            The exact type follows the table in :attr:`.MetricFrame.overall`.
+469:        """
+470:        subtrahend = np.nan
+471:        if method == 'between_groups':
+472:            subtrahend = self.group_min()
+473:        elif method == 'to_overall':
+474:            subtrahend = self.overall
+475:        else:
+476:            raise ValueError("Unrecognised method '{0}' in difference() call".format(method))
+477:
+478:        return (self.by_group - subtrahend).abs().max(level=self.control_levels)
+479:
+480:    def ratio(self,
+481:              method: str = 'between_groups') -> Union[Any, pd.Series, pd.DataFrame]:
+482:        """Return the minimum ratio between groups for each metric.
+483:
+484:        This method calculates a scalar value for each underlying metric by
+485:        finding the minimum ratio (that is, the ratio is forced to be
+486:        less than unity) between the entries in each
+487:        column of the :attr:`.by_group` property.
+488:
+489:        Similar to other methods, the result type varies with the
+490:        specification of the metric functions, and whether control features
+491:        are present or not.
+(153 more lines below)
+
+(Open file: /fairlearn/fairlearn/metrics/_metric_frame.py)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'goto' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 407:437\n    def group_min(self) -> Union[Any, pd.Series, pd.DataFrame]:\n        """Return the minimum value of the metric over the sensitive features.\n\n        This method computes the minimum value over all combinations of\n        sensitive features for each underlying metric function in the :attr:`.by_group`\n        property (it will only succeed if all the underlying metric\n        functions return scalar values). The exact return type depends on\n        whether control features are present, and whether the metric functions\n        were specified as a single callable or a dictionary.\n\n        Returns\n        -------\n        typing.Any pandas.Series or pandas.DataFrame\n            The minimum value over sensitive features. The exact type\n            follows the table in :attr:`.MetricFrame.overall`.\n        """\n        if not self.control_levels:\n            result = pd.Series(index=self._by_group.columns, dtype=\'object\')\n            for m in result.index:\n                try:\n                    min_val = self._by_group[m].min()\n                except Exception as e:\n                    logger.warning(f"Exception occurred for metric {m}: {e}")\n                    min_val = np.NaN\n                result[m] = min_val\n        else:\n            result = self._by_group.groupby(level=self.control_levels).min()\n\n        if self._user_supplied_callable:\n            if self.control_levels:\n                return result.iloc[:, 0]\n            else:\n                return result.iloc[0]\n        else:\n            return result\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /fairlearn/fairlearn/metrics/_metric_frame.py (648 lines total)]
+(356 more lines above)
+357:        """
+358:        return self._cf_names
+359:
+360:    @property
+361:    def sensitive_levels(self) -> List[str]:
+362:        """Return a list of the feature names which are produced by sensitive features.
+363:
+364:        In cases where the :attr:`.by_group` property has a :class:`pandas.MultiIndex`
+365:        index, this identifies which elements of the index are sensitive features.
+366:
+367:        Returns
+368:        -------
+369:        List[str]
+370:            List of names, which can be used in calls to
+371:            :meth:`pandas.DataFrame.groupby` etc.
+372:        """
+373:        return self._sf_names
+374:
+375:    def group_max(self) -> Union[Any, pd.Series, pd.DataFrame]:
+376:        """Return the maximum value of the metric over the sensitive features.
+377:
+378:        This method computes the maximum value over all combinations of
+379:        sensitive features for each underlying metric function in the :attr:`.by_group`
+380:        property (it will only succeed if all the underlying metric
+381:        functions return scalar values). The exact return type depends on
+382:        whether control features are present, and whether the metric functions
+383:        were specified as a single callable or a dictionary.
+384:
+385:        Returns
+386:        -------
+387:        typing.Any or pandas.Series or pandas.DataFrame
+388:            The maximum value over sensitive features. The exact type
+389:            follows the table in :attr:`.MetricFrame.overall`.
+390:        """
+391:        if not self.control_levels:
+392:            result = pd.Series(index=self._by_group.columns, dtype='object')
+393:            for m in result.index:
+394:                max_val = self._by_group[m].max()
+395:                result[m] = max_val
+396:        else:
+397:            result = self._by_group.groupby(level=self.control_levels).max()
+398:
+399:        if self._user_supplied_callable:
+400:            if self.control_levels:
+401:                return result.iloc[:, 0]
+402:            else:
+403:                return result.iloc[0]
+404:        else:
+405:            return result
+406:
+407:    def group_min(self) -> Union[Any, pd.Series, pd.DataFrame]:
+408:        """Return the minimum value of the metric over the sensitive features.
+409:
+410:        This method computes the minimum value over all combinations of
+411:        sensitive features for each underlying metric function in the :attr:`.by_group`
+412:        property (it will only succeed if all the underlying metric
+413:        functions return scalar values). The exact return type depends on
+414:        whether control features are present, and whether the metric functions
+415:        were specified as a single callable or a dictionary.
+416:
+417:        Returns
+418:        -------
+419:        typing.Any pandas.Series or pandas.DataFrame
+420:            The minimum value over sensitive features. The exact type
+421:            follows the table in :attr:`.MetricFrame.overall`.
+422:        """
+423:        if not self.control_levels:
+424:            result = pd.Series(index=self._by_group.columns, dtype='object')
+425:            for m in result.index:
+426:                try:
+427:                    min_val = self._by_group[m].min()
+428:                except Exception as e:
+429:                    logger.warning(f"Exception occurred for metric {m}: {e}")
+430:                    min_val = np.NaN
+431:                result[m] = min_val
+432:        else:
+433:            result = self._by_group.groupby(level=self.control_levels).min()
+434:
+435:        if self._user_supplied_callable:
+436:            if self.control_levels:
+437:                return result.iloc[:, 0]
+438:            else:
+439:                return result.iloc[0]
+440:        else:
+441:            return result
+442:
+443:    def difference(self,
+444:                   method: str = 'between_groups') -> Union[Any, pd.Series, pd.DataFrame]:
+445:        """Return the maximum absolute difference between groups for each metric.
+446:
+447:        This method calculates a scalar value for each underlying metric by
+448:        finding the maximum absolute difference between the entries in each
+449:        combination of sensitive features in the :attr:`.by_group` property.
+450:
+451:        Similar to other methods, the result type varies with the
+452:        specification of the metric functions, and whether control features
+453:        are present or not.
+454:
+455:        There are two allowed values for the ``method=`` parameter. The
+456:        value ``between_groups`` computes the maximum difference between
+(192 more lines below)
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /fairlearn/fairlearn/metrics/_metric_frame.py)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">goto</div>
+          <div class="args">{'command': 'goto 375'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /fairlearn/fairlearn/metrics/_metric_frame.py (648 lines total)]
+(359 more lines above)
+360:    @property
+361:    def sensitive_levels(self) -> List[str]:
+362:        """Return a list of the feature names which are produced by sensitive features.
+363:
+364:        In cases where the :attr:`.by_group` property has a :class:`pandas.MultiIndex`
+365:        index, this identifies which elements of the index are sensitive features.
+366:
+367:        Returns
+368:        -------
+369:        List[str]
+370:            List of names, which can be used in calls to
+371:            :meth:`pandas.DataFrame.groupby` etc.
+372:        """
+373:        return self._sf_names
+374:
+375:    def group_max(self) -> Union[Any, pd.Series, pd.DataFrame]:
+376:        """Return the maximum value of the metric over the sensitive features.
+377:
+378:        This method computes the maximum value over all combinations of
+379:        sensitive features for each underlying metric function in the :attr:`.by_group`
+380:        property (it will only succeed if all the underlying metric
+381:        functions return scalar values). The exact return type depends on
+382:        whether control features are present, and whether the metric functions
+383:        were specified as a single callable or a dictionary.
+384:
+385:        Returns
+386:        -------
+387:        typing.Any or pandas.Series or pandas.DataFrame
+388:            The maximum value over sensitive features. The exact type
+389:            follows the table in :attr:`.MetricFrame.overall`.
+390:        """
+391:        if not self.control_levels:
+392:            result = pd.Series(index=self._by_group.columns, dtype='object')
+393:            for m in result.index:
+394:                max_val = self._by_group[m].max()
+395:                result[m] = max_val
+396:        else:
+397:            result = self._by_group.groupby(level=self.control_levels).max()
+398:
+399:        if self._user_supplied_callable:
+400:            if self.control_levels:
+401:                return result.iloc[:, 0]
+402:            else:
+403:                return result.iloc[0]
+404:        else:
+405:            return result
+406:
+407:    def group_min(self) -> Union[Any, pd.Series, pd.DataFrame]:
+408:        """Return the minimum value of the metric over the sensitive features.
+409:
+410:        This method computes the minimum value over all combinations of
+411:        sensitive features for each underlying metric function in the :attr:`.by_group`
+412:        property (it will only succeed if all the underlying metric
+413:        functions return scalar values). The exact return type depends on
+414:        whether control features are present, and whether the metric functions
+415:        were specified as a single callable or a dictionary.
+416:
+417:        Returns
+418:        -------
+419:        typing.Any pandas.Series or pandas.DataFrame
+420:            The minimum value over sensitive features. The exact type
+421:            follows the table in :attr:`.MetricFrame.overall`.
+422:        """
+423:        if not self.control_levels:
+424:            result = pd.Series(index=self._by_group.columns, dtype='object')
+425:            for m in result.index:
+426:                try:
+427:                    min_val = self._by_group[m].min()
+428:                except Exception as e:
+429:                    logger.warning(f"Exception occurred for metric {m}: {e}")
+430:                    min_val = np.NaN
+431:                result[m] = min_val
+432:        else:
+433:            result = self._by_group.groupby(level=self.control_levels).min()
+434:
+435:        if self._user_supplied_callable:
+436:            if self.control_levels:
+437:                return result.iloc[:, 0]
+438:            else:
+439:                return result.iloc[0]
+440:        else:
+441:            return result
+442:
+443:    def difference(self,
+444:                   method: str = 'between_groups') -> Union[Any, pd.Series, pd.DataFrame]:
+445:        """Return the maximum absolute difference between groups for each metric.
+446:
+447:        This method calculates a scalar value for each underlying metric by
+448:        finding the maximum absolute difference between the entries in each
+449:        combination of sensitive features in the :attr:`.by_group` property.
+450:
+451:        Similar to other methods, the result type varies with the
+452:        specification of the metric functions, and whether control features
+453:        are present or not.
+454:
+455:        There are two allowed values for the ``method=`` parameter. The
+456:        value ``between_groups`` computes the maximum difference between
+457:        any two pairs of groups in the :attr:`.by_group` property (i.e.
+458:        ``group_max() - group_min()``). Alternatively, ``to_overall``
+459:        computes the difference between each subgroup and the
+(189 more lines below)
+
+(Open file: /fairlearn/fairlearn/metrics/_metric_frame.py)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'goto' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 375:405\n    def group_max(self) -> Union[Any, pd.Series, pd.DataFrame]:\n        """Return the maximum value of the metric over the sensitive features.\n\n        This method computes the maximum value over all combinations of\n        sensitive features for each underlying metric function in the :attr:`.by_group`\n        property (it will only succeed if all the underlying metric\n        functions return scalar values). The exact return type depends on\n        whether control features are present, and whether the metric functions\n        were specified as a single callable or a dictionary.\n\n        Returns\n        -------\n        typing.Any or pandas.Series or pandas.DataFrame\n            The maximum value over sensitive features. The exact type\n            follows the table in :attr:`.MetricFrame.overall`.\n        """\n        if not self.control_levels:\n            result = pd.Series(index=self._by_group.columns, dtype=\'object\')\n            for m in result.index:\n                try:\n                    max_val = self._by_group[m].max()\n                except Exception as e:\n                    logger.warning(f"Exception occurred for metric {m}: {e}")\n                    max_val = np.NaN\n                result[m] = max_val\n        else:\n            result = self._by_group.groupby(level=self.control_levels).max()\n\n        if self._user_supplied_callable:\n            if self.control_levels:\n                return result.iloc[:, 0]\n            else:\n                return result.iloc[0]\n        else:\n            return result\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /fairlearn/fairlearn/metrics/_metric_frame.py (652 lines total)]
+(324 more lines above)
+325:            When a callable is supplied to the constructor, the result is
+326:            a :class:`pandas.Series`, indexed by the combinations of subgroups
+327:            in the sensitive and control features.
+328:
+329:            When the metric functions were specified with a dictionary (even
+330:            if the dictionary only has a single entry), then the result is
+331:            a :class:`pandas.DataFrame` with columns named after the metric
+332:            functions, and rows indexed by the combinations of subgroups
+333:            in the sensitive and control features.
+334:
+335:            If a particular combination of subgroups was not present in the dataset
+336:            (likely to occur as more sensitive and control features
+337:            are specified), then the corresponding entry will be NaN.
+338:        """
+339:        if self._user_supplied_callable:
+340:            return self._by_group.iloc[:, 0]
+341:        else:
+342:            return self._by_group
+343:
+344:    @property
+345:    def control_levels(self) -> List[str]:
+346:        """Return a list of feature names which are produced by control features.
+347:
+348:        If control features are present, then the rows of the :attr:`.by_group`
+349:        property have a :class:`pandas.MultiIndex` index. This property
+350:        identifies which elements of that index are control features.
+351:
+352:        Returns
+353:        -------
+354:        List[str] or None
+355:            List of names, which can be used in calls to
+356:            :meth:`pandas.DataFrame.groupby` etc.
+357:        """
+358:        return self._cf_names
+359:
+360:    @property
+361:    def sensitive_levels(self) -> List[str]:
+362:        """Return a list of the feature names which are produced by sensitive features.
+363:
+364:        In cases where the :attr:`.by_group` property has a :class:`pandas.MultiIndex`
+365:        index, this identifies which elements of the index are sensitive features.
+366:
+367:        Returns
+368:        -------
+369:        List[str]
+370:            List of names, which can be used in calls to
+371:            :meth:`pandas.DataFrame.groupby` etc.
+372:        """
+373:        return self._sf_names
+374:
+375:    def group_max(self) -> Union[Any, pd.Series, pd.DataFrame]:
+376:        """Return the maximum value of the metric over the sensitive features.
+377:
+378:        This method computes the maximum value over all combinations of
+379:        sensitive features for each underlying metric function in the :attr:`.by_group`
+380:        property (it will only succeed if all the underlying metric
+381:        functions return scalar values). The exact return type depends on
+382:        whether control features are present, and whether the metric functions
+383:        were specified as a single callable or a dictionary.
+384:
+385:        Returns
+386:        -------
+387:        typing.Any or pandas.Series or pandas.DataFrame
+388:            The maximum value over sensitive features. The exact type
+389:            follows the table in :attr:`.MetricFrame.overall`.
+390:        """
+391:        if not self.control_levels:
+392:            result = pd.Series(index=self._by_group.columns, dtype='object')
+393:            for m in result.index:
+394:                try:
+395:                    max_val = self._by_group[m].max()
+396:                except Exception as e:
+397:                    logger.warning(f"Exception occurred for metric {m}: {e}")
+398:                    max_val = np.NaN
+399:                result[m] = max_val
+400:        else:
+401:            result = self._by_group.groupby(level=self.control_levels).max()
+402:
+403:        if self._user_supplied_callable:
+404:            if self.control_levels:
+405:                return result.iloc[:, 0]
+406:            else:
+407:                return result.iloc[0]
+408:        else:
+409:            return result
+410:
+411:    def group_min(self) -> Union[Any, pd.Series, pd.DataFrame]:
+412:        """Return the minimum value of the metric over the sensitive features.
+413:
+414:        This method computes the minimum value over all combinations of
+415:        sensitive features for each underlying metric function in the :attr:`.by_group`
+416:        property (it will only succeed if all the underlying metric
+417:        functions return scalar values). The exact return type depends on
+418:        whether control features are present, and whether the metric functions
+419:        were specified as a single callable or a dictionary.
+420:
+421:        Returns
+422:        -------
+423:        typing.Any pandas.Series or pandas.DataFrame
+424:            The minimum value over sensitive features. The exact type
+(228 more lines below)
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /fairlearn/fairlearn/metrics/_metric_frame.py)
+(Current directory: /fairlearn)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">submit</div>
+          <div class="args">{'command': 'submit'}</div>
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'submit' with no corresponding planned step.</div>
+      
+    </div>
+    
+  </div>
+
+  <footer>run_id: 26900982-5a00-4138-92f6-634e0fa3ee64</footer>
+</div>
+</body>
+</html>

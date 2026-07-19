@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trace Diff Report — 9722d6fa-4176-418e-b949-9e1b9ecd97c6</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 2rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  header h1 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #555; font-weight: 600; }
+  .task { font-size: 1.05rem; margin-bottom: 0.75rem; }
+  .stats { display: flex; gap: 1.5rem; font-size: 0.9rem; color: #444; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .label { font-size: 0.75rem; text-transform: uppercase; color: #888; }
+  .status-success { color: #1a7f37; font-weight: 600; }
+  .status-failure { color: #cf222e; font-weight: 600; }
+  .summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f0f4ff;
+    border-left: 3px solid #4361ee;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  .columns-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .diff { display: flex; flex-direction: column; gap: 0.5rem; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: white;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .row-match { background: #eafbf0; }
+  .row-args-changed { background: #fff9e6; }
+  .row-substitute { background: #fdeeee; }
+  .row-missing { background: #f4f4f5; border: 1px dashed #ccc; }
+  .row.first-divergence { border-left: 4px solid #cf222e; }
+  .cell .tool-name {
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .cell .reason, .cell .args {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .output-inline {
+    font-size: 0.85rem;
+    color: #2a6f4b;
+    margin-top: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  details.output {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+  }
+  details.output summary {
+    cursor: pointer;
+    color: #4361ee;
+    user-select: none;
+  }
+  details.output .output-body {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #f7f7f8;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
+  .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
+  .event-detail {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: #a13a1c;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #eee;
+  }
+  footer { margin-top: 2rem; font-size: 0.8rem; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>agent-trace-diff report</h1>
+    <div class="task">Incorrect description for env_extra for HTCondorCluster
+Hi,
+
+The description for env_extra in [HTCondorCluster](https://jobqueue.dask.org/en/latest/generated/dask_jobqueue.HTCondorCluster.html#dask_</div>
+    <div class="stats">
+      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Divergences</span><span>9</span></div>
+      <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
+    </div>
+    <div class="summary">No upfront plan exists for this run (either a legacy pre-Plan-and-Execute trace, or a framework that doesn't plan upfront) — there's nothing to compare execution against.</div>
+  </header>
+
+  
+  <div class="columns-header">
+    <div>Planned</div>
+    <div>Actual</div>
+  </div>
+  
+
+  <div class="diff">
+    
+    
+    <div class="row row-missing first-divergence">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">search_dir</div>
+          <div class="args">{'command': 'search_dir "class HTCondorCluster"'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">Found 1 matches for "class HTCondorCluster" in /dask-jobqueue:
+/dask-jobqueue/dask_jobqueue/htcondor.py (1 matches)
+End of matches for "class HTCondorCluster" in /dask-jobqueue
+
+(Open file: n/a)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'search_dir' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">open</div>
+          <div class="args">{'command': 'open dask_jobqueue/htcondor.py'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (266 lines total)]
+1:import logging
+2:import re
+3:import shlex
+4:
+5:import dask
+6:from dask.utils import parse_bytes
+7:
+8:from .core import JobQueueCluster, Job, job_parameters, cluster_parameters
+9:
+10:logger = logging.getLogger(__name__)
+11:
+12:
+13:class HTCondorJob(Job):
+14:    _script_template = """
+15:%(shebang)s
+16:
+17:%(job_header)s
+18:
+19:Environment = "%(quoted_environment)s"
+20:Arguments = "%(quoted_arguments)s"
+21:Executable = %(executable)s
+22:
+23:Queue
+24:""".lstrip()
+25:
+26:    submit_command = "condor_submit"
+27:    cancel_command = "condor_rm"
+28:    job_id_regexp = r"(?P<job_id>\d+\.\d+)"
+29:
+30:    # condor sets argv[0] of the executable to "condor_exec.exe", which confuses
+31:    # Python (can't find its libs), so we have to go through the shell.
+32:    executable = "/bin/sh"
+33:
+34:    config_name = "htcondor"
+35:
+36:    def __init__(
+37:        self,
+38:        scheduler=None,
+39:        name=None,
+40:        disk=None,
+41:        job_extra=None,
+42:        config_name=None,
+43:        submit_command_extra=None,
+44:        cancel_command_extra=None,
+45:        **base_class_kwargs
+46:    ):
+47:        super().__init__(
+48:            scheduler=scheduler, name=name, config_name=config_name, **base_class_kwargs
+49:        )
+50:
+51:        if disk is None:
+52:            disk = dask.config.get("jobqueue.%s.disk" % self.config_name)
+53:        if disk is None:
+54:            raise ValueError(
+55:                "You must specify how much disk to use per job like ``disk='1 GB'``"
+56:            )
+57:        self.worker_disk = parse_bytes(disk)
+58:        if job_extra is None:
+59:            self.job_extra = dask.config.get(
+60:                "jobqueue.%s.job-extra" % self.config_name, {}
+61:            )
+62:        else:
+63:            self.job_extra = job_extra
+64:
+65:        env_extra = base_class_kwargs.get("env_extra", None)
+66:        if env_extra is None:
+67:            env_extra = dask.config.get(
+68:                "jobqueue.%s.env-extra" % self.config_name, default=[]
+69:            )
+70:        self.env_dict = self.env_lines_to_dict(env_extra)
+71:
+72:        self.job_header_dict = {
+73:            "MY.DaskWorkerName": '"htcondor--$F(MY.JobId)--"',
+74:            "RequestCpus": "MY.DaskWorkerCores",
+75:            "RequestMemory": "floor(MY.DaskWorkerMemory / 1048576)",
+76:            "RequestDisk": "floor(MY.DaskWorkerDisk / 1024)",
+77:            "MY.JobId": '"$(ClusterId).$(ProcId)"',
+78:            "MY.DaskWorkerCores": self.worker_cores,
+79:            "MY.DaskWorkerMemory": self.worker_memory,
+80:            "MY.DaskWorkerDisk": self.worker_disk,
+81:        }
+82:        if self.log_directory:
+83:            self.job_header_dict.update(
+84:                {
+85:                    "LogDirectory": self.log_directory,
+86:                    # $F(...) strips quotes
+87:                    "Output": "$(LogDirectory)/worker-$F(MY.JobId).out",
+88:                    "Error": "$(LogDirectory)/worker-$F(MY.JobId).err",
+89:                    "Log": "$(LogDirectory)/worker-$(ClusterId).log",
+90:                    # We kill all the workers to stop them so we need to stream their
+91:                    # output+error if we ever want to see anything
+92:                    "Stream_Output": True,
+93:                    "Stream_Error": True,
+94:                }
+95:            )
+96:        if self.job_extra:
+97:            self.job_header_dict.update(self.job_extra)
+98:
+99:        if submit_command_extra is None:
+100:            submit_command_extra = dask.config.get(
+(166 more lines below)
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'open' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">scroll_down</div>
+          <div class="args">{'command': 'scroll_down'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (266 lines total)]
+(98 more lines above)
+99:        if submit_command_extra is None:
+100:            submit_command_extra = dask.config.get(
+101:                "jobqueue.%s.submit-command-extra" % self.config_name, []
+102:            )
+103:
+104:        self.submit_command = (
+105:            HTCondorJob.submit_command
+106:            + " "
+107:            + " ".join(shlex.quote(arg) for arg in submit_command_extra)
+108:        )
+109:
+110:        if cancel_command_extra is None:
+111:            cancel_command_extra = dask.config.get(
+112:                "jobqueue.%s.cancel-command-extra" % self.config_name, []
+113:            )
+114:
+115:        self.cancel_command = (
+116:            HTCondorJob.cancel_command
+117:            + " "
+118:            + " ".join(shlex.quote(arg) for arg in cancel_command_extra)
+119:        )
+120:
+121:    def env_lines_to_dict(self, env_lines):
+122:        """Convert an array of export statements (what we get from env-extra
+123:        in the config) into a dict"""
+124:        env_dict = {}
+125:        for env_line in env_lines:
+126:            split_env_line = shlex.split(env_line)
+127:            if split_env_line[0] == "export":
+128:                split_env_line = split_env_line[1:]
+129:            for item in split_env_line:
+130:                if "=" in item:
+131:                    k, v = item.split("=", 1)
+132:                    env_dict[k] = v
+133:        return env_dict
+134:
+135:    def job_script(self):
+136:        """Construct a job submission script"""
+137:        quoted_arguments = quote_arguments(["-c", self._command_template])
+138:        quoted_environment = quote_environment(self.env_dict)
+139:        job_header_lines = "\n".join(
+140:            "%s = %s" % (k, v) for k, v in self.job_header_dict.items()
+141:        )
+142:        return self._script_template % {
+143:            "shebang": self.shebang,
+144:            "job_header": job_header_lines,
+145:            "quoted_environment": quoted_environment,
+146:            "quoted_arguments": quoted_arguments,
+147:            "executable": self.executable,
+148:        }
+149:
+150:    def _job_id_from_submit_output(self, out):
+151:        cluster_id_regexp = r"submitted to cluster (\d+)"
+152:        match = re.search(cluster_id_regexp, out)
+153:        if match is None:
+154:            msg = (
+155:                "Could not parse cluster id from submission command output.\n"
+156:                "Cluster id regexp is {!r}\n"
+157:                "Submission command output is:\n{}".format(cluster_id_regexp, out)
+158:            )
+159:            raise ValueError(msg)
+160:        return "%s.0" % match.group(1)
+161:
+162:
+163:def _double_up_quotes(instr):
+164:    return instr.replace("'", "''").replace('"', '""')
+165:
+166:
+167:def quote_arguments(args):
+168:    """Quote a string or list of strings using the Condor submit file "new" argument quoting rules.
+169:
+170:    Returns
+171:    -------
+172:    str
+173:        The arguments in a quoted form.
+174:
+175:    Warnings
+176:    --------
+177:    You will need to surround the result in double-quotes before using it in
+178:    the Arguments attribute.
+179:
+180:    Examples
+181:    --------
+182:    >>> quote_arguments(["3", "simple", "arguments"])
+183:    '3 simple arguments'
+184:    >>> quote_arguments(["one", "two with spaces", "three"])
+185:    'one \'two with spaces\' three'
+186:    >>> quote_arguments(["one", "\"two\"", "spacy 'quoted' argument"])
+187:    'one ""two"" \'spacey \'\'quoted\'\' argument\''
+188:    """
+189:    if isinstance(args, str):
+190:        args_list = [args]
+191:    else:
+192:        args_list = args
+193:
+194:    quoted_args = []
+195:    for a in args_list:
+196:        qa = _double_up_quotes(a)
+197:        if " " in qa or "'" in qa:
+198:            qa = "'" + qa + "'"
+(68 more lines below)
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'scroll_down' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">scroll_down</div>
+          <div class="args">{'command': 'scroll_down'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (266 lines total)]
+(166 more lines above)
+167:def quote_arguments(args):
+168:    """Quote a string or list of strings using the Condor submit file "new" argument quoting rules.
+169:
+170:    Returns
+171:    -------
+172:    str
+173:        The arguments in a quoted form.
+174:
+175:    Warnings
+176:    --------
+177:    You will need to surround the result in double-quotes before using it in
+178:    the Arguments attribute.
+179:
+180:    Examples
+181:    --------
+182:    >>> quote_arguments(["3", "simple", "arguments"])
+183:    '3 simple arguments'
+184:    >>> quote_arguments(["one", "two with spaces", "three"])
+185:    'one \'two with spaces\' three'
+186:    >>> quote_arguments(["one", "\"two\"", "spacy 'quoted' argument"])
+187:    'one ""two"" \'spacey \'\'quoted\'\' argument\''
+188:    """
+189:    if isinstance(args, str):
+190:        args_list = [args]
+191:    else:
+192:        args_list = args
+193:
+194:    quoted_args = []
+195:    for a in args_list:
+196:        qa = _double_up_quotes(a)
+197:        if " " in qa or "'" in qa:
+198:            qa = "'" + qa + "'"
+199:        quoted_args.append(qa)
+200:    return " ".join(quoted_args)
+201:
+202:
+203:def quote_environment(env):
+204:    """Quote a dict of strings using the Condor submit file "new" environment quoting rules.
+205:
+206:    Returns
+207:    -------
+208:    str
+209:        The environment in quoted form.
+210:
+211:    Warnings
+212:    --------
+213:    You will need to surround the result in double-quotes before using it in
+214:    the Environment attribute.
+215:
+216:    Examples
+217:    --------
+218:    >>> from collections import OrderedDict
+219:    >>> quote_environment(OrderedDict([("one", 1), ("two", '"2"'), ("three", "spacey 'quoted' value")]))
+220:    'one=1 two=""2"" three=\'spacey \'\'quoted\'\' value\''
+221:    """
+222:    if not isinstance(env, dict):
+223:        raise TypeError("env must be a dict")
+224:
+225:    entries = []
+226:    for k, v in env.items():
+227:        qv = _double_up_quotes(str(v))
+228:        if " " in qv or "'" in qv:
+229:            qv = "'" + qv + "'"
+230:        entries.append("%s=%s" % (k, qv))
+231:
+232:    return " ".join(entries)
+233:
+234:
+235:class HTCondorCluster(JobQueueCluster):
+236:    __doc__ = """ Launch Dask on an HTCondor cluster
+237:
+238:    Parameters
+239:    ----------
+240:    disk : str
+241:        Total amount of disk per job
+242:    job_extra : dict
+243:        Extra submit file attributes for the job
+244:    submit_command_extra : list of str
+245:        Extra arguments to pass to condor_submit
+246:    cancel_command_extra : list of str
+247:        Extra arguments to pass to condor_rm
+248:    {job}
+249:    {cluster}
+250:
+251:    Examples
+252:    --------
+253:    >>> from dask_jobqueue.htcondor import HTCondorCluster
+254:    >>> cluster = HTCondorCluster(cores=24, memory="4GB", disk="4GB")
+255:    >>> cluster.scale(jobs=10)  # ask for 10 jobs
+256:
+257:    >>> from dask.distributed import Client
+258:    >>> client = Client(cluster)
+259:
+260:    This also works with adaptive clusters.  This automatically launches and kill workers based on load.
+261:
+262:    >>> cluster.adapt(maximum_jobs=20)
+263:    """.format(
+264:        job=job_parameters, cluster=cluster_parameters
+265:    )
+266:    job_cls = HTCondorJob
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'scroll_down' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">scroll_down</div>
+          <div class="args">{'command': 'scroll_down'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (266 lines total)]
+(166 more lines above)
+167:def quote_arguments(args):
+168:    """Quote a string or list of strings using the Condor submit file "new" argument quoting rules.
+169:
+170:    Returns
+171:    -------
+172:    str
+173:        The arguments in a quoted form.
+174:
+175:    Warnings
+176:    --------
+177:    You will need to surround the result in double-quotes before using it in
+178:    the Arguments attribute.
+179:
+180:    Examples
+181:    --------
+182:    >>> quote_arguments(["3", "simple", "arguments"])
+183:    '3 simple arguments'
+184:    >>> quote_arguments(["one", "two with spaces", "three"])
+185:    'one \'two with spaces\' three'
+186:    >>> quote_arguments(["one", "\"two\"", "spacy 'quoted' argument"])
+187:    'one ""two"" \'spacey \'\'quoted\'\' argument\''
+188:    """
+189:    if isinstance(args, str):
+190:        args_list = [args]
+191:    else:
+192:        args_list = args
+193:
+194:    quoted_args = []
+195:    for a in args_list:
+196:        qa = _double_up_quotes(a)
+197:        if " " in qa or "'" in qa:
+198:            qa = "'" + qa + "'"
+199:        quoted_args.append(qa)
+200:    return " ".join(quoted_args)
+201:
+202:
+203:def quote_environment(env):
+204:    """Quote a dict of strings using the Condor submit file "new" environment quoting rules.
+205:
+206:    Returns
+207:    -------
+208:    str
+209:        The environment in quoted form.
+210:
+211:    Warnings
+212:    --------
+213:    You will need to surround the result in double-quotes before using it in
+214:    the Environment attribute.
+215:
+216:    Examples
+217:    --------
+218:    >>> from collections import OrderedDict
+219:    >>> quote_environment(OrderedDict([("one", 1), ("two", '"2"'), ("three", "spacey 'quoted' value")]))
+220:    'one=1 two=""2"" three=\'spacey \'\'quoted\'\' value\''
+221:    """
+222:    if not isinstance(env, dict):
+223:        raise TypeError("env must be a dict")
+224:
+225:    entries = []
+226:    for k, v in env.items():
+227:        qv = _double_up_quotes(str(v))
+228:        if " " in qv or "'" in qv:
+229:            qv = "'" + qv + "'"
+230:        entries.append("%s=%s" % (k, qv))
+231:
+232:    return " ".join(entries)
+233:
+234:
+235:class HTCondorCluster(JobQueueCluster):
+236:    __doc__ = """ Launch Dask on an HTCondor cluster
+237:
+238:    Parameters
+239:    ----------
+240:    disk : str
+241:        Total amount of disk per job
+242:    job_extra : dict
+243:        Extra submit file attributes for the job
+244:    submit_command_extra : list of str
+245:        Extra arguments to pass to condor_submit
+246:    cancel_command_extra : list of str
+247:        Extra arguments to pass to condor_rm
+248:    {job}
+249:    {cluster}
+250:
+251:    Examples
+252:    --------
+253:    >>> from dask_jobqueue.htcondor import HTCondorCluster
+254:    >>> cluster = HTCondorCluster(cores=24, memory="4GB", disk="4GB")
+255:    >>> cluster.scale(jobs=10)  # ask for 10 jobs
+256:
+257:    >>> from dask.distributed import Client
+258:    >>> client = Client(cluster)
+259:
+260:    This also works with adaptive clusters.  This automatically launches and kill workers based on load.
+261:
+262:    >>> cluster.adapt(maximum_jobs=20)
+263:    """.format(
+264:        job=job_parameters, cluster=cluster_parameters
+265:    )
+266:    job_cls = HTCondorJob
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'scroll_down' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">goto</div>
+          <div class="args">{'command': 'goto 1'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (266 lines total)]
+1:import logging
+2:import re
+3:import shlex
+4:
+5:import dask
+6:from dask.utils import parse_bytes
+7:
+8:from .core import JobQueueCluster, Job, job_parameters, cluster_parameters
+9:
+10:logger = logging.getLogger(__name__)
+11:
+12:
+13:class HTCondorJob(Job):
+14:    _script_template = """
+15:%(shebang)s
+16:
+17:%(job_header)s
+18:
+19:Environment = "%(quoted_environment)s"
+20:Arguments = "%(quoted_arguments)s"
+21:Executable = %(executable)s
+22:
+23:Queue
+24:""".lstrip()
+25:
+26:    submit_command = "condor_submit"
+27:    cancel_command = "condor_rm"
+28:    job_id_regexp = r"(?P<job_id>\d+\.\d+)"
+29:
+30:    # condor sets argv[0] of the executable to "condor_exec.exe", which confuses
+31:    # Python (can't find its libs), so we have to go through the shell.
+32:    executable = "/bin/sh"
+33:
+34:    config_name = "htcondor"
+35:
+36:    def __init__(
+37:        self,
+38:        scheduler=None,
+39:        name=None,
+40:        disk=None,
+41:        job_extra=None,
+42:        config_name=None,
+43:        submit_command_extra=None,
+44:        cancel_command_extra=None,
+45:        **base_class_kwargs
+46:    ):
+47:        super().__init__(
+48:            scheduler=scheduler, name=name, config_name=config_name, **base_class_kwargs
+49:        )
+50:
+51:        if disk is None:
+52:            disk = dask.config.get("jobqueue.%s.disk" % self.config_name)
+53:        if disk is None:
+54:            raise ValueError(
+55:                "You must specify how much disk to use per job like ``disk='1 GB'``"
+56:            )
+57:        self.worker_disk = parse_bytes(disk)
+58:        if job_extra is None:
+59:            self.job_extra = dask.config.get(
+60:                "jobqueue.%s.job-extra" % self.config_name, {}
+61:            )
+62:        else:
+63:            self.job_extra = job_extra
+64:
+65:        env_extra = base_class_kwargs.get("env_extra", None)
+66:        if env_extra is None:
+67:            env_extra = dask.config.get(
+68:                "jobqueue.%s.env-extra" % self.config_name, default=[]
+69:            )
+70:        self.env_dict = self.env_lines_to_dict(env_extra)
+71:
+72:        self.job_header_dict = {
+73:            "MY.DaskWorkerName": '"htcondor--$F(MY.JobId)--"',
+74:            "RequestCpus": "MY.DaskWorkerCores",
+75:            "RequestMemory": "floor(MY.DaskWorkerMemory / 1048576)",
+76:            "RequestDisk": "floor(MY.DaskWorkerDisk / 1024)",
+77:            "MY.JobId": '"$(ClusterId).$(ProcId)"',
+78:            "MY.DaskWorkerCores": self.worker_cores,
+79:            "MY.DaskWorkerMemory": self.worker_memory,
+80:            "MY.DaskWorkerDisk": self.worker_disk,
+81:        }
+82:        if self.log_directory:
+83:            self.job_header_dict.update(
+84:                {
+85:                    "LogDirectory": self.log_directory,
+86:                    # $F(...) strips quotes
+87:                    "Output": "$(LogDirectory)/worker-$F(MY.JobId).out",
+88:                    "Error": "$(LogDirectory)/worker-$F(MY.JobId).err",
+89:                    "Log": "$(LogDirectory)/worker-$(ClusterId).log",
+90:                    # We kill all the workers to stop them so we need to stream their
+91:                    # output+error if we ever want to see anything
+92:                    "Stream_Output": True,
+93:                    "Stream_Error": True,
+94:                }
+95:            )
+96:        if self.job_extra:
+97:            self.job_header_dict.update(self.job_extra)
+98:
+99:        if submit_command_extra is None:
+100:            submit_command_extra = dask.config.get(
+(166 more lines below)
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'goto' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">scroll_down</div>
+          <div class="args">{'command': 'scroll_down'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (266 lines total)]
+(98 more lines above)
+99:        if submit_command_extra is None:
+100:            submit_command_extra = dask.config.get(
+101:                "jobqueue.%s.submit-command-extra" % self.config_name, []
+102:            )
+103:
+104:        self.submit_command = (
+105:            HTCondorJob.submit_command
+106:            + " "
+107:            + " ".join(shlex.quote(arg) for arg in submit_command_extra)
+108:        )
+109:
+110:        if cancel_command_extra is None:
+111:            cancel_command_extra = dask.config.get(
+112:                "jobqueue.%s.cancel-command-extra" % self.config_name, []
+113:            )
+114:
+115:        self.cancel_command = (
+116:            HTCondorJob.cancel_command
+117:            + " "
+118:            + " ".join(shlex.quote(arg) for arg in cancel_command_extra)
+119:        )
+120:
+121:    def env_lines_to_dict(self, env_lines):
+122:        """Convert an array of export statements (what we get from env-extra
+123:        in the config) into a dict"""
+124:        env_dict = {}
+125:        for env_line in env_lines:
+126:            split_env_line = shlex.split(env_line)
+127:            if split_env_line[0] == "export":
+128:                split_env_line = split_env_line[1:]
+129:            for item in split_env_line:
+130:                if "=" in item:
+131:                    k, v = item.split("=", 1)
+132:                    env_dict[k] = v
+133:        return env_dict
+134:
+135:    def job_script(self):
+136:        """Construct a job submission script"""
+137:        quoted_arguments = quote_arguments(["-c", self._command_template])
+138:        quoted_environment = quote_environment(self.env_dict)
+139:        job_header_lines = "\n".join(
+140:            "%s = %s" % (k, v) for k, v in self.job_header_dict.items()
+141:        )
+142:        return self._script_template % {
+143:            "shebang": self.shebang,
+144:            "job_header": job_header_lines,
+145:            "quoted_environment": quoted_environment,
+146:            "quoted_arguments": quoted_arguments,
+147:            "executable": self.executable,
+148:        }
+149:
+150:    def _job_id_from_submit_output(self, out):
+151:        cluster_id_regexp = r"submitted to cluster (\d+)"
+152:        match = re.search(cluster_id_regexp, out)
+153:        if match is None:
+154:            msg = (
+155:                "Could not parse cluster id from submission command output.\n"
+156:                "Cluster id regexp is {!r}\n"
+157:                "Submission command output is:\n{}".format(cluster_id_regexp, out)
+158:            )
+159:            raise ValueError(msg)
+160:        return "%s.0" % match.group(1)
+161:
+162:
+163:def _double_up_quotes(instr):
+164:    return instr.replace("'", "''").replace('"', '""')
+165:
+166:
+167:def quote_arguments(args):
+168:    """Quote a string or list of strings using the Condor submit file "new" argument quoting rules.
+169:
+170:    Returns
+171:    -------
+172:    str
+173:        The arguments in a quoted form.
+174:
+175:    Warnings
+176:    --------
+177:    You will need to surround the result in double-quotes before using it in
+178:    the Arguments attribute.
+179:
+180:    Examples
+181:    --------
+182:    >>> quote_arguments(["3", "simple", "arguments"])
+183:    '3 simple arguments'
+184:    >>> quote_arguments(["one", "two with spaces", "three"])
+185:    'one \'two with spaces\' three'
+186:    >>> quote_arguments(["one", "\"two\"", "spacy 'quoted' argument"])
+187:    'one ""two"" \'spacey \'\'quoted\'\' argument\''
+188:    """
+189:    if isinstance(args, str):
+190:        args_list = [args]
+191:    else:
+192:        args_list = args
+193:
+194:    quoted_args = []
+195:    for a in args_list:
+196:        qa = _double_up_quotes(a)
+197:        if " " in qa or "'" in qa:
+198:            qa = "'" + qa + "'"
+(68 more lines below)
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'scroll_down' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">edit</div>
+          <div class="args">{'command': 'edit 121:133\n    def env_lines_to_dict(self, env_lines):\n        """Convert an array of export statements (what we get from env-extra\n        in the config) into a dict\n        \n        Notes\n        -----\n        Each entry in env_lines should be a string of the form \'key=value\' \n        where key is an environment variable name and value is its value. \n        These will be inserted into dask-worker\'s environment.\n        """\n        env_dict = {}\n        for env_line in env_lines:\n            split_env_line = shlex.split(env_line)\n            if split_env_line[0] == "export":\n                split_env_line = split_env_line[1:]\n            for item in split_env_line:\n                if "=" in item:\n                    k, v = item.split("=", 1)\n                    env_dict[k] = v\n        return env_dict\nend_of_edit'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">[File: /dask-jobqueue/dask_jobqueue/htcondor.py (273 lines total)]
+(70 more lines above)
+71:
+72:        self.job_header_dict = {
+73:            "MY.DaskWorkerName": '"htcondor--$F(MY.JobId)--"',
+74:            "RequestCpus": "MY.DaskWorkerCores",
+75:            "RequestMemory": "floor(MY.DaskWorkerMemory / 1048576)",
+76:            "RequestDisk": "floor(MY.DaskWorkerDisk / 1024)",
+77:            "MY.JobId": '"$(ClusterId).$(ProcId)"',
+78:            "MY.DaskWorkerCores": self.worker_cores,
+79:            "MY.DaskWorkerMemory": self.worker_memory,
+80:            "MY.DaskWorkerDisk": self.worker_disk,
+81:        }
+82:        if self.log_directory:
+83:            self.job_header_dict.update(
+84:                {
+85:                    "LogDirectory": self.log_directory,
+86:                    # $F(...) strips quotes
+87:                    "Output": "$(LogDirectory)/worker-$F(MY.JobId).out",
+88:                    "Error": "$(LogDirectory)/worker-$F(MY.JobId).err",
+89:                    "Log": "$(LogDirectory)/worker-$(ClusterId).log",
+90:                    # We kill all the workers to stop them so we need to stream their
+91:                    # output+error if we ever want to see anything
+92:                    "Stream_Output": True,
+93:                    "Stream_Error": True,
+94:                }
+95:            )
+96:        if self.job_extra:
+97:            self.job_header_dict.update(self.job_extra)
+98:
+99:        if submit_command_extra is None:
+100:            submit_command_extra = dask.config.get(
+101:                "jobqueue.%s.submit-command-extra" % self.config_name, []
+102:            )
+103:
+104:        self.submit_command = (
+105:            HTCondorJob.submit_command
+106:            + " "
+107:            + " ".join(shlex.quote(arg) for arg in submit_command_extra)
+108:        )
+109:
+110:        if cancel_command_extra is None:
+111:            cancel_command_extra = dask.config.get(
+112:                "jobqueue.%s.cancel-command-extra" % self.config_name, []
+113:            )
+114:
+115:        self.cancel_command = (
+116:            HTCondorJob.cancel_command
+117:            + " "
+118:            + " ".join(shlex.quote(arg) for arg in cancel_command_extra)
+119:        )
+120:
+121:    def env_lines_to_dict(self, env_lines):
+122:        """Convert an array of export statements (what we get from env-extra
+123:        in the config) into a dict
+124:        
+125:        Notes
+126:        -----
+127:        Each entry in env_lines should be a string of the form 'key=value' 
+128:        where key is an environment variable name and value is its value. 
+129:        These will be inserted into dask-worker's environment.
+130:        """
+131:        env_dict = {}
+132:        for env_line in env_lines:
+133:            split_env_line = shlex.split(env_line)
+134:            if split_env_line[0] == "export":
+135:                split_env_line = split_env_line[1:]
+136:            for item in split_env_line:
+137:                if "=" in item:
+138:                    k, v = item.split("=", 1)
+139:                    env_dict[k] = v
+140:        return env_dict
+141:
+142:    def job_script(self):
+143:        """Construct a job submission script"""
+144:        quoted_arguments = quote_arguments(["-c", self._command_template])
+145:        quoted_environment = quote_environment(self.env_dict)
+146:        job_header_lines = "\n".join(
+147:            "%s = %s" % (k, v) for k, v in self.job_header_dict.items()
+148:        )
+149:        return self._script_template % {
+150:            "shebang": self.shebang,
+151:            "job_header": job_header_lines,
+152:            "quoted_environment": quoted_environment,
+153:            "quoted_arguments": quoted_arguments,
+154:            "executable": self.executable,
+155:        }
+156:
+157:    def _job_id_from_submit_output(self, out):
+158:        cluster_id_regexp = r"submitted to cluster (\d+)"
+159:        match = re.search(cluster_id_regexp, out)
+160:        if match is None:
+161:            msg = (
+162:                "Could not parse cluster id from submission command output.\n"
+163:                "Cluster id regexp is {!r}\n"
+164:                "Submission command output is:\n{}".format(cluster_id_regexp, out)
+165:            )
+166:            raise ValueError(msg)
+167:        return "%s.0" % match.group(1)
+168:
+169:
+170:def _double_up_quotes(instr):
+(103 more lines below)
+File updated. Please review the changes and make sure they are correct (correct indentation, no duplicate lines, etc). Edit the file again if necessary.
+
+(Open file: /dask-jobqueue/dask_jobqueue/htcondor.py)
+(Current directory: /dask-jobqueue)
+bash-$</div>
+            </details>
+            
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'edit' with no corresponding planned step.</div>
+      
+    </div>
+    
+    <div class="row row-missing">
+      <div class="cell">
+        
+          <div class="empty-cell">(not planned)</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">submit</div>
+          <div class="args">{'command': 'submit'}</div>
+          
+        
+      </div>
+      
+      <div class="event-detail">Called 'submit' with no corresponding planned step.</div>
+      
+    </div>
+    
+  </div>
+
+  <footer>run_id: 9722d6fa-4176-418e-b949-9e1b9ecd97c6</footer>
+</div>
+</body>
+</html>
