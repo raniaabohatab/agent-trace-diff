@@ -871,6 +871,22 @@ parsing artifacts like the one caught in Week 5 Day 4. One of the new cases,
 `iterative__dvc-3462`, has a single action step, useful for the short run adversarial
 case Day 6-7 wants anyway.
 
+## Week 7 Day 4-5: hand label and reassemble
+
+Read all 8 new external cases, same discipline as Week 5, confirmed the mechanical
+`ground_truth_divergence_step = 0` rule individually for each rather than assuming it
+carries over, and wrote genuine reading notes on two of them in `labeling_notes.md`,
+one a real short self correction and one a clean methodical run included for
+contrast.
+
+Also generated 3 more clean control cases with four step plans, since the original 10
+topped out at three steps and Day 1 flagged that as worth padding out even though it
+was not the main gap. All 3 came back as exact matches on the first try.
+
+Reassembled `eval_set.jsonl`: 38 self constructed, 26 external, 13 clean, 77 total.
+Same structural checks as Week 5 Day 7, no duplicate run ids, no category or ground
+truth mismatches, nothing found wrong.
+
 ## 2026-08-11
 
 - **Framework: LangChain.** Most widely used agent framework, verbose/callback-based

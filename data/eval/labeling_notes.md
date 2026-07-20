@@ -92,6 +92,33 @@ suspiciously short `task_description` values. Spot-read all 18 external
 parsing corruption. Found no corrections to make. Re-ran the harness after this
 review to confirm nothing had drifted: identical 49/49 results.
 
+## Week 7 additions (2026-07-19)
+
+Same mechanical rule as above applies to all 8 new external cases: `ground_truth_
+divergence_step = 0`, because SWE-agent never produces an upfront plan, checked and
+confirmed for each of the 8 individually, not assumed from the first one.
+
+Genuine reading notes on two of them, again supplementary and not scored:
+
+- **`iris-hep__func_adl-116`** — a real, compact self-correction. The agent tries to
+  create a reproduction file, the create silently produces an empty file, it tries
+  to create the same file again and gets an explicit "file already exists" error,
+  and only on the third action does it correctly pivot to opening the existing file
+  instead. Three real actions, one clear mistake, one clean recovery. A good example
+  of exactly the kind of short, message pattern this project's algorithm cannot see,
+  since it only compares tool call sequences against a plan that does not exist here.
+
+- **`fairlearn__fairlearn-896`** — a clean, methodical trajectory throughout: find the
+  right file, locate the class, locate the two methods the issue names, update both
+  with matching error handling, submit. No visible missteps. Included for contrast
+  with the messier cases already on record, since a fair sample should have some of
+  both.
+
+Also added, self constructed, not hand labeled since ground truth is auto populated
+the same way as Week 5: the new `wrong_tool+skip_step` combined cases, and `wrong_
+tool`/`corrupt_args` cases run on three step plans instead of one step plans. See
+`docs/decisions.md`, Week 7 Day 2-3, for how those were verified.
+
 ## Clean control cases (10, from the Week 3/4 corpus)
 
 No hand-labeling needed — `ground_truth_divergence_step = None` for all 10, because
