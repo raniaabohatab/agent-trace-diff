@@ -116,3 +116,35 @@ The honest one line summary for this week: found a real bug, fixed it, confirmed
 fix on the traces that exposed it, and the current eval set is not built to detect
 either the bug or the fix. All three of those things are true at once, and the
 project is better for knowing it.
+
+## Week 7 rerun (2026-07-20), at 77 cases instead of 49
+
+Same command, the expanded eval set from Week 7, which specifically fills gaps the
+Week 6 set had: multi step plans for the self constructed injectors instead of just
+one step ones, a combined injector that produces two real hard divergences in one
+run instead of always exactly one, longer plans, 8 more external cases from 8 new
+GitHub issues, and 3 more clean controls with longer plans.
+
+| Category | n | Exact match | Accuracy (exact) |
+|---|---|---|---|
+| self_constructed_failure | 38 | 38 | 1.000 |
+| external_no_plan | 26 | 26 | 1.000 |
+| clean_control | 13 | 13 | 1.000 |
+
+Primary accuracy is still 1.000 exact, now on n=51 instead of n=31. Still 100 percent,
+and this time that is a somewhat stronger claim than Week 5 or Week 6's, not a
+weaker one. The new cases specifically target things the algorithm had never been
+tested against: a run with two real divergences instead of one, and a run that gets
+the first step wrong but correctly matches every step after it, the recovers after a
+mistake case Week 7 Day 1 identified as missing. The algorithm handles both
+correctly, which is a real result at this scale, not a coincidence carried over from
+easier cases, since these specific cases did not exist before this week.
+
+The same honest limits from the Week 5 and Week 6 write ups still apply and are not
+solved by adding more cases built the same way. self constructed cases still share
+the same alignment assumptions as the code being tested, and external cases are still
+trivially guaranteed by the algorithm's own definition. A bigger number of cases
+built the same way is more evidence within that scope, not evidence outside it. The
+`first_divergence_index` metric still cannot see the repeated tool tie breaking bug's
+effect on pairing, because that bug never touches which position is reported first,
+only which occurrence gets blamed.
