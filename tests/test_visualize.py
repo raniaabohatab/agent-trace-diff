@@ -3,7 +3,30 @@ every divergence type the classifier produces, asserting the exact expected
 sentence, not just "does it return something."
 """
 from src.diff.classify import DivergenceEvent
-from src.visualize.render_report import summarize
+from src.schema import AgentRun, Step
+from src.visualize.render_report import _pair_actions_with_observations, summarize
+
+
+def _action(step_index, tool, call_id):
+    return Step(
+        step_index=step_index,
+        step_type="action",
+        actual_tool=tool,
+        tool_input={},
+        timestamp="2026-07-21T00:00:00Z",
+        tool_call_id=call_id,
+    )
+
+
+def _observation(step_index, tool, output, call_id):
+    return Step(
+        step_index=step_index,
+        step_type="observation",
+        actual_tool=tool,
+        tool_output=output,
+        timestamp="2026-07-21T00:00:00Z",
+        tool_call_id=call_id,
+    )
 
 
 def test_summarize_no_events():
@@ -97,6 +120,72 @@ def test_summarize_three_hard_divergences_plural_count():
         "Agent planned to call 'search' but called 'calc' instead, at step 0. "
         "(2 more divergences after this point.)"
     )
+
+
+def test_pair_actions_with_observations_uses_tool_call_id_when_out_of_order():
+    # Reproduces the real bug found in Week 7: 3 parallel calculator calls
+    # requested in order (a, b, c) but their observations come back
+    # scrambled (b, c, a). Positional pairing would attribute b's output to
+    # a, c's output to b, and a's output to c. Pairing by tool_call_id must
+    # get every one right regardless of arrival order.
+    run = AgentRun(
+        run_id="test",
+        task_description="add three pairs of numbers",
+        framework="langchain",
+        model_name="claude-haiku-4-5",
+        final_status="success",
+        steps=[
+            _action(0, "calculator", "call_a"),
+            _action(1, "calculator", "call_b"),
+            _action(2, "calculator", "call_c"),
+            _observation(3, "calculator", "4", "call_b"),
+            _observation(4, "calculator", "6", "call_c"),
+            _observation(5, "calculator", "2", "call_a"),
+        ],
+    )
+    pairs = _pair_actions_with_observations(run)
+    assert [obs.tool_output for _, obs in pairs] == ["2", "4", "6"]
+
+
+def test_pair_actions_with_observations_falls_back_to_position_without_call_id():
+    # Traces generated before Week 7 have tool_call_id = None on every step.
+    # They must still pair by position, exactly like before this fix.
+    run = AgentRun(
+        run_id="test",
+        task_description="add two pairs of numbers",
+        framework="langchain",
+        model_name="claude-haiku-4-5",
+        final_status="success",
+        steps=[
+            _action(0, "calculator", None),
+            _action(1, "calculator", None),
+            _observation(2, "calculator", "2", None),
+            _observation(3, "calculator", "4", None),
+        ],
+    )
+    pairs = _pair_actions_with_observations(run)
+    assert [obs.tool_output for _, obs in pairs] == ["2", "4"]
+
+
+def test_pair_actions_with_observations_mismatched_tool_name_degrades_gracefully():
+    # Legacy positional fallback: if the Nth action and Nth observation
+    # don't even agree on tool name, drop the observation instead of
+    # showing the wrong tool's output.
+    run = AgentRun(
+        run_id="test",
+        task_description="do two different things",
+        framework="langchain",
+        model_name="claude-haiku-4-5",
+        final_status="success",
+        steps=[
+            _action(0, "calculator", None),
+            _action(1, "search", None),
+            _observation(2, "search", "results", None),
+            _observation(3, "calculator", "42", None),
+        ],
+    )
+    pairs = _pair_actions_with_observations(run)
+    assert [obs.tool_output if obs else None for _, obs in pairs] == [None, None]
 
 
 def test_summarize_ignores_soft_args_changed_when_counting_and_ordering_hard_divergences():

@@ -197,6 +197,7 @@ def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
                                     actual_tool=call["name"],
                                     tool_input=call["args"],
                                     raw_thought=thought,
+                                    tool_call_id=call.get("id"),
                                 )
                         else:
                             add_step(step_type="final_answer", raw_thought=thought)
@@ -205,6 +206,7 @@ def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
                             step_type="observation",
                             actual_tool=getattr(message, "name", None),
                             tool_output=message.content,
+                            tool_call_id=getattr(message, "tool_call_id", None),
                         )
     except Exception as exc:  # noqa: BLE001 - deliberately broad: capture partial trace on any failure
         final_status = "failure"

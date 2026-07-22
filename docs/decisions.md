@@ -916,3 +916,50 @@ truth mismatches, nothing found wrong.
 - **Tools are fully deterministic/canned** (calculator does real arithmetic locally;
   search and read_file return fixed canned strings) — no real external APIs, so every
   run is repeatable while building the schema and ingestion pipeline, per Day 1 spec.
+
+## Week 7 Day 6-7: adversarial testing found a real ordering bug
+
+Ran a batch of deliberately unusual cases through the pipeline: an empty plan, a
+single step run, a run with the same tool called 15 times in a row, an unusually
+phrased two part task, and a 15 way parallel tool call burst in one turn. Most of
+these came back clean. The 15 parallel calculator calls did not.
+
+Rendered that trace to a report and screenshotted it with headless Chrome to eyeball
+it, since a table of 15 near identical rows is exactly the kind of thing that looks
+fine at a glance and is wrong in a way you only catch by actually looking. Row 8
+showed "8+8 -> 20", which is wrong, 20 is what 10+10 produces. Pulled the raw JSON to
+confirm it was not a rendering bug: the 15 actions were captured in the right order,
+1+1 through 15+15, but the 15 observation values were `2,4,6,8,10,12,14,20,18,22,
+16,24,28,26,30`, scrambled starting at position 7.
+
+The cause: `_pair_actions_with_observations` in `render_report.py` assumed the Nth
+action step and the Nth observation step always correspond, because ToolMessages
+had reliably come back in request order in every earlier test. That held for the
+small batches tested through Week 4 (documented then as verified against a real
+2-parallel-call trace) but does not hold once enough tool calls run in parallel that
+LangGraph's execution can complete them out of request order.
+
+Checked what the real fix should be against the live Anthropic API directly rather
+than guessing: a fresh 3-parallel-tool-call test confirmed that both
+`AIMessage.tool_calls[i]['id']` and the matching `ToolMessage.tool_call_id` are
+present on every call and reliably correlate, regardless of what order the messages
+arrive in. That is the actual identity a pairing should use, not list position.
+
+Added `tool_call_id` to the `Step` schema, captured it in `generate_traces.py` for
+both the action and observation `add_step()` calls, and rewrote
+`_pair_actions_with_observations` to pair by that id when it is present, falling
+back to the old positional pairing (with its existing tool-name mismatch guard) for
+the 100+ traces generated before this field existed. This only affects what
+`tool_output` gets displayed next to each row. It does not touch `align()` or
+`classify()`, since alignment only ever reads tool names captured in call order from
+`AIMessage.tool_calls`, never the scrambled observation values, so none of the
+eval numbers were expected to move and a full rerun confirmed they didn't (still
+77/77 exact match, same as the Week 7 Day 5-6 rerun).
+
+Added three regression tests in `test_visualize.py` covering the exact scrambled
+order scenario, the legacy no-call-id fallback, and the mismatch guard, all against
+a synthetic `AgentRun` rather than relying on live LLM output being non-deterministic
+in the right way. Regenerated a fresh 15-parallel-call trace live to confirm the fix
+end to end, re-ran the full pipeline (normalize, diff, render) so every existing
+report picks up the new field, and re-screenshotted the new trace's report: all 15
+rows now show the correct paired result.

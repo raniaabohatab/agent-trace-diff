@@ -72,24 +72,34 @@ _LONG_OUTPUT_THRESHOLD = 150  # chars, above which the output collapses into a <
 
 
 def _pair_actions_with_observations(run: AgentRun) -> list[tuple]:
-    """Actions and observations aren't always strictly alternating — a single
-    AIMessage can request multiple parallel tool calls, which appends several
-    "action" steps in a row before their "observation" steps arrive (also in
-    a row). ToolMessages come back in the same order their tool_calls were
-    requested, so the Nth action step's output is the Nth observation step,
-    even when they're not adjacent. Verified against a real 2-parallel-call
-    trace before relying on this. See docs/decisions.md, 2026-06-24.
+    """A single AIMessage can request several parallel tool calls, which
+    appends multiple "action" steps in a row before their "observation"
+    steps arrive. We used to assume the Nth action's output was always the
+    Nth observation, in order. That held for small batches but a real
+    15-parallel-call trace showed observations can complete out of order,
+    so the tool name we captured at request time is the only thing that
+    still lines up correctly by tool_call_id. Traces generated after Week 7
+    carry tool_call_id on both sides and get paired by that id. Traces from
+    before that field existed fall back to the old positional pairing, with
+    the same tool-name mismatch guard as before. See docs/decisions.md,
+    2026-07-21.
     """
     action_steps = [s for s in run.steps if s.step_type == "action"]
     observation_steps = [s for s in run.steps if s.step_type == "observation"]
+    observations_by_call_id = {
+        s.tool_call_id: s for s in observation_steps if s.tool_call_id is not None
+    }
+
     paired = []
     for i, action in enumerate(action_steps):
-        observation = observation_steps[i] if i < len(observation_steps) else None
-        if observation is not None and observation.actual_tool != action.actual_tool:
-            # Ordering assumption broke for this run — degrade gracefully
-            # (no output shown) rather than mis-attribute one tool's output
-            # to a different tool's row.
-            observation = None
+        if action.tool_call_id is not None and action.tool_call_id in observations_by_call_id:
+            observation = observations_by_call_id[action.tool_call_id]
+        else:
+            observation = observation_steps[i] if i < len(observation_steps) else None
+            if observation is not None and observation.actual_tool != action.actual_tool:
+                # Positional fallback broke for this run, degrade gracefully
+                # instead of mis-attributing one tool's output to another.
+                observation = None
         paired.append((action, observation))
     return paired
 

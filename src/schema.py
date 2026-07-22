@@ -32,6 +32,7 @@ class Step(BaseModel):
     tool_output: Optional[Any] = None  # raw output/observation returned
     raw_thought: Optional[str] = None  # the agent's reasoning text for this step, if captured
     timestamp: str  # ISO 8601
+    tool_call_id: Optional[str] = None  # links an action to its observation when several run in parallel, Week 7+
 
 
 class AgentRun(BaseModel):
