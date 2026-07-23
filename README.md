@@ -1,14 +1,42 @@
 # agent-trace-diff
 
-Captures an AI agent's full execution trace, diffs the planned sequence of actions
-against what was actually executed, and flags the exact step where they diverge.
+An AI agent makes a plan, then goes and executes it. Sometimes it does exactly
+what it said it would. Sometimes it doesn't. This tool captures both sides of
+that story, an agent's own upfront plan and what it actually did step by
+step, lines them up, and tells you the exact point where they stop matching.
 
-**Status:** Trace generation, the ingestion pipeline, the diff algorithm, HTML report
-visualization, and the evaluation harness are all working end-to-end, with a real
-49-case evaluation set (self-constructed injected failures, external real-world
-traces, and clean controls) and real, honestly-reported results — see
-`docs/eval_results.md`. Iterating on the algorithm against these results (Week 6) and
-final polish/writeup (Week 7+) are not done yet.
+Think of it as a diff tool for agent behavior, the same idea as `git diff`,
+but for planned tool calls versus real tool calls instead of planned code
+versus real code.
+
+## What it actually does
+
+1. Runs a LangChain agent on a task. The agent first makes one upfront call
+   to plan out which tools it intends to use, then executes the task for
+   real, free to deviate from that plan if it wants to.
+2. Captures the full trace: every planned step, every real action, every
+   tool output, every thought in between.
+3. Aligns the planned sequence against the actual sequence using the same
+   dynamic programming approach behind `git diff` and DNA sequence alignment,
+   and classifies exactly where and how they diverge.
+4. Renders the result as a single HTML file you can open in a browser.
+   Green for a step that went exactly as planned, red for the first place
+   things went wrong, gray for anything planned but skipped or done but
+   never planned.
+5. Scores the whole approach against a 77-case evaluation set, made up of
+   deliberately broken runs, real external agent trajectories, and clean
+   controls, with every number in `docs/eval_results.md` coming from an
+   actual run of the harness, nothing estimated.
+
+## Why this exists
+
+Most agent debugging today means reading a raw log line by line and hoping
+you notice the moment things went sideways. That doesn't scale once an agent
+runs for dozens of steps, and it gives you no consistent, comparable measure
+of how often or how badly an agent's real behavior departs from what it said
+it would do. This tool turns that into one number, the first divergence
+step, backed by an actual sequence alignment instead of a guess, and one
+picture, a report you can read in under thirty seconds.
 
 ## Setup
 
@@ -18,118 +46,144 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Create a `.env` file with `ANTHROPIC_API_KEY=<your key>` (never committed — see `.gitignore`).
+Create a `.env` file with `ANTHROPIC_API_KEY=<your key>`. It's gitignored
+and never gets committed.
 
 ## Usage
 
-**1. Generate a trace** — the agent first makes one upfront LLM call to produce a
-plan (an ordered list of tool calls it intends to make), then executes the task with
-a normal 3-tool (calculator, search, read_file) LangChain agent on `claude-haiku-4-5`,
-free to deviate from its own plan as it goes. Both the plan and the actual execution
-are captured to `data/raw/{run_id}.jsonl`:
+Run everything as a module (`-m`), not as a direct script path. These files
+import `src.schema` and friends, which need the repo root on `sys.path`, and
+`-m` is what gives you that.
+
+**1. Generate a trace.** The agent plans, then runs, on three deterministic
+tools (calculator, search, read_file), so every run is repeatable:
 
 ```bash
 python -m src.generate_traces --task "What is 23 * 17, and what is the capital of France?"
 ```
 
-Tools return deterministic, canned data — no real external APIs — so runs are
-repeatable. `data/raw/` currently has 32 traces: 14 from the original ReAct-style
-agent (no upfront plan — `planned_steps` is an empty list for these, a real,
-deliberately-handled edge case, not missing data) plus 18 Plan-and-Execute traces,
-including several with genuine plan/execution divergence.
+You can also deliberately break a run to build eval data, swapping in the
+wrong tool, skipping a planned step, corrupting arguments, or combining two
+of those in one run:
 
-**2. Normalize the corpus** — validates every file in `data/raw/` against the trace
-schema and writes the result to `data/normalized/{run_id}.jsonl`. A file that fails to
-parse is logged to `data/normalized/_unparsed.log` with a reason instead of stopping
-the batch:
+```bash
+python -m src.generate_traces --task "..." --inject-failure wrong_tool
+```
+
+**2. Normalize the corpus.** Validates every file in `data/raw/` against the
+trace schema and writes the result to `data/normalized/{run_id}.jsonl`. A
+file that fails to parse gets logged with a reason instead of stopping the
+whole batch:
 
 ```bash
 python -m src.ingest.run_pipeline
 ```
 
-**3. Diff plan vs. actual** — aligns each normalized run's planned tool calls against
-its actual ones and classifies the differences, writing a `DiffResult` to
-`data/diffs/{run_id}.jsonl`:
+This step also handles real external agent trajectories, not just traces
+this project generated itself. `src/ingest/swe_agent_parser.py` reads real
+SWE-agent runs pulled from Hugging Face and turns them into the same
+`AgentRun` schema everything else in this project works with.
+
+**3. Diff plan vs. actual.** Aligns each run's planned tool calls against its
+actual ones and classifies the differences:
 
 ```bash
 python -m src.diff.run_diff --all
 ```
 
-**4. Render a report** — turns one `DiffResult` + its source `AgentRun` into a
-standalone HTML file, or render the whole corpus at once:
+**4. Render a report.** Turns one diff and its source run into a standalone
+HTML file, or renders the whole corpus at once:
 
 ```bash
 python -m src.visualize.render_report --run-id <run_id>   # single report -> reports/{run_id}.html
-python -m src.visualize.render_all                         # every diff in data/diffs/ -> reports/
+python -m src.visualize.render_all                          # every diff -> reports/
 ```
 
-Run everything as a module (`-m`), not as a direct script path — these files import
-`src.schema`/`src.ingest.*`/`src.diff.*`/`src.visualize.*`, which need the repo root
-on `sys.path`; `-m` gives you that, a direct script invocation doesn't.
+**5. Run the evaluation harness.** Scores every case in
+`data/eval/eval_set.jsonl` against its hand-labeled ground truth and prints
+accuracy by category:
+
+```bash
+python -m src.eval.eval_harness
+```
 
 ## How the diff algorithm works
 
-Each agent run produces two sequences of tool names: the **planned** sequence (from
-the upfront plan) and the **actual** sequence (the tools genuinely invoked during
-execution). The diff algorithm's job is to line these two sequences up and say
-exactly where — and how — they stop matching.
+Every agent run produces two sequences of tool names, the planned sequence
+from the upfront plan and the actual sequence from execution. The job is to
+line these up and say exactly where they stop matching.
 
-The alignment step (`src/diff/align.py`) treats this as a classic sequence-alignment
-problem, the same dynamic-programming family Needleman-Wunsch and Myers diff belong
-to: find the cheapest way to transform the planned sequence into the actual sequence
-using three edit operations — substitute one tool for another, insert an unplanned
-tool call, or delete a planned call that never happened — plus free matches where the
-two sequences already agree. The output is an ordered list of aligned pairs, each
-tagged `match`, `substitute`, `insert`, or `delete`.
+`src/diff/align.py` treats this as a sequence alignment problem, the same
+dynamic programming family Needleman-Wunsch and Myers diff belong to. It
+finds the cheapest way to turn the planned sequence into the actual one
+using three edit operations, substitute one tool for another, insert an
+unplanned tool call, or delete a planned call that never happened, plus free
+matches where the two sequences already agree.
 
-The classification step (`src/diff/classify.py`) turns that alignment into
-human-readable divergence events. A `delete` becomes a **skipped step** (the agent
-planned to call a tool and never did); an `insert` becomes an **unexpected step** (the
-agent called a tool it never planned to); a `substitute` becomes **wrong tool** (it
-called something other than what it planned at that point). These three are "hard"
-divergences. A softer fourth signal, **args changed**, flags a `match` where the tool
-name is right but its arguments don't obviously relate to the plan's stated reason for
-that step — this is deliberately excluded from counting as a hard divergence, since it's
-a much weaker, lexical-overlap-based signal rather than a structural one. The single
-most important output of the whole pipeline is `first_divergence_index`: the position
-of the first hard divergence, or `None` if the run followed its plan exactly. Week 5's
-evaluation measures how well this number matches hand-labeled ground truth.
+`src/diff/classify.py` turns that alignment into readable divergence events.
+A delete becomes a skipped step. An insert becomes an unexpected step. A
+substitute becomes wrong tool. Those three count as hard divergences. A
+softer fourth signal, args changed, flags a step where the tool name matches
+but its arguments don't obviously relate to the plan's stated reason for
+that step. That one stays a soft signal on purpose, it's a lexical overlap
+heuristic, not a structural fact about the sequence, so it never counts
+toward the hard divergence total.
 
-A known limitation, found by manually checking real traces rather than assumed: when
-the same tool appears more than once on both sides, the alignment can tie between
-multiple equally-cheap pairings, and the specific pairing chosen is decided by
-backtrack order alone, blind to the actual arguments involved — in one observed case
-this visibly paired the plan against the wrong one of two identical-tool calls. It
-doesn't affect `first_divergence_index` in any case checked so far, only the
-fine-grained pairing detail. See `docs/decisions.md` (2026-06-15) for the specifics.
+The single most important output is `first_divergence_index`, the position
+of the first hard divergence, or nothing at all if the run followed its plan
+exactly. That's the number the evaluation harness measures against
+hand-labeled ground truth.
+
+When the same tool shows up more than once on both sides, a naive alignment
+can tie between two equally cheap pairings and pick the wrong one, matching
+the plan's reasoning against the wrong occurrence of a repeated call. This
+was a real bug, found by hand-checking real traces, not assumed. The fix
+breaks ties using the actual text involved, the plan's stated reason and the
+tool's real arguments, and falls back to matching a real occurrence lexically
+instead of defaulting to whichever came first in a backtrack. See
+`docs/decisions.md` for the specifics and for a second, related bug: parallel
+tool calls that complete out of request order, which needed each action
+paired to its observation by ID instead of by position.
 
 ## Visualization
 
-Each report (`src/visualize/render_report.py`) is a single self-contained HTML file —
-no server, no build step, works offline, opens directly in a browser. That's a
-deliberate choice (see `docs/decisions.md`, 2026-06-17): the time not spent building
-a live app went into making the report itself legible in well under 30 seconds.
+Each report is one self-contained HTML file. No server, no build step, no
+external dependencies, opens directly in a browser and still works with no
+internet connection.
 
-A report has three parts. A **summary header** up top states the task, whether the
-run succeeded, how many hard divergences it has, and a one-line plain-English
-explanation generated programmatically from the divergence events (no LLM call —
-`summarize()` in `render_report.py`). Below that, a **two-column table** lines up the
-planned tool calls against the actual ones, row by row, following the same alignment
-`align()` computed — green rows are exact matches, yellow rows matched on tool name
-but have arguments that don't obviously relate to the plan's stated reason, red rows
-are a substituted tool, and gray dashed rows are a step with nothing on the other
-side (planned but never executed, or executed but never planned). Each row also
-shows the tool's actual output, inline if short or in a collapsible `<details>` if
-long. The **first hard divergence** — the single most important thing to notice — gets
-a red left border so it's the first thing your eye lands on.
-
-Example: a task asking for two separate divisions, where the plan only anticipated
-one `calculator` call. The extra unplanned call is immediately visible (gray dashed
-row, first-divergence marker), and the yellow row below it shows a real caught issue
-too — the second `calculator` call actually errored (`division by zero`), visible
-directly in its output line:
+A report has three parts. A summary header states the task, whether the run
+succeeded, how many hard divergences it has, and a one-line plain-English
+explanation generated programmatically from the divergence events, no LLM
+call involved. Below that, a two-column table lines up planned tool calls
+against actual ones, row by row, following the same alignment the algorithm
+computed. Green rows are exact matches. Yellow rows matched on tool name but
+have arguments that don't obviously relate to the plan. Red rows are a
+substituted tool. Gray dashed rows are a step with nothing on the other
+side, planned but never executed, or executed but never planned. Each row
+also shows the tool's real output, inline if short, collapsed if long. The
+first hard divergence gets a red left border, since it's the one thing worth
+noticing first.
 
 ![Example diff report](docs/example_report.png)
+
+## Evaluation
+
+`docs/eval_results.md` has the full writeup, including what the numbers
+don't prove and why. The short version: 77 hand-labeled cases across three
+categories, self-constructed failures where a clean run is deliberately
+broken in a known way, real external SWE-agent trajectories, and clean
+controls where the plan and the execution genuinely match. The primary
+metric excludes the external category, since those traces never had an
+upfront plan to begin with, which makes their score trivially perfect by
+definition rather than a real test of judgment. On the primary set, 51
+cases, first divergence detection is currently 100 percent exact match.
+
+That number is real, but it's not the whole story, and the writeup says so
+directly. Self-constructed cases share the same alignment assumptions as the
+code being tested. External cases are guaranteed correct by their own
+structure. A harder, more independent test would need cases nobody
+building the algorithm hand-picked, and that's flagged as real future work,
+not glossed over.
 
 ## Tests
 
@@ -137,44 +191,53 @@ directly in its output line:
 python -m pytest tests/
 ```
 
-30 tests: 3 on the trace schema, 6 on ingestion, 12 on the diff algorithm
-(hand-constructed cases — exact match, single insert/delete/substitute, empty-plan
-and empty-execution edge cases, repeated-consecutive-tool, multiple divergences in
-one run, and the args-changed soft-signal behavior — with manually-verified expected
-answers, kept separate from real messy agent data), and 9 on `summarize()`'s
-plain-English output, one exact-string assertion per divergence type.
+37 tests: 3 on the trace schema, 6 on ingestion, 16 on the diff algorithm
+(hand-constructed cases with manually verified expected answers, kept
+separate from real messy agent data), and 12 on report rendering, covering
+`summarize()`'s plain-English output for every divergence type and the
+action-to-observation pairing logic, including a synthetic reproduction of
+the parallel tool call ordering bug described above.
 
 ## Project layout
 
 ```
 src/
-  schema.py            # Step / PlannedStep / AgentRun pydantic models
-  generate_traces.py   # plans + runs the agent, captures the trace, writes data/raw/
+  schema.py             # Step / PlannedStep / AgentRun pydantic models
+  generate_traces.py    # plans + runs the agent, captures the trace, writes data/raw/
   ingest/
-    base.py             # abstract TraceParser interface
-    langchain_parser.py # concrete parser for the format generate_traces.py writes
-    run_pipeline.py     # data/raw/ -> data/normalized/, with per-file failure handling
+    base.py              # abstract TraceParser interface
+    langchain_parser.py  # parser for traces generate_traces.py writes
+    swe_agent_parser.py  # parser for real external SWE-agent trajectories
+    run_pipeline.py       # data/raw/ -> data/normalized/, per-file failure handling
   diff/
-    align.py            # planned-vs-actual sequence alignment (DP / edit distance)
-    classify.py          # alignment -> human-readable divergence events
-    diff_result.py       # DiffResult output schema
-    run_diff.py           # data/normalized/ -> data/diffs/, with per-run failure handling
+    align.py              # planned-vs-actual sequence alignment (DP / edit distance)
+    text_utils.py          # shared tokenizer, used for tie-breaking and args_changed
+    classify.py             # alignment -> human-readable divergence events
+    diff_result.py           # DiffResult output schema
+    run_diff.py                # data/normalized/ -> data/diffs/, per-run failure handling
+  eval/
+    eval_harness.py            # scores data/eval/eval_set.jsonl against ground truth
   visualize/
-    template.html         # self-contained Jinja2 HTML template (inline CSS)
-    render_report.py       # DiffResult + AgentRun -> reports/{run_id}.html; summarize()
-    render_all.py           # batch version, same pattern as run_pipeline.py/run_diff.py
+    template.html               # self-contained Jinja2 HTML template (inline CSS)
+    render_report.py             # DiffResult + AgentRun -> reports/{run_id}.html
+    render_all.py                 # batch version, same pattern as run_pipeline.py
 data/
-  raw/                  # untouched agent traces, one file per run
-  normalized/            # schema-validated output of the ingestion pipeline
-  diffs/                 # DiffResult output of the diff pipeline
+  raw/                   # untouched agent traces, one file per run
+  normalized/             # schema-validated output of the ingestion pipeline
+  diffs/                   # DiffResult output of the diff pipeline
+  eval/
+    eval_set.jsonl          # 77 hand-labeled cases
+    labeling_notes.md        # how every ground truth value was determined
 reports/
-  {run_id}.html          # standalone HTML report per run
+  {run_id}.html            # standalone HTML report per run
 docs/
-  decisions.md           # dated log of non-obvious choices, with reasoning
-  example_report.png      # screenshot of a real generated report
+  decisions.md              # dated log of non-obvious choices, with reasoning
+  eval_results.md            # full evaluation writeup, honestly reported
+  example_report.png          # screenshot of a real generated report
 ```
 
-See `docs/decisions.md` for the reasoning behind specific choices (schema design,
-LangChain API surface, parser error handling, alignment cost function, test design,
-the repeated-tool tie-breaking limitation, the `plan_was_attempted` field, and the
-report-legibility fixes found during the Week 4 readability review).
+See `docs/decisions.md` for the reasoning behind every non-obvious choice in
+this project: schema design, the LangChain API surface, parser error
+handling, the alignment cost function, test design, the repeated-tool
+tie-breaking bug and fix, the parallel tool call pairing bug and fix, and
+the evaluation set's design.
