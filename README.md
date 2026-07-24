@@ -100,7 +100,7 @@ python -m src.visualize.render_all                          # every diff -> repo
 ```
 
 **5. Run the evaluation harness.** Scores every case in
-`data/eval/eval_set.jsonl` against its hand-labeled ground truth and prints
+`data/eval/eval_set.jsonl` against its hand labeled ground truth and prints
 accuracy by category:
 
 ```bash
@@ -132,12 +132,12 @@ toward the hard divergence total.
 The single most important output is `first_divergence_index`, the position
 of the first hard divergence, or nothing at all if the run followed its plan
 exactly. That's the number the evaluation harness measures against
-hand-labeled ground truth.
+hand labeled ground truth.
 
 When the same tool shows up more than once on both sides, a naive alignment
 can tie between two equally cheap pairings and pick the wrong one, matching
 the plan's reasoning against the wrong occurrence of a repeated call. This
-was a real bug, found by hand-checking real traces, not assumed. The fix
+was a real bug, found by hand checking real traces, not assumed. The fix
 breaks ties using the actual text involved, the plan's stated reason and the
 tool's real arguments, and falls back to matching a real occurrence lexically
 instead of defaulting to whichever came first in a backtrack. See
@@ -147,14 +147,14 @@ paired to its observation by ID instead of by position.
 
 ## Visualization
 
-Each report is one self-contained HTML file. No server, no build step, no
+Each report is one self contained HTML file. No server, no build step, no
 external dependencies, opens directly in a browser and still works with no
 internet connection.
 
 A report has three parts. A summary header states the task, whether the run
-succeeded, how many hard divergences it has, and a one-line plain-English
+succeeded, how many hard divergences it has, and a one line plain English
 explanation generated programmatically from the divergence events, no LLM
-call involved. Below that, a two-column table lines up planned tool calls
+call involved. Below that, a two column table lines up planned tool calls
 against actual ones, row by row, following the same alignment the algorithm
 computed. Green rows are exact matches. Yellow rows matched on tool name but
 have arguments that don't obviously relate to the plan. Red rows are a
@@ -164,13 +164,22 @@ also shows the tool's real output, inline if short, collapsed if long. The
 first hard divergence gets a red left border, since it's the one thing worth
 noticing first.
 
+The example below is a real run: a task asking for two separate divisions,
+where the plan only anticipated one. The green row shows the plan correctly
+matched to the real call it describes, 45 divided by 9. The gray dashed row
+below it is the actual first divergence, an unplanned second call that also
+happened to error out on division by zero, both facts visible at a glance.
+This is also the exact trace that caught the repeated tool tie breaking bug
+described above. Before that fix, this same report paired the plan against
+the wrong calculator call.
+
 ![Example diff report](docs/example_report.png)
 
 ## Evaluation
 
 `docs/eval_results.md` has the full writeup, including what the numbers
-don't prove and why. The short version: 77 hand-labeled cases across three
-categories, self-constructed failures where a clean run is deliberately
+don't prove and why. The short version: 77 hand labeled cases across three
+categories, self constructed failures where a clean run is deliberately
 broken in a known way, real external SWE-agent trajectories, and clean
 controls where the plan and the execution genuinely match. The primary
 metric excludes the external category, since those traces never had an
@@ -179,10 +188,10 @@ definition rather than a real test of judgment. On the primary set, 51
 cases, first divergence detection is currently 100 percent exact match.
 
 That number is real, but it's not the whole story, and the writeup says so
-directly. Self-constructed cases share the same alignment assumptions as the
+directly. Self constructed cases share the same alignment assumptions as the
 code being tested. External cases are guaranteed correct by their own
 structure. A harder, more independent test would need cases nobody
-building the algorithm hand-picked, and that's flagged as real future work,
+building the algorithm hand picked, and that's flagged as real future work,
 not glossed over.
 
 ## Tests
@@ -192,10 +201,10 @@ python -m pytest tests/
 ```
 
 37 tests: 3 on the trace schema, 6 on ingestion, 16 on the diff algorithm
-(hand-constructed cases with manually verified expected answers, kept
+(hand constructed cases with manually verified expected answers, kept
 separate from real messy agent data), and 12 on report rendering, covering
-`summarize()`'s plain-English output for every divergence type and the
-action-to-observation pairing logic, including a synthetic reproduction of
+`summarize()`'s plain English output for every divergence type and the
+action to observation pairing logic, including a synthetic reproduction of
 the parallel tool call ordering bug described above.
 
 ## Project layout
@@ -208,36 +217,36 @@ src/
     base.py              # abstract TraceParser interface
     langchain_parser.py  # parser for traces generate_traces.py writes
     swe_agent_parser.py  # parser for real external SWE-agent trajectories
-    run_pipeline.py       # data/raw/ -> data/normalized/, per-file failure handling
+    run_pipeline.py       # data/raw/ -> data/normalized/, per file failure handling
   diff/
-    align.py              # planned-vs-actual sequence alignment (DP / edit distance)
-    text_utils.py          # shared tokenizer, used for tie-breaking and args_changed
-    classify.py             # alignment -> human-readable divergence events
+    align.py              # planned vs actual sequence alignment (DP / edit distance)
+    text_utils.py          # shared tokenizer, used for tie breaking and args_changed
+    classify.py             # alignment -> human readable divergence events
     diff_result.py           # DiffResult output schema
-    run_diff.py                # data/normalized/ -> data/diffs/, per-run failure handling
+    run_diff.py                # data/normalized/ -> data/diffs/, per run failure handling
   eval/
     eval_harness.py            # scores data/eval/eval_set.jsonl against ground truth
   visualize/
-    template.html               # self-contained Jinja2 HTML template (inline CSS)
+    template.html               # self contained Jinja2 HTML template (inline CSS)
     render_report.py             # DiffResult + AgentRun -> reports/{run_id}.html
     render_all.py                 # batch version, same pattern as run_pipeline.py
 data/
   raw/                   # untouched agent traces, one file per run
-  normalized/             # schema-validated output of the ingestion pipeline
+  normalized/             # schema validated output of the ingestion pipeline
   diffs/                   # DiffResult output of the diff pipeline
   eval/
-    eval_set.jsonl          # 77 hand-labeled cases
+    eval_set.jsonl          # 77 hand labeled cases
     labeling_notes.md        # how every ground truth value was determined
 reports/
   {run_id}.html            # standalone HTML report per run
 docs/
-  decisions.md              # dated log of non-obvious choices, with reasoning
+  decisions.md              # dated log of non obvious choices, with reasoning
   eval_results.md            # full evaluation writeup, honestly reported
   example_report.png          # screenshot of a real generated report
 ```
 
-See `docs/decisions.md` for the reasoning behind every non-obvious choice in
+See `docs/decisions.md` for the reasoning behind every non obvious choice in
 this project: schema design, the LangChain API surface, parser error
-handling, the alignment cost function, test design, the repeated-tool
-tie-breaking bug and fix, the parallel tool call pairing bug and fix, and
+handling, the alignment cost function, test design, the repeated tool
+tie breaking bug and fix, the parallel tool call pairing bug and fix, and
 the evaluation set's design.
