@@ -1,10 +1,10 @@
 """Scan data/raw/, run each file through whichever registered parser claims
 it, and write the normalized AgentRun to data/normalized/{run_id}.jsonl.
 
-One bad file should never take down the whole batch — anything that doesn't
+One bad file should never take down the whole batch. Anything that doesn't
 parse gets logged to data/normalized/_unparsed.log with a reason instead of
 raising. Two parsers now (LangChain-generated traces, and external
-SWE-agent-derived traces) — this is exactly the payoff Week 2's abstract
+SWE-agent-derived traces). This is exactly the payoff Week 2's abstract
 TraceParser interface was built for: a second format is a new parser class,
 not a rewrite of this loop. See docs/decisions.md, 2026-07-01.
 """

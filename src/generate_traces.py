@@ -14,7 +14,7 @@ import json
 import os
 import re
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -39,7 +39,7 @@ def calculator(expression: str) -> str:
         if not set(expression) <= allowed:
             return f"Error: expression contains disallowed characters: {expression}"
         return str(eval(expression, {"__builtins__": {}}, {}))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001, any eval failure should become an error string, not a crash
         return f"Error evaluating expression: {e}"
 
 
@@ -77,7 +77,7 @@ def build_agent():
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _extract_text(content) -> str:
@@ -110,11 +110,11 @@ def _parse_plan_json(text: str) -> list[dict]:
 
 def make_plan(task: str, verbose: bool = True) -> list[PlannedStep]:
     """One upfront LLM call: ask for an ordered list of intended tool calls
-    before any execution happens. This is a separate call from execution —
+    before any execution happens. This is a separate call from execution,
     the model is not in an agent loop here, just asked to plan.
 
     Never raises: a plan that fails to parse is a soft failure (empty plan,
-    logged to stdout), not a reason to abandon the whole trace — this
+    logged to stdout), not a reason to abandon the whole trace. This
     project needs the execution trace even when the plan came back malformed.
     """
     model = ChatAnthropic(model=MODEL_NAME)
@@ -140,7 +140,7 @@ def make_plan(task: str, verbose: bool = True) -> list[PlannedStep]:
             PlannedStep(step_index=i, tool=s["tool"], reason=s["reason"])
             for i, s in enumerate(raw_steps)
         ]
-    except Exception as exc:  # noqa: BLE001 - a bad plan shouldn't abort the whole trace
+    except Exception as exc:  # noqa: BLE001, a bad plan should not abort the whole trace
         if verbose:
             print(f"--- plan generation failed, using empty plan: {exc} ---\n")
         return []
@@ -149,7 +149,7 @@ def make_plan(task: str, verbose: bool = True) -> list[PlannedStep]:
 def _format_plan_for_execution(planned_steps: list[PlannedStep]) -> str:
     if not planned_steps:
         return ""
-    lines = "\n".join(f"{s.step_index + 1}. {s.tool} — {s.reason}" for s in planned_steps)
+    lines = "\n".join(f"{s.step_index + 1}. {s.tool}: {s.reason}" for s in planned_steps)
     return (
         "\n\nYou previously planned to take these steps:\n"
         f"{lines}\n\n"
@@ -163,7 +163,7 @@ def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
     the trace schema.
 
     Handles mid-run errors by setting final_status="failure" and keeping
-    whatever steps were captured before the error — partial runs are still
+    whatever steps were captured before the error. Partial runs are still
     useful data, not discarded.
     """
     planned_steps = make_plan(task, verbose=verbose)
@@ -181,7 +181,7 @@ def run_and_capture(task: str, verbose: bool = True) -> AgentRun:
             {"messages": [{"role": "user", "content": execution_prompt}]},
             stream_mode="updates",
         ):
-            for _node_name, node_output in chunk.items():
+            for node_output in chunk.values():
                 for message in node_output.get("messages", []):
                     if verbose:
                         message.pretty_print()
@@ -236,7 +236,7 @@ class InjectionPreconditionError(ValueError):
 def inject_wrong_tool(run: AgentRun) -> AgentRun:
     """Swap the first planned step's tool for one that differs from what was
     actually executed there, forcing a deterministic SUBSTITUTE divergence
-    at position 0 — ground truth is known exactly because we caused it.
+    at position 0. Ground truth is known exactly because we caused it.
     Requires the run's first planned step to have cleanly matched execution.
     """
     action_steps = [s for s in run.steps if s.step_type == "action"]
@@ -261,8 +261,8 @@ def inject_wrong_tool(run: AgentRun) -> AgentRun:
 
 def inject_skip_step(run: AgentRun) -> AgentRun:
     """Remove the last planned step's actual execution (its action step and
-    matching observation), simulating the agent skipping a step it planned
-    — forces a deterministic DELETE (skipped_step) divergence. Requires the
+    matching observation), simulating the agent skipping a step it planned.
+    Forces a deterministic DELETE (skipped_step) divergence. Requires the
     run to have cleanly executed every planned step, one tool call each.
     """
     if len(run.planned_steps) < 2:
@@ -293,7 +293,7 @@ def inject_skip_step(run: AgentRun) -> AgentRun:
 
 def inject_corrupt_args(run: AgentRun) -> AgentRun:
     """Replace the first executed action's arguments with values clearly
-    unrelated to the plan's stated reason — the tool called is still the
+    unrelated to the plan's stated reason. The tool called is still the
     planned one (align() sees a clean MATCH), but classify()'s lexical-
     overlap check should flag args_changed. This is a soft signal, so
     ground_truth_divergence_step stays None: there is no hard divergence to
@@ -369,7 +369,7 @@ if __name__ == "__main__":
             "Deliberately corrupt the captured run to force a known divergence "
             "(auto-populates ground_truth_divergence_step). Fails clearly if this "
             "task's run isn't shaped right for the chosen injection (e.g. no clean "
-            "match to corrupt) — try a different --task."
+            "match to corrupt), try a different --task."
         ),
     )
     args = parser.parse_args()

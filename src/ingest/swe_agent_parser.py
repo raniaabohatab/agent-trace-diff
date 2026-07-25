@@ -1,12 +1,12 @@
 """Concrete TraceParser for real external agent trajectories from the
 nebius/SWE-agent-trajectories dataset (SWE-agent attempting real GitHub
-issues from SWE-bench). Not AgentBench — see docs/decisions.md, 2026-06-29,
+issues from SWE-bench). Not AgentBench, see docs/decisions.md, 2026-06-29,
 for why: AgentBench's public repo has task specs and Docker configs, not
 recorded transcripts; getting real traces out of it means running their
 whole harness, a much bigger lift than adapting an existing dataset.
 
 SWE-agent is ReAct-style with no upfront plan (same as the project's own
-Week 1 legacy traces) — planned_steps is always empty here, deliberately,
+Week 1 legacy traces). planned_steps is always empty here, deliberately,
 not a parsing gap. See docs/decisions.md, 2026-06-29, for what that means
 for how these cases are scored in Week 5's evaluation.
 
@@ -14,14 +14,14 @@ Command extraction takes the LAST fenced code block in each "ai" turn, not
 the first. Real trajectories from the weaker model in this dataset
 (swe-agent-llama-8b) don't reliably use the "DISCUSSION"/"COMMAND" section
 headers at all, and can quote an earlier ``` block from the issue text as
-context before stating the real command in a later, unlabeled ``` block —
-taking the first block in that case grabs the quoted reference, not the
+context before stating the real command in a later, unlabeled ``` block.
+Taking the first block in that case grabs the quoted reference, not the
 real action (confirmed against the actual tool_output that followed: it
 matched the LAST block's command, not the first's). "Last block" is a
-known-imperfect heuristic for the rarer opposite case — a turn emitting
+known-imperfect heuristic for the rarer opposite case, a turn emitting
 several real edit commands at once, where the harness that produced this
 dataset only executed the first one (confirmed the same way: exactly one
-observation followed a multi-block turn, never several) — see
+observation followed a multi-block turn, never several). See
 docs/decisions.md, 2026-07-02, for why this residual ambiguity is
 documented rather than special-cased away.
 """
@@ -40,7 +40,7 @@ _DISCUSSION_RE = re.compile(r"DISCUSSION\s*\n(.*?)(?:\n\s*COMMAND|\Z)", re.DOTAL
 
 def _extract_command_and_thought(text: str) -> tuple[str | None, str | None]:
     """SWE-agent's ACI format is usually 'DISCUSSION\\n<reasoning>\\n\\nCOMMAND\\n```\\n<cmd>\\n```',
-    but not always (see module docstring) — take the LAST fenced block as the command regardless."""
+    but not always (see module docstring). Take the LAST fenced block as the command regardless."""
     if not text:
         return None, None
     command_blocks = _COMMAND_BLOCK_RE.findall(text)
@@ -54,7 +54,7 @@ def _tool_name_from_command(command: str) -> str:
     """First whitespace-separated token of the command as the 'tool name'
     (e.g. 'find_file "x.py" lexicon' -> 'find_file', 'ls -F' -> 'ls').
     SWE-agent's ACI verbs (open, edit, search_dir, find_file, submit, ...)
-    plus raw bash both work fine with this — it's just "the command word.\""""
+    plus raw bash both work fine with this, it's just "the command word.\""""
     return command.split()[0] if command.strip() else "unknown"
 
 
@@ -97,7 +97,7 @@ class SWEAgentTraceParser(TraceParser):
         task_description = f"SWE-bench issue: {data['instance_id']}"
         for entry in trajectory:
             if entry.get("role") == "user" and entry.get("text"):
-                # First user turn is the issue statement -- use it (trimmed) as
+                # First user turn is the issue statement, use it (trimmed) as
                 # a more useful task_description than the bare instance_id.
                 issue_text = entry["text"].split("ISSUE:", 1)[-1].strip()
                 task_description = issue_text[:200]
@@ -127,7 +127,7 @@ class SWEAgentTraceParser(TraceParser):
                     )
                     pending_tool_for_observation = tool
                 else:
-                    # No command block -- treat as a final answer (e.g. the
+                    # No command block, treat as a final answer (e.g. the
                     # agent's closing summary after `submit`).
                     steps.append(
                         Step(
@@ -161,7 +161,7 @@ class SWEAgentTraceParser(TraceParser):
             framework="swe_agent_bench",
             model_name=data["model_name"],
             steps=steps,
-            planned_steps=[],  # ReAct-style, no upfront plan -- see module docstring
+            planned_steps=[],  # ReAct-style, no upfront plan, see module docstring
             plan_was_attempted=False,
             final_status="failure" if not data["target_resolved"] else "success",
             ground_truth_divergence_step=None,  # hand-labeled in Week 5 Day 4

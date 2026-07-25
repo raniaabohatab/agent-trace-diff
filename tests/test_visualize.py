@@ -1,4 +1,4 @@
-"""summarize() is the first thing anyone reads in a demo — test it against
+"""summarize() is the first thing anyone reads in a demo, test it against
 every divergence type the classifier produces, asserting the exact expected
 sentence, not just "does it return something."
 """
@@ -30,7 +30,7 @@ def _observation(step_index, tool, output, call_id):
 
 
 def test_summarize_no_events():
-    assert summarize([]) == "Agent followed its plan exactly — no divergence detected."
+    assert summarize([]) == "Agent followed its plan exactly, no divergence detected."
 
 
 def test_summarize_skipped_step():

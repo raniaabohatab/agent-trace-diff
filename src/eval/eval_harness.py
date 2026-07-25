@@ -1,13 +1,13 @@
 """Measure how well align()/classify() detect divergence against hand-labeled
-ground truth. This script measures — it does not modify align.py or
+ground truth. This script only measures, it does not modify align.py or
 classify.py to chase a better number. That's explicitly Week 6's job, done
 as a separate, deliberate iteration step with its own before/after
 comparison.
 
 Metrics are reported per source_category, plus a "primary" aggregate that
 excludes external_no_plan cases. Those cases are structurally guaranteed to
-produce first_divergence_index==0 (no plan exists to diverge from — see
-docs/decisions.md, 2026-06-29 and 2026-07-02) — folding them into a single
+produce first_divergence_index==0 (no plan exists to diverge from, see
+docs/decisions.md, 2026-06-29 and 2026-07-02). Folding them into a single
 blended accuracy number would inflate it with cases the algorithm cannot
 get wrong by construction, which is exactly the kind of thing this project's
 "honest measurement" discipline exists to catch.

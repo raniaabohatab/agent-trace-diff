@@ -1,5 +1,5 @@
 """Diff algorithm tests against small, hand-constructed cases with a known
-correct answer — deliberately separate from real messy agent data (that's
+correct answer, deliberately separate from real messy agent data (that's
 Week 3 Day 6). Every expected AlignOp / DivergenceEvent / first_divergence_index
 here was worked out by hand, not just asserted against whatever the code
 happened to produce.
@@ -136,7 +136,7 @@ def test_repeated_consecutive_tool_matches_cleanly():
 def test_multiple_divergences_in_one_run():
     # Two fully-unrelated tool names at each position: the minimum-cost
     # alignment is two substitutions (cost 2), strictly cheaper than
-    # deleting both and inserting both (cost 4) -- hand-verifiable.
+    # deleting both and inserting both (cost 4), hand-verifiable.
     aligned, events = diff_of(["alpha", "beta"], ["gamma", "delta"])
     assert [p.op for p in aligned] == [AlignOp.SUBSTITUTE, AlignOp.SUBSTITUTE]
     assert len(events) == 2

@@ -5,7 +5,7 @@ edit distance.
 Cost function is uniform: match=0, substitute=1, insert=1, delete=1. A
 smarter cost function (e.g. penalizing substitutions less than insertions
 when tool names are semantically similar) is a known possible improvement,
-deliberately deferred — see docs/decisions.md, 2026-06-09.
+deliberately deferred. See docs/decisions.md, 2026-06-09.
 
 The minimum cost itself is never in question. What can be ambiguous is
 which occurrence of a repeated tool the backtrack pairs up when more than

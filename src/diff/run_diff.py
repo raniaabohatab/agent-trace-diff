@@ -1,7 +1,7 @@
 """CLI entry point: take normalized AgentRuns from data/normalized/, run
 align() + classify() on each, and write DiffResult objects to data/diffs/.
 
-Same per-file resilience pattern as Week 2's run_pipeline.py — one run that
+Same per-file resilience pattern as Week 2's run_pipeline.py. One run that
 fails to diff (e.g. malformed planned_steps) is logged and skipped, not a
 reason to abort the whole batch.
 """

@@ -58,7 +58,7 @@ class LangChainTraceParser(TraceParser):
         extra_fields = set(data.keys()) - _KNOWN_FIELDS
         if extra_fields:
             logger.warning(
-                "%s has unrecognized field(s) %s — ignoring them (forward compatibility)",
+                "%s has unrecognized field(s) %s, ignoring them (forward compatibility)",
                 raw_path,
                 sorted(extra_fields),
             )
@@ -69,4 +69,4 @@ class LangChainTraceParser(TraceParser):
             problems = "; ".join(
                 f"field '{'.'.join(str(p) for p in err['loc'])}': {err['msg']}" for err in e.errors()
             )
-            raise ValueError(f"{raw_path} failed schema validation — {problems}") from e
+            raise ValueError(f"{raw_path} failed schema validation: {problems}") from e

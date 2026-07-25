@@ -1,6 +1,6 @@
 """Output schema for one run's diff: aligned pairs, classified divergence
 events, and the single most important number Week 5's evaluation measures
-against ground truth — first_divergence_index.
+against ground truth, first_divergence_index.
 """
 from dataclasses import asdict
 
@@ -21,5 +21,5 @@ class DiffResult(BaseModel):
 def serialize_aligned_pairs(pairs: list[AlignedPair]) -> list[dict]:
     """AlignOp is a (str, Enum) subclass, so it serializes to its plain string
     value automatically when the resulting dict later goes through pydantic's
-    model_dump_json() — no manual enum handling needed here."""
+    model_dump_json(), no manual enum handling needed here."""
     return [asdict(p) for p in pairs]

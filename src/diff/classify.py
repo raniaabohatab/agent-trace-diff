@@ -2,7 +2,7 @@
 
 args_changed detection (MATCH pairs where the executed tool's arguments
 don't obviously relate to the plan's stated reason) uses a plain lexical
-overlap heuristic, not an LLM call — see docs/decisions.md, 2026-06-10, for
+overlap heuristic, not an LLM call. See docs/decisions.md, 2026-06-10, for
 why that's a known-crude signal deliberately kept simple. The heuristic
 itself now lives in text_utils.py so align.py can reuse it too (Week 6
 Day 3, the repeated tool tie breaking fix).
@@ -25,7 +25,7 @@ class DivergenceEvent(BaseModel):
 def _args_look_unrelated_to_reason(tool_input: dict | None, reason: str) -> bool:
     """Crude lexical-overlap heuristic: if none of the tool call's argument
     values share a word with the plan's stated reason, flag it. False
-    negatives and false positives are both expected — this is a soft signal
+    negatives and false positives are both expected, this is a soft signal
     (args_changed is explicitly excluded from "hard" divergences), not a
     claim of semantic understanding.
     """
@@ -42,7 +42,7 @@ def classify(aligned: list[AlignedPair], run: AgentRun) -> list[DivergenceEvent]
     - AlignOp.INSERT  -> "unexpected_step" (executed but not planned)
     - AlignOp.SUBSTITUTE -> "wrong_tool" (different tool than planned)
     - AlignOp.MATCH but tool_input differs meaningfully from the plan's stated reason
-      -> "args_changed" (softer signal — flag but don't count as a hard divergence)
+      -> "args_changed" (softer signal, flag but don't count as a hard divergence)
     """
     action_steps = [s for s in run.steps if s.step_type == "action"]
     events: list[DivergenceEvent] = []

@@ -1,7 +1,7 @@
 """Render one DiffResult + its source AgentRun into a standalone HTML report.
 
 Self-contained on purpose: the template has its CSS inlined, so the output
-file works with no internet connection and no build step — see
+file works with no internet connection and no build step. See
 docs/decisions.md, 2026-06-17, for why static HTML over a live app.
 """
 import json
@@ -33,13 +33,13 @@ def _describe_event(event: DivergenceEvent) -> str:
             f"Agent planned to call '{event.planned_tool}' but called "
             f"'{event.actual_tool}' instead, at step {event.index}."
         )
-    # args_changed — only reachable here via a direct call with no hard events.
+    # args_changed, only reachable here via a direct call with no hard events.
     return f"Agent called '{event.actual_tool}' as planned, but with unexpected arguments, at step {event.index}."
 
 
 def summarize(divergence_events: list[DivergenceEvent]) -> str:
     """Generate a one-line plain-English explanation from classify.py's
-    structured output. Template-string logic keyed on `kind` and position —
+    structured output. Template-string logic keyed on `kind` and position,
     no LLM call, deterministic given the same events."""
     hard = [e for e in divergence_events if e.kind in _HARD_KINDS]
     soft = [e for e in divergence_events if e.kind not in _HARD_KINDS]
@@ -52,7 +52,7 @@ def summarize(divergence_events: list[DivergenceEvent]) -> str:
                 f"{len(soft)} step{plural} had arguments that don't obviously "
                 "match the plan's stated reason."
             )
-        return "Agent followed its plan exactly — no divergence detected."
+        return "Agent followed its plan exactly, no divergence detected."
 
     sentence = _describe_event(hard[0])
     remaining = len(hard) - 1
@@ -147,7 +147,7 @@ def render_report(run: AgentRun, diff: DiffResult) -> str:
     hard_count = sum(1 for e in diff.divergence_events if e.kind in _HARD_KINDS)
 
     if not run.plan_was_attempted:
-        # No upfront plan exists for this run at all — either a legacy Week 1
+        # No upfront plan exists for this run at all, either a legacy Week 1
         # trace (predates the Plan-and-Execute change) or a ReAct-style
         # external trace (e.g. SWE-agent, which reasons and acts one step at
         # a time with no upfront plan by design). Either way, every executed
@@ -155,12 +155,12 @@ def render_report(run: AgentRun, diff: DiffResult) -> str:
         # technically correct but reads as "the agent went off-script" when
         # the real story is "there was no plan to compare against." See
         # docs/decisions.md, 2026-06-11 and 2026-07-01. Deliberately NOT `not
-        # run.planned_steps` — a run where a plan was genuinely attempted and
+        # run.planned_steps`, a run where a plan was genuinely attempted and
         # came back empty (and execution also made zero tool calls) is a real,
         # correct exact match, not a missing plan. See 2026-06-23.
         summary_text = (
             "No upfront plan exists for this run (either a legacy pre-Plan-and-"
-            "Execute trace, or a framework that doesn't plan upfront) — there's "
+            "Execute trace, or a framework that doesn't plan upfront), so there's "
             "nothing to compare execution against."
         )
     else:
