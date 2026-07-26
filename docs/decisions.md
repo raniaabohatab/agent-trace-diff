@@ -963,3 +963,25 @@ in the right way. Regenerated a fresh 15-parallel-call trace live to confirm the
 end to end, re-ran the full pipeline (normalize, diff, render) so every existing
 report picks up the new field, and re-screenshotted the new trace's report: all 15
 rows now show the correct paired result.
+
+## Week 8 Day 5: fresh clone verification
+
+Cloned the repo to a clean temp directory and followed the README's own setup
+steps exactly, nothing skipped or done from memory. Fresh venv, `pip install -r
+requirements.txt`, then the full sequence: test suite, ingest pipeline, diff
+pipeline, render pipeline, eval harness, and the exact getting-started command
+from the README with a real live API call.
+
+Everything worked on the first try. All 37 tests passed. The full pipeline
+processed all 102 committed traces with zero failures. The eval harness printed
+the exact same numbers as `docs/eval_results.md`, 77 cases, 100 percent exact
+match on the primary set. The live trace generation command produced a real
+5 step trace and flowed cleanly through normalize, diff, and render. Also
+reconfirmed the README's warning about running scripts directly instead of as
+a module: `python src/generate_traces.py` still fails with `ModuleNotFoundError:
+No module named 'src'`, exactly as documented, so that warning is still accurate
+and not stale advice.
+
+Deleted the temp clone afterward since it briefly held a copy of the API key
+(copied in only to test the one command that needs it). No code changes came
+out of this pass, the honest result is that nothing was broken.
