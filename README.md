@@ -23,7 +23,7 @@ versus real code.
    Green for a step that went exactly as planned, red for the first place
    things went wrong, gray for anything planned but skipped or done but
    never planned.
-5. Scores the whole approach against a 77-case evaluation set, made up of
+5. Scores the whole approach against a 77 case evaluation set, made up of
    deliberately broken runs, real external agent trajectories, and clean
    controls, with every number in `docs/eval_results.md` coming from an
    actual run of the harness, nothing estimated.
@@ -211,38 +211,38 @@ the parallel tool call ordering bug described above.
 
 ```
 src/
-  schema.py             # Step / PlannedStep / AgentRun pydantic models
-  generate_traces.py    # plans + runs the agent, captures the trace, writes data/raw/
+  schema.py            # Step / PlannedStep / AgentRun pydantic models
+  generate_traces.py   # plans + runs the agent, captures the trace, writes data/raw/
   ingest/
-    base.py              # abstract TraceParser interface
-    langchain_parser.py  # parser for traces generate_traces.py writes
-    swe_agent_parser.py  # parser for real external SWE-agent trajectories
+    base.py               # abstract TraceParser interface
+    langchain_parser.py   # parser for traces generate_traces.py writes
+    swe_agent_parser.py   # parser for real external SWE-agent trajectories
     run_pipeline.py       # data/raw/ -> data/normalized/, per file failure handling
   diff/
     align.py              # planned vs actual sequence alignment (DP / edit distance)
-    text_utils.py          # shared tokenizer, used for tie breaking and args_changed
-    classify.py             # alignment -> human readable divergence events
-    diff_result.py           # DiffResult output schema
-    run_diff.py                # data/normalized/ -> data/diffs/, per run failure handling
+    text_utils.py         # shared tokenizer, used for tie breaking and args_changed
+    classify.py           # alignment -> human readable divergence events
+    diff_result.py        # DiffResult output schema
+    run_diff.py           # data/normalized/ -> data/diffs/, per run failure handling
   eval/
-    eval_harness.py            # scores data/eval/eval_set.jsonl against ground truth
+    eval_harness.py       # scores data/eval/eval_set.jsonl against ground truth
   visualize/
-    template.html               # self contained Jinja2 HTML template (inline CSS)
-    render_report.py             # DiffResult + AgentRun -> reports/{run_id}.html
-    render_all.py                 # batch version, same pattern as run_pipeline.py
+    template.html         # self contained Jinja2 HTML template (inline CSS)
+    render_report.py      # DiffResult + AgentRun -> reports/{run_id}.html
+    render_all.py         # batch version, same pattern as run_pipeline.py
 data/
-  raw/                   # untouched agent traces, one file per run
-  normalized/             # schema validated output of the ingestion pipeline
-  diffs/                   # DiffResult output of the diff pipeline
+  raw/                  # untouched agent traces, one file per run
+  normalized/           # schema validated output of the ingestion pipeline
+  diffs/                # DiffResult output of the diff pipeline
   eval/
-    eval_set.jsonl          # 77 hand labeled cases
-    labeling_notes.md        # how every ground truth value was determined
+    eval_set.jsonl        # 77 hand labeled cases
+    labeling_notes.md     # how every ground truth value was determined
 reports/
-  {run_id}.html            # standalone HTML report per run
+  {run_id}.html         # standalone HTML report per run
 docs/
-  decisions.md              # dated log of non obvious choices, with reasoning
-  eval_results.md            # full evaluation writeup, honestly reported
-  example_report.png          # screenshot of a real generated report
+  decisions.md          # dated log of non obvious choices, with reasoning
+  eval_results.md       # full evaluation writeup, honestly reported
+  example_report.png    # screenshot of a real generated report
 ```
 
 See `docs/decisions.md` for the reasoning behind every non obvious choice in
