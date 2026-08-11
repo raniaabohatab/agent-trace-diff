@@ -985,3 +985,70 @@ and not stale advice.
 Deleted the temp clone afterward since it briefly held a copy of the API key
 (copied in only to test the one command that needs it). No code changes came
 out of this pass, the honest result is that nothing was broken.
+
+## Swapping the search tool from canned data to a real API
+
+The search tool was canned since Week 1, a small lookup dict with two entries
+(weather, capital of France) and a fallback string for anything else. Swapped
+it for Claude's own server side web search tool, so search results now come
+from a real search instead of a lookup table.
+
+Chose Claude's built in web search over a separate provider like Tavily or
+DuckDuckGo specifically because the project already has an Anthropic API key
+configured and gitignored, and adding it meant no new service, no new key to
+manage, and no new line in requirements.txt, since the `anthropic` package
+was already a direct dependency. The `search` LangChain tool still looks
+exactly the same to the agent and to every downstream consumer of its
+output, a function that takes a query string and returns a result string.
+Internally it now makes one call to `client.messages.create()` with Claude's
+`web_search_20250305` tool declared and `tool_choice: {"type": "any"}` to
+force an actual search rather than let the model answer from its own
+training data, then returns the concatenated text blocks from the response.
+
+The tool type string matters and needed checking, not guessing. Claude's
+newer web search variant, `web_search_20260209`, adds dynamic filtering but
+is restricted to Opus and Sonnet tier models, it does not support
+`claude-haiku-4-5`, the model this project uses everywhere. The basic
+variant, `web_search_20250305`, is the one documented as working on older
+models, confirmed against the current Claude API skill reference before
+writing any code rather than assumed from an older training prior.
+
+Checked the synthetic tests before touching anything, not after. None of
+`test_diff.py`, `test_visualize.py`, `test_schema.py`, or `test_ingest.py`
+import `src.generate_traces` or invoke the real LangChain tools at all, they
+build `Step`/`AgentRun`/`AlignedPair` objects by hand with plain string tool
+names. The swap could not have touched their determinism because there was
+never a path from the real tool to those tests to begin with. Confirmed this
+by search rather than assuming it, then ran the full suite after the swap
+anyway: still 37 passed.
+
+Generated three fresh live traces to see what real search output actually
+looks like in a report, on purpose picking tasks the old canned dict could
+never have answered honestly: current weather in a real city, the tallest
+mountain in the world (which has a genuinely interesting two part answer,
+sea level versus base to peak, that no lookup table would produce), and
+recent Mars colonization mission news. All three came back with real,
+current, substantive answers, not training data recall, confirmed by asking
+for today's weather and getting today's actual temperature back.
+
+Nothing broke, which is itself worth stating plainly rather than skipping
+past. Real search output is longer than the placeholder text ever was, one
+response came back at 261 characters versus the old canned strings which
+topped out around 70, which meant this was the first real trace in the
+corpus to genuinely exercise the report's collapsible `<details>` output
+threshold (over 150 characters), a code path that had only ever been
+verified with synthetic 200 character test data before now (Week 4, see the
+2026-06-24 entry). Screenshotted the rendered report and it collapsed
+correctly. Ran all three new reports through the same well formed HTML check
+used in Week 4's readability review (Python's `html.parser`, checking for
+mismatched tags) and all three passed clean, no broken markup from the
+unicode degree symbols, markdown style asterisks, or embedded newlines real
+search responses contain that the canned strings never did.
+
+One real cost tradeoff worth naming: every live trace generation now makes
+one paid web search call, at Anthropic's published rate, instead of a free
+dictionary lookup. Existing raw traces already on disk keep their original
+canned search output untouched, since the pipeline only re-processes
+existing files, it never re-runs the tools that produced them, so this
+swap affects new trace generation going forward, not the 105 traces
+already in the corpus.

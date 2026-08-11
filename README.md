@@ -55,8 +55,10 @@ Run everything as a module (`-m`), not as a direct script path. These files
 import `src.schema` and friends, which need the repo root on `sys.path`, and
 `-m` is what gives you that.
 
-**1. Generate a trace.** The agent plans, then runs, on three deterministic
-tools (calculator, search, read_file), so every run is repeatable:
+**1. Generate a trace.** The agent plans, then runs, on three tools:
+calculator and read_file are deterministic and canned, search calls Claude's
+real server-side web search tool, so search results (and any agent behavior
+that depends on them) can vary between runs:
 
 ```bash
 python -m src.generate_traces --task "What is 23 * 17, and what is the capital of France?"

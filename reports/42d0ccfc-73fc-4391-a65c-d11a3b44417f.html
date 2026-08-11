@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trace Diff Report: 42d0ccfc-73fc-4391-a65c-d11a3b44417f</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: #f7f7f8;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 2rem;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+  header {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  header h1 { margin: 0 0 0.5rem 0; font-size: 1.1rem; color: #555; font-weight: 600; }
+  .task { font-size: 1.05rem; margin-bottom: 0.75rem; }
+  .stats { display: flex; gap: 1.5rem; font-size: 0.9rem; color: #444; }
+  .stat { display: flex; flex-direction: column; }
+  .stat .label { font-size: 0.75rem; text-transform: uppercase; color: #888; }
+  .status-success { color: #1a7f37; font-weight: 600; }
+  .status-failure { color: #cf222e; font-weight: 600; }
+  .summary {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #f0f4ff;
+    border-left: 3px solid #4361ee;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  .columns-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    padding: 0 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .diff { display: flex; flex-direction: column; gap: 0.5rem; }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    background: white;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .row-match { background: #eafbf0; }
+  .row-args-changed { background: #fff9e6; }
+  .row-substitute { background: #fdeeee; }
+  .row-missing { background: #f4f4f5; border: 1px dashed #ccc; }
+  .row.first-divergence { border-left: 4px solid #cf222e; }
+  .cell .tool-name {
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .cell .reason, .cell .args {
+    font-size: 0.85rem;
+    color: #555;
+    margin-top: 0.25rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .output-inline {
+    font-size: 0.85rem;
+    color: #2a6f4b;
+    margin-top: 0.35rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    word-break: break-word;
+  }
+  details.output {
+    margin-top: 0.35rem;
+    font-size: 0.85rem;
+  }
+  details.output summary {
+    cursor: pointer;
+    color: #4361ee;
+    user-select: none;
+  }
+  details.output .output-body {
+    margin-top: 0.4rem;
+    padding: 0.5rem 0.6rem;
+    background: #f7f7f8;
+    border-radius: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 12rem;
+    overflow-y: auto;
+  }
+  .empty-cell { color: #aaa; font-style: italic; }
+  .empty-state {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 6px;
+  }
+  .event-detail {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: #a13a1c;
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px dashed #eee;
+  }
+  footer { margin-top: 2rem; font-size: 0.8rem; color: #999; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>agent-trace-diff report</h1>
+    <div class="task">What is the tallest mountain in the world, and what is 900 divided by 12?</div>
+    <div class="stats">
+      <div class="stat"><span class="label">Status</span><span class="status-success">success</span></div>
+      <div class="stat"><span class="label">Divergences</span><span>0</span></div>
+      <div class="stat"><span class="label">Followed plan</span><span>yes</span></div>
+    </div>
+    <div class="summary">Agent followed its plan exactly, no divergence detected.</div>
+  </header>
+
+  
+  <div class="columns-header">
+    <div>Planned</div>
+    <div>Actual</div>
+  </div>
+  
+
+  <div class="diff">
+    
+    
+    <div class="row row-match">
+      <div class="cell">
+        
+          <div class="tool-name">search</div>
+          <div class="reason">need to find information about the tallest mountain in the world</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">search</div>
+          <div class="args">{'query': 'tallest mountain in the world'}</div>
+          
+            
+            <details class="output">
+              <summary>output (click to expand)</summary>
+              <div class="output-body">The answer depends on how you measure:
+
+**By height above sea level:** 
+Mount Everest, located on the border between China and Nepal, has an altitude of 8,848.86 meters (29,031.69 feet) - making it the highest mountain in the world.
+
+
+**By total height from base to peak:** 
+Mauna Kea (White Mountain) on the island of Hawaii, USA, is the world's tallest mountain.
+ 
+Measured from its submarine base in the Hawaiian Trough to its peak, it has a combined height of approximately 10,205 metres (33,480 feet)
+, because 
+almost two-thirds of it lies unseen beneath the Pacific Ocean.</div>
+            </details>
+            
+          
+        
+      </div>
+      
+    </div>
+    
+    <div class="row row-match">
+      <div class="cell">
+        
+          <div class="tool-name">calculator</div>
+          <div class="reason">need to compute 900 divided by 12</div>
+        
+      </div>
+      <div class="cell">
+        
+          <div class="tool-name">calculator</div>
+          <div class="args">{'expression': '900 / 12'}</div>
+          
+            
+            <div class="output-inline">→ 75.0</div>
+            
+          
+        
+      </div>
+      
+    </div>
+    
+  </div>
+
+  <footer>run_id: 42d0ccfc-73fc-4391-a65c-d11a3b44417f</footer>
+</div>
+</body>
+</html>

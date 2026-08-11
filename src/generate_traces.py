@@ -17,6 +17,7 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
+import anthropic
 from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain.tools import tool
@@ -29,6 +30,13 @@ load_dotenv()
 MODEL_NAME = "claude-haiku-4-5"
 FRAMEWORK = "langchain"
 RAW_DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "raw"
+
+_search_client = anthropic.Anthropic()
+# web_search_20250305 is the basic (non dynamic filtering) tool variant.
+# The dynamic filtering variant, web_search_20260209, is restricted to
+# Opus/Sonnet tier models and does not support claude-haiku-4-5, the model
+# this project runs everywhere else. See docs/decisions.md.
+SEARCH_TOOL_TYPE = "web_search_20250305"
 
 
 @tool
@@ -45,15 +53,23 @@ def calculator(expression: str) -> str:
 
 @tool
 def search(query: str) -> str:
-    """Search the web for information about a topic. Returns canned results for testing."""
-    canned = {
-        "weather": "Canned result: it is sunny and 72F today.",
-        "capital of france": "Canned result: the capital of France is Paris.",
-    }
-    for key, value in canned.items():
-        if key in query.lower():
-            return value
-    return f"Canned result: no specific data found for '{query}'. Try a more common query."
+    """Search the web for information about a topic. Uses Claude's server-side
+    web search tool and returns Claude's synthesized answer."""
+    try:
+        response = _search_client.messages.create(
+            model=MODEL_NAME,
+            max_tokens=1024,
+            tools=[{"type": SEARCH_TOOL_TYPE, "name": "web_search"}],
+            tool_choice={"type": "any"},
+            messages=[{"role": "user", "content": f"Search the web and answer concisely: {query}"}],
+        )
+    except Exception as e:  # noqa: BLE001, a failed search should become an error string, not a crash
+        return f"Error searching for '{query}': {e}"
+
+    text_blocks = [b.text for b in response.content if b.type == "text"]
+    if not text_blocks:
+        return f"No results found for '{query}'."
+    return "\n".join(text_blocks)
 
 
 @tool
