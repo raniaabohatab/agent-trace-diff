@@ -2,12 +2,7 @@
 
 A tool that watches an AI agent work and tells you where it went off script.
 
-Here's the idea. Before an agent starts a task, it makes a plan: "I'll call
-this tool, then that one." Then it actually does the task, and sometimes it
-follows that plan exactly, and sometimes it doesn't. This tool captures both
-sides, lines them up, and shows you the exact step where they stop matching.
-Think of it like `git diff`, but for what an agent said it would do versus
-what it actually did.
+Before an agent starts a task it writes a plan, then does the task, and sometimes it follows that plan and sometimes it doesn't. This captures both sides, lines them up, and shows the step where they stop matching. It's a `git diff`, but for what an agent said it would do versus what it did.
 
 ## Setup
 
@@ -60,7 +55,6 @@ It's a plain HTML file, opens in any browser, no server needed. You'll see
 the plan on the left, what actually happened on the right, color coded:
 green means it matched, red marks the first place it didn't.
 
-That's the whole loop. Give it a task, run three commands, open a file.
 
 ## What you're looking at in the report
 
@@ -85,7 +79,7 @@ it errored out on division by zero:
 python -m src.generate_traces --task "..." --inject-failure wrong_tool
 ```
 
-**Check how accurate the tool actually is**, against a set of 77 hand
+**Check how accurate the tool is**, against a set of 77 hand
 checked cases:
 
 ```bash
