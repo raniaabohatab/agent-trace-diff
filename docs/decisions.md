@@ -1052,3 +1052,84 @@ canned search output untouched, since the pipeline only re-processes
 existing files, it never re-runs the tools that produced them, so this
 swap affects new trace generation going forward, not the 105 traces
 already in the corpus.
+
+## Two real report bugs and a stale example screenshot
+
+Found while looking closely at `docs/example_report.png` for the first time
+in a while, not by accident.
+
+The first was a real styling bug. The result line under a tool call
+(`→ {{ actual_output }}`) rendered in the same green as a successful call no
+matter what the output actually said, including `Error evaluating
+expression: division by zero`. Every tool in this project signals failure
+the same crude way, a string that starts with "Error", there is no separate
+`is_error` field on `Step`. Fixed by detecting that prefix in `_build_rows()`
+and giving the template a real `output-error` class, red text instead of
+green, for both the inline result line and the collapsed `<details>` case.
+The word "Error" was already in the text itself, so this isn't a
+color-only signal, the styling reinforces something the text already says
+rather than being the only thing carrying the information.
+
+The second was smaller but genuinely confusing on a first read: the summary
+header showed "Status: success" directly next to "Followed plan: no", which
+reads as a contradiction to anyone who hasn't internalized that those two
+fields answer different questions. `final_status` describes whether the run
+itself completed without crashing, not whether it matched its plan. Relabeled
+the stat to "Run" and its displayed values to "completed" / "errored"
+instead of reusing "success" / "failure", so the two fields stop looking
+like they disagree with each other.
+
+The example screenshot itself was a bad demo, worth admitting plainly rather
+than leaving up because it was already there. It was two calculator calls for
+two divisions: one repeated tool name, so the alignment algorithm's actual
+job (lining up different tools) was never visible, and the only flagged
+divergence was the plan writing one step for what turned out to be a two
+part task, which makes a correctly behaving agent look like a false
+positive to anyone skimming the README. Two rows also doesn't make the case
+for a tool whose whole pitch is not reading hundreds of lines of trace by
+hand.
+
+Fixing it meant the project's toolset itself was too thin to build a good
+demo from. Three tools, two of them near duplicates in kind (calculator,
+read_file, both single purpose lookups), isn't enough to show five or six
+tools in one trace. Added two more canned tools in the same style as the
+existing ones, `convert_units` (a small fixed set of unit pairs, km/miles,
+celsius/fahrenheit, kg/lbs) and `get_current_time` (canned times for three
+cities). Both are deterministic, matching the project's original tools, not
+live calls like search now is.
+
+Building the actual example took two tries, both instructive. The first
+attempt asked for a unit conversion using "kilometers", and `convert_units`
+only recognized "km", a real gap in the tool, not the model doing anything
+wrong. It errored, then correctly retried with "km", which meant the run no
+longer had a clean one call per planned step correspondence, exactly the
+precondition `inject_skip_step` needs. Fixed by adding a small alias table
+(kilometers/miles/pounds/etc. all map to their short forms) so the tool
+accepts the way a person would naturally phrase a unit, not just the
+abbreviation. The second attempt, after that fix, ran clean: 8 planned
+steps, 8 executed, tool-for-tool matched.
+
+Generated the final example the same honest way the eval set's
+self-constructed cases are built, described in `docs/decisions.md` under
+2026-06-30: run the task for real, capture a genuinely clean result, and
+only then deliberately corrupt the stored plan, using the project's own
+`--inject-failure wrong_tool+skip_step` CLI flag, not hand-written fake
+data. The real run covers five distinct tools across eight steps
+(get_current_time, convert_units, search, read_file, calculator).
+The injector swapped the first planned tool, producing a real wrong_tool
+substitution at step 0, and dropped the last step's real execution,
+producing a real skipped_step at the end. The six steps in between are
+untouched, genuine matches, still doing real work (a real web search
+result, a real unit conversion, a real file read) instead of degenerating
+into placeholder text. Re-screenshotted into `docs/example_report.png` and
+rewrote the README caption to describe what's actually in the new image,
+including saying plainly that the divergences are constructed with the
+project's own injection tool, not implying the agent stumbled into them
+on its own.
+
+Added two tests locking in the two rendering fixes
+(`test_build_rows_flags_error_output_separately_from_success_output`,
+`test_render_report_relabels_status_so_it_does_not_contradict_followed_plan`),
+both built the same way the rest of `test_visualize.py` is, a synthetic
+`AgentRun` run through the real `diff_run()` and `render_report()` rather
+than asserting against a hand-built `DiffResult`.

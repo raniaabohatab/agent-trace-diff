@@ -84,7 +84,51 @@ def read_file(filename: str) -> str:
     return f"Error: file '{filename}' not found. Available files: {list(canned_files.keys())}"
 
 
-TOOLS = [calculator, search, read_file]
+_UNIT_ALIASES = {
+    "km": "km", "kilometer": "km", "kilometers": "km",
+    "miles": "miles", "mile": "miles",
+    "celsius": "celsius", "c": "celsius",
+    "fahrenheit": "fahrenheit", "f": "fahrenheit",
+    "kg": "kg", "kilogram": "kg", "kilograms": "kg",
+    "lbs": "lbs", "lb": "lbs", "pound": "lbs", "pounds": "lbs",
+}
+
+
+@tool
+def convert_units(value: float, from_unit: str, to_unit: str) -> str:
+    """Convert a numeric value between a small set of known units, e.g.
+    kilometers to miles, celsius to fahrenheit, or kilograms to pounds."""
+    conversions = {
+        ("km", "miles"): lambda v: v * 0.621371,
+        ("miles", "km"): lambda v: v / 0.621371,
+        ("celsius", "fahrenheit"): lambda v: v * 9 / 5 + 32,
+        ("fahrenheit", "celsius"): lambda v: (v - 32) * 5 / 9,
+        ("kg", "lbs"): lambda v: v * 2.20462,
+        ("lbs", "kg"): lambda v: v / 2.20462,
+    }
+    from_key = _UNIT_ALIASES.get(from_unit.lower(), from_unit.lower())
+    to_key = _UNIT_ALIASES.get(to_unit.lower(), to_unit.lower())
+    key = (from_key, to_key)
+    if key not in conversions:
+        return f"Error: no conversion known from '{from_unit}' to '{to_unit}'."
+    return f"{round(conversions[key](value), 2)} {to_unit}"
+
+
+@tool
+def get_current_time(location: str) -> str:
+    """Get the current local time in a named city. Returns canned times for testing."""
+    canned_times = {
+        "tokyo": "2026-08-15T21:14:00+09:00",
+        "london": "2026-08-15T13:14:00+01:00",
+        "new york": "2026-08-15T08:14:00-04:00",
+    }
+    key = location.lower()
+    if key in canned_times:
+        return canned_times[key]
+    return f"Error: no time data available for '{location}'."
+
+
+TOOLS = [calculator, search, read_file, convert_units, get_current_time]
 
 
 def build_agent():

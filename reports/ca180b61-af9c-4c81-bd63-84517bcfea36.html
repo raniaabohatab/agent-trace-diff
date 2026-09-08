@@ -76,6 +76,12 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     word-break: break-word;
   }
+  .output-inline.output-error {
+    color: #cf222e;
+    font-weight: 600;
+  }
+  details.output.output-error summary { color: #cf222e; }
+  details.output.output-error .output-body { color: #cf222e; }
   details.output {
     margin-top: 0.35rem;
     font-size: 0.85rem;
@@ -123,7 +129,7 @@
     <div class="task">Bringing pycasbin in track with casbin-core.
 I am sure there must be some features or functionalities which are not in track with casbin-core, why should we not track those features and bring them her</div>
     <div class="stats">
-      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Run</span><span class="status-failure">errored</span></div>
       <div class="stat"><span class="label">Divergences</span><span>4</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
     </div>

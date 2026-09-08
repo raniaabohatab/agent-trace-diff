@@ -3,8 +3,9 @@ every divergence type the classifier produces, asserting the exact expected
 sentence, not just "does it return something."
 """
 from src.diff.classify import DivergenceEvent
-from src.schema import AgentRun, Step
-from src.visualize.render_report import _pair_actions_with_observations, summarize
+from src.diff.run_diff import diff_run
+from src.schema import AgentRun, PlannedStep, Step
+from src.visualize.render_report import _build_rows, _pair_actions_with_observations, render_report, summarize
 
 
 def _action(step_index, tool, call_id):
@@ -186,6 +187,56 @@ def test_pair_actions_with_observations_mismatched_tool_name_degrades_gracefully
     )
     pairs = _pair_actions_with_observations(run)
     assert [obs.tool_output if obs else None for _, obs in pairs] == [None, None]
+
+
+def test_build_rows_flags_error_output_separately_from_success_output():
+    # Real bug: a tool call that errors ("Error: ...") was rendered with the
+    # exact same green success styling as a real result, so a divide by zero
+    # looked like it succeeded. actual_output_is_error is the signal the
+    # template branches on to fix that.
+    run = AgentRun(
+        run_id="test",
+        task_description="divide by zero then add two numbers",
+        framework="langchain",
+        model_name="claude-haiku-4-5",
+        final_status="success",
+        planned_steps=[
+            PlannedStep(step_index=0, tool="calculator", reason="divide by zero"),
+            PlannedStep(step_index=1, tool="calculator", reason="add two numbers"),
+        ],
+        plan_was_attempted=True,
+        steps=[
+            _action(0, "calculator", "call_a"),
+            _observation(1, "calculator", "Error evaluating expression: division by zero", "call_a"),
+            _action(2, "calculator", "call_b"),
+            _observation(3, "calculator", "7", "call_b"),
+        ],
+    )
+    diff = diff_run(run)
+    rows = _build_rows(run, diff)
+    assert [r["actual_output_is_error"] for r in rows] == [True, False]
+
+
+def test_render_report_relabels_status_so_it_does_not_contradict_followed_plan():
+    # "Status: success" next to "Followed plan: no" reads as a contradiction,
+    # since a run can complete fine while still diverging from its plan.
+    # The label and the displayed text both changed to describe the run
+    # itself, not the outcome.
+    run = AgentRun(
+        run_id="test",
+        task_description="do one thing",
+        framework="langchain",
+        model_name="claude-haiku-4-5",
+        final_status="success",
+        planned_steps=[PlannedStep(step_index=0, tool="calculator", reason="need to add")],
+        plan_was_attempted=True,
+        steps=[_action(0, "search", "call_a"), _observation(0, "search", "result", "call_a")],
+    )
+    diff = diff_run(run)
+    html = render_report(run, diff)
+    assert ">Run<" in html
+    assert ">completed<" in html
+    assert ">success<" not in html
 
 
 def test_summarize_ignores_soft_args_changed_when_counting_and_ordering_hard_divergences():

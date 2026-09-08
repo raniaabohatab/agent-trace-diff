@@ -76,6 +76,12 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     word-break: break-word;
   }
+  .output-inline.output-error {
+    color: #cf222e;
+    font-weight: 600;
+  }
+  details.output.output-error summary { color: #cf222e; }
+  details.output.output-error .output-body { color: #cf222e; }
   details.output {
     margin-top: 0.35rem;
     font-size: 0.85rem;
@@ -123,7 +129,7 @@
     <div class="task">It looks like the upgrade to 2.1.6 has broken dependency installation in `cfn submit --dry-run`
 The pip installation in `cfn submit` appears to log pip usage instructions to stdout instead of actually</div>
     <div class="stats">
-      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Run</span><span class="status-failure">errored</span></div>
       <div class="stat"><span class="label">Divergences</span><span>5</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
     </div>

@@ -76,6 +76,12 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     word-break: break-word;
   }
+  .output-inline.output-error {
+    color: #cf222e;
+    font-weight: 600;
+  }
+  details.output.output-error summary { color: #cf222e; }
+  details.output.output-error .output-body { color: #cf222e; }
   details.output {
     margin-top: 0.35rem;
     font-size: 0.85rem;
@@ -122,7 +128,7 @@
     <h1>agent-trace-diff report</h1>
     <div class="task">{{ task_description }}</div>
     <div class="stats">
-      <div class="stat"><span class="label">Status</span><span class="status-{{ final_status }}">{{ final_status }}</span></div>
+      <div class="stat"><span class="label">Run</span><span class="status-{{ final_status }}">{{ run_status_label }}</span></div>
       <div class="stat"><span class="label">Divergences</span><span>{{ divergence_count }}</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>{{ "yes" if plan_followed_exactly else "no" }}</span></div>
     </div>
@@ -156,12 +162,12 @@
           {% if row.actual_input %}<div class="args">{{ row.actual_input }}</div>{% endif %}
           {% if row.actual_output %}
             {% if row.actual_output_is_long %}
-            <details class="output">
+            <details class="output{% if row.actual_output_is_error %} output-error{% endif %}">
               <summary>output (click to expand)</summary>
               <div class="output-body">{{ row.actual_output }}</div>
             </details>
             {% else %}
-            <div class="output-inline">→ {{ row.actual_output }}</div>
+            <div class="output-inline{% if row.actual_output_is_error %} output-error{% endif %}">→ {{ row.actual_output }}</div>
             {% endif %}
           {% endif %}
         {% else %}

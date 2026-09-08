@@ -76,6 +76,12 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     word-break: break-word;
   }
+  .output-inline.output-error {
+    color: #cf222e;
+    font-weight: 600;
+  }
+  details.output.output-error summary { color: #cf222e; }
+  details.output.output-error .output-body { color: #cf222e; }
   details.output {
     margin-top: 0.35rem;
     font-size: 0.85rem;
@@ -122,7 +128,7 @@
     <h1>agent-trace-diff report</h1>
     <div class="task">What's 9 factorial? Use the calculator if you can, otherwise compute it yourself.</div>
     <div class="stats">
-      <div class="stat"><span class="label">Status</span><span class="status-success">success</span></div>
+      <div class="stat"><span class="label">Run</span><span class="status-success">completed</span></div>
       <div class="stat"><span class="label">Divergences</span><span>0</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>yes</span></div>
     </div>

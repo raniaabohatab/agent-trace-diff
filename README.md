@@ -65,9 +65,12 @@ green means it matched, red marks the first place it didn't.
 - **Gray dashed rows**: something with nothing to match on the other side,
   either it skipped a planned step, or it did something it never planned.
 
-Here's a real example, a task asking for two divisions where the plan only
-expected one. The extra call shows up immediately, and so does the fact that
-it errored out on division by zero:
+Here's an example built with the project's own failure injection tool (the
+same one used to build the eval set), on a real eight step run across five
+different tools: get the time in two cities, convert some units, search the
+web, read a file, do some arithmetic. Step one is forced red, a different
+tool than the one actually called. Everything in the middle matched its plan
+exactly. The last step is forced gray, planned but never executed:
 
 ![Example diff report](docs/example_report.png)
 

@@ -76,6 +76,12 @@
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     word-break: break-word;
   }
+  .output-inline.output-error {
+    color: #cf222e;
+    font-weight: 600;
+  }
+  details.output.output-error summary { color: #cf222e; }
+  details.output.output-error .output-body { color: #cf222e; }
   details.output {
     margin-top: 0.35rem;
     font-size: 0.85rem;
@@ -127,7 +133,7 @@ ds.Where(lambda e: e.met_e > 25).Select(lambda event: event.jet_pt)
 ```
 </div>
     <div class="stats">
-      <div class="stat"><span class="label">Status</span><span class="status-failure">failure</span></div>
+      <div class="stat"><span class="label">Run</span><span class="status-failure">errored</span></div>
       <div class="stat"><span class="label">Divergences</span><span>3</span></div>
       <div class="stat"><span class="label">Followed plan</span><span>no</span></div>
     </div>
@@ -183,7 +189,7 @@ bash-$</div>
           <div class="args">{'command': 'create reproduce.py'}</div>
           
             
-            <details class="output">
+            <details class="output output-error">
               <summary>output (click to expand)</summary>
               <div class="output-body">Error: File 'reproduce.py' already exists.
 [File: /func_adl/reproduce.py (1 lines total)]

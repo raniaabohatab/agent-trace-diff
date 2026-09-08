@@ -70,6 +70,16 @@ _ROW_CLASS_BY_EVENT_KIND = {
 
 _LONG_OUTPUT_THRESHOLD = 150  # chars, above which the output collapses into a <details>
 
+# final_status describes whether the run itself completed, not whether it
+# followed its plan. Displaying it as "success" next to "Followed plan: no"
+# reads as a contradiction, since the run can complete fine while still
+# diverging. Relabeled to describe the run, not the outcome.
+_RUN_STATUS_LABEL = {
+    "success": "completed",
+    "failure": "errored",
+    "unknown": "unknown",
+}
+
 
 def _pair_actions_with_observations(run: AgentRun) -> list[tuple]:
     """A single AIMessage can request several parallel tool calls, which
@@ -118,6 +128,11 @@ def _build_rows(run: AgentRun, diff: DiffResult) -> list[dict]:
             action_observation_pairs[pair["actual_index"]] if pair["actual_index"] is not None else (None, None)
         )
         actual_output = str(observation.tool_output) if observation and observation.tool_output is not None else None
+        # Every tool in this project reports a failure by returning a string
+        # that starts with "Error", there's no separate is_error field on
+        # Step. A result line needs to look different from a real success,
+        # green on "Error: division by zero" reads as the call succeeded.
+        actual_output_is_error = bool(actual_output) and actual_output.startswith("Error")
 
         if op == "match":
             row_class = _ROW_CLASS_BY_EVENT_KIND.get(event.kind, "row-match") if event else "row-match"
@@ -134,6 +149,7 @@ def _build_rows(run: AgentRun, diff: DiffResult) -> list[dict]:
                 "actual_input": actual.tool_input if actual else None,
                 "actual_output": actual_output,
                 "actual_output_is_long": bool(actual_output) and len(actual_output) > _LONG_OUTPUT_THRESHOLD,
+                "actual_output_is_error": actual_output_is_error,
                 "row_class": row_class,
                 "is_first_divergence": diff.first_divergence_index == i,
                 "event_detail": event.detail if event else None,
@@ -170,6 +186,7 @@ def render_report(run: AgentRun, diff: DiffResult) -> str:
         run_id=run.run_id,
         task_description=run.task_description,
         final_status=run.final_status,
+        run_status_label=_RUN_STATUS_LABEL.get(run.final_status, run.final_status),
         divergence_count=hard_count,
         summary_text=summary_text,
         plan_followed_exactly=diff.plan_followed_exactly,
